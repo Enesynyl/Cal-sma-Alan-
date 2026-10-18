@@ -176,18 +176,74 @@ dialog[open]{animation:dlgIn .28s cubic-bezier(.2,.8,.2,1)}dialog::backdrop{anim
 <body>
 <div class="wrap" id="app"></div>
 <dialog id="dl"></dialog>
+
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+
 <script>
 const $=i=>document.getElementById(i),uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
 const e=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 let db,W=null,cur={m:null,t:null,wk:mon(new Date())},WZ={},CF=null;
 function mon(d){d=new Date(d);d.setDate(d.getDate()-(d.getDay()+6)%7);d.setHours(0,0,0,0);return d}
 const iso=d=>{d=new Date(d);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
-/* ---- IndexedDB ---- */
-const openDB=()=>new Promise((a,b)=>{const r=indexedDB.open('calisma-alani',1);r.onupgradeneeded=()=>{const d=r.result;d.createObjectStore('ws',{keyPath:'id'});d.createObjectStore('rec',{keyPath:'id'}).createIndex('ws','ws');d.createObjectStore('meta',{keyPath:'k'})};r.onsuccess=()=>a(r.result);r.onerror=()=>b(r.error)});
-const P=r=>new Promise((a,b)=>{r.onsuccess=()=>a(r.result);r.onerror=()=>b(r.error)});
-const tx=(s,m='readonly')=>db.transaction(s,m).objectStore(s);
-const all=s=>P(tx(s).getAll()),put=(s,v)=>P(tx(s,'readwrite').put(v)),del=(s,k)=>P(tx(s,'readwrite').delete(k));
-const recs=async(ws,t)=>(await P(tx('rec').index('ws').getAll(ws))).filter(r=>!t||r.type===t);
+
+/* ---- Firebase ---- */
+const firebaseConfig = {
+  apiKey: "AIzaSyBQ3I3HgnLqrmfnPJCPiAfBj67CeifoxCI",
+  authDomain: "calisma-alani-34ba7.firebaseapp.com",
+  projectId: "calisma-alani-34ba7",
+  storageBucket: "calisma-alani-34ba7.firebasestorage.app",
+  messagingSenderId: "993870284701",
+  appId: "1:993870284701:web:8e1d2ec2a1c597fcba9174",
+  measurementId: "G-YQXJX85D9D"
+};
+
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+const dbFirestore = firebase.firestore();
+const auth = firebase.auth();
+let aktifKullaniciId = "anonim";
+
+const openDB = () => new Promise((resolve, reject) => {
+    auth.signInAnonymously().then((userCredential) => {
+        aktifKullaniciId = userCredential.user.uid;
+        resolve(true);
+    }).catch(reject);
+});
+
+const P = p => p;
+const tx = (s) => ({
+    get: async (k) => {
+        const snap = await dbFirestore.collection(s + "_" + aktifKullaniciId).doc(String(k)).get();
+        return snap.exists ? snap.data() : undefined;
+    }
+});
+
+const all = async (s) => {
+    const snapshot = await dbFirestore.collection(s + "_" + aktifKullaniciId).get();
+    return snapshot.docs.map(doc => doc.data());
+};
+
+const put = async (s, v) => {
+    const docId = String(v.id || v.k);
+    await dbFirestore.collection(s + "_" + aktifKullaniciId).doc(docId).set(v);
+};
+
+const del = async (s, k) => {
+    await dbFirestore.collection(s + "_" + aktifKullaniciId).doc(String(k)).delete();
+};
+
+const recs = async (ws, t) => {
+    const snapshot = await dbFirestore.collection("rec_" + aktifKullaniciId).where("ws", "==", ws).get();
+    let sonuclar = snapshot.docs.map(doc => doc.data());
+    if (t) {
+        sonuclar = sonuclar.filter(r => r.type === t);
+    }
+    return sonuclar;
+};
+
 /* ---- Tanımlar ---- */
 const ST='sel:Bekliyor,Devam ediyor,Tamamlandı,İptal edildi';
 const T={
@@ -626,13 +682,13 @@ async function pdfOku(f){if(!f)return;const st=$('pst'),say=t=>{if(st)st.textCon
 async function pdfOnay(r){PGL=r;const ex=(await recs(W.id,'ders')).map(x=>trl(x.ad||''));
  dlg(`<h3>📄 Bulunan dersler (${r.length})</h3><p class="m">Yanlış okunanı düzelt, eklemek istemediğin dersin işaretini kaldır.</p><div style="max-height:58vh;overflow:auto">${r.map((c,i)=>{const v=ex.includes(trl(c.ad));return `<div class="card" style="padding:10px;margin:8px 0"><label class="chk" style="margin:0"><input type="checkbox" id="pc${i}" ${v?'':'checked'}> <b>${e(c.ad)}</b>${v?' <span class="m">(zaten var — işaretlersen saatleri güncellenir)</span>':''}</label><label>Ders adı<input id="pa${i}" value="${e(c.ad)}"></label><div style="display:grid;grid-template-columns:90px 1fr;gap:8px"><label>AKTS *<input id="pk${i}" type="number" inputmode="decimal" min="1" placeholder="zorunlu" oninput="this.style.borderColor=''" value="${c.kredi||''}"></label><label>Öğretim üyesi<input id="ph${i}" value="${e(c.hoca||'')}"></label></div><label>Ders saatleri (satır başına: Gün 09:00-10:50 Sınıf)<textarea id="pp${i}" style="min-height:64px">${e(progTxt(c.m))}</textarea></label></div>`}).join('')}</div><div class="row"><button onclick="dlg()">Vazgeç</button><button class="p" onclick="pdfEkle()">Seçilenleri ekle</button></div>`)}
 async function pdfEkle(){const all=await recs(W.id,'ders');let n=0,u=0,bad=null,nb=0;
- for(let i=0;i<PGL.length;i++){if(!$('pc'+i)?.checked)continue;const ad=$('pa'+i).value.trim();if(!ad)continue;const k=$('pk'+i),o=all.find(x=>trl(x.ad||'')===trl(ad));
+ for(let i=0;i<PGL.length;i++){if(!\$('pc'+i)?.checked)continue;const ad=$('pa'+i).value.trim();if(!ad)continue;const k=$('pk'+i),o=all.find(x=>trl(x.ad||'')===trl(ad));
   if(!(+k.value>0)&&!(o&&+o.kredi>0)){k.style.borderColor='#d33';nb++;if(!bad)bad=k}}
  if(bad){bad.scrollIntoView({block:'center'});bad.focus();toast(`AKTS zorunlu: ${nb} dersin AKTS'sini yaz ya da dersin işaretini kaldır ⚠️`);return}
- for(let i=0;i<PGL.length;i++){if(!$('pc'+i)?.checked)continue;const ad=$('pa'+i).value.trim();if(!ad)continue;const pt=$('pp'+i).value.trim(),m=meets({progtxt:pt})[0]||{},kr=$('pk'+i).value,ho=$('ph'+i).value.trim(),old=all.find(x=>trl(x.ad||'')===trl(ad));
+ for(let i=0;i<PGL.length;i++){if(!\$('pc'+i)?.checked)continue;const ad=$('pa'+i).value.trim();if(!ad)continue;const pt=$('pp'+i).value.trim(),m=meets({progtxt:pt})[0]||{},kr=$('pk'+i).value,ho=$('ph'+i).value.trim(),old=all.find(x=>trl(x.ad||'')===trl(ad));
   if(old){await put('rec',{...old,progtxt:pt,gun:m.gun||old.gun||'',saat:m.s||old.saat||'',yer:m.yer||old.yer||'',kredi:old.kredi||kr,hoca:old.hoca||ho});u++}
   else{await put('rec',{id:uid(),ws:W.id,type:'ders',ad,kredi:kr,hoca:ho,gun:m.gun||'',saat:m.s||'',yer:m.yer||'',progtxt:pt});n++}}
- dlg();toast(`${n} ders eklendi${u?`, ${u} ders güncellendi`:''} ✅`);render()}
+ dlg();toast(`${n} ders eklendi${u?`, \${u} ders güncellendi`:''} ✅`);render()}
 let VK='';{const _r=render;render=async function(){const k=cur.m+'|'+cur.t,ch=k!==VK;VK=k;const x=await _r.apply(this,arguments);if(ch){const m=document.querySelector('.main');if(m){m.classList.remove('vin');void m.offsetWidth;m.classList.add('vin')}}return x}}
 init();
 
@@ -641,17 +697,17 @@ const UNI=`Abdullah Gül=agu.edu.tr|Acıbadem Mehmet Ali Aydınlar=acibadem.edu.
 const UN={mode:'ad',c:{},l:[]},fold=t=>String(t).toLocaleLowerCase('tr').replace(/ı/g,'i').replace(/[çğöşü]/g,c=>({ç:'c',ğ:'g',ö:'o',ş:'s',ü:'u'}[c]));
 const uniFull=u=>u.n+' Üniversitesi',uniUrl=u=>'https://'+u.d.replace(/^https?:\/\//,'');
 function uniSet(i){const x=UNI.filter(u=>fold(uniFull(u)).includes(fold(UN.q||'')))[i];if(x)upd({uni:x})}
-function uniFilt(v){UN.q=v;const b=$('ul');if(b)b.innerHTML=uniOpts()}
+function uniFilt(v){UN.q=v;const b=\$('ul');if(b)b.innerHTML=uniOpts()}
 const uniOpts=()=>{const r=UNI.filter(u=>fold(uniFull(u)).includes(fold(UN.q||''))).slice(0,80);return r.length?r.map((u,i)=>`<div class="it" onclick="uniSet(${i})"><div><b>${e(uniFull(u))}</b><small>${e(u.d)}</small></div></div>`).join(''):'<div class="empty">Listede bulunamadı. Aşağıdan kendin ekleyebilirsin.</div>'};
 function uniCustom(){const n=prompt('Üniversitenin adı (örn. Örnek Üniversitesi):');if(!n)return;const d=prompt('Web sitesi (örn. ornek.edu.tr):');if(!d)return;upd({uni:{n:n.replace(/\s*Üniversitesi$/i,'').trim(),d:d.trim().replace(/^https?:\/\//,'').replace(/\/$/,'')}})}
-function uniFix(){const d=prompt('Doğru web sitesi adresi:',W.uni.d);if(d)upd({uni:{...W.uni,d:d.trim().replace(/^https?:\/\//,'').replace(/\/$/,'')}})}
+function uniFix(){const d=prompt('Doğru web sitesi adresi:',W.uni.d);if(d)upd({uni:{...W.uni,d:d.trim().replace(/^https?:\/\//,'').replace(/\/\$/,'')}})}
 async function pxGet(u){const px=[x=>'https://api.allorigins.win/raw?url='+encodeURIComponent(x),x=>'https://corsproxy.io/?url='+encodeURIComponent(x),x=>'https://api.codetabs.com/v1/proxy?quest='+encodeURIComponent(x)];let er;
  for(const f of px){try{const r=await Promise.race([fetch(f(u)),new Promise((_,j)=>setTimeout(()=>j(new Error('zaman aşımı')),8000))]);if(!r.ok)throw new Error('HTTP '+r.status);const x=await r.text();if(x&&x.length>200)return x;throw new Error('boş yanıt')}catch(x){er=x}}
  throw new Error('Bağlantı kurulamadı'+(er?' ('+er.message+')':''))}
 const rssItems=(t,bing)=>[...new DOMParser().parseFromString(t,'text/xml').querySelectorAll('item')].map(i=>{const g=n=>i.getElementsByTagName(n)[0]?.textContent||'';let l=g('link');if(bing)try{const p=new URL(l).searchParams.get('url');if(p)l=p}catch(x){}return{t:g('title'),l,d:g('pubDate'),s:g('News:Source')||g('source'),x:g('description')}}).filter(x=>x.t);
 async function uniSite(u){const base='https://'+u.d,P=t=>new DOMParser().parseFromString(t,'text/html'),d=P(await pxGet(base)),
  grab=(doc,b)=>[...doc.querySelectorAll('a[href]')].map(a=>({t:a.textContent.replace(/\s+/g,' ').trim(),l:(()=>{try{return new URL(a.getAttribute('href'),b).href}catch(x){return''}})()})).filter(x=>x.l.startsWith('http')&&x.t.length>=18&&/duyuru|haber|announce|news|etkinlik|ilan/i.test(x.l));
- let out=grab(d,base);const ix=[...d.querySelectorAll('a[href]')].find(a=>/^(tüm )?(duyurular|haberler)$/i.test(a.textContent.trim()));
+ let out=grab(d,base);const ix=[...d.querySelectorAll('a[href]')].find(a=>/^(tüm )?(duyurular|haberler)\$/i.test(a.textContent.trim()));
  if(ix){try{const b2=new URL(ix.getAttribute('href'),base).href;out=out.concat(grab(P(await pxGet(b2)),b2))}catch(x){}}
  return out.filter((x,i,a)=>a.findIndex(y=>y.l===x.l)===i).slice(0,25).map(x=>({...x,d:'',s:u.d,x:''}))}
 async function uniNews0(u,mode,force){const k=u.d+mode,h=UN.c[k];if(h&&!force&&Date.now()-h.t<18e5)return h.v;let v;
@@ -660,7 +716,7 @@ async function uniNews0(u,mode,force){const k=u.d+mode,h=UN.c[k];if(h&&!force&&D
   if(!v.length)v=rssItems(await pxGet('https://news.google.com/rss/search?q='+q+'%20when:30d&hl=tr&gl=TR&ceid=TR:tr'));v=v.slice(0,15)}
  UN.c[k]={t:Date.now(),v};return v}
 const uniRow=(x,i)=>{const d=x.d?new Date(x.d):null,m=[x.s,d&&!isNaN(d)?d.toLocaleDateString('tr-TR',{day:'numeric',month:'long'}):''].filter(Boolean).join(' · ');return `<div class="it" onclick="uniRead(${i})"><div><b>${e(x.t)}</b><small>${e(m)}</small></div></div>`};
-const tmo=(p,ms)=>Promise.race([p,new Promise((_,j)=>setTimeout(()=>j(new Error('zaman aşımı')),ms))]),st=t=>{const b=$('un')?.querySelector('.empty')||$('unb')?.querySelector('small');if(b)b.textContent=t};
+const tmo=(p,ms)=>Promise.race([p,new Promise((_,j)=>setTimeout(()=>j(new Error('zaman aşımı')),ms))]),st=t=>{const b=$('un')?.querySelector('.empty')\vert{}\vert{}$('unb')?.querySelector('small');if(b)b.textContent=t};
 async function uniAI(u,mode){const k=await P(tx('meta').get('apikey')),kk=k&&k.v,
  p=mode==='site'?`${uniFull(u)} resmî sitesinde (${u.d}) son duyuru ve haberleri ara.`:`${uniFull(u)} hakkındaki son 30 günün haberlerini ve gelişmelerini ara.`,
  r=await tmo(fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json',...(kk?{'x-api-key':kk,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'}:{})},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:3000,tools:[{type:'web_search_20250305',name:'web_search'}],messages:[{role:'user',content:p+` En fazla 8 madde. Her madde için Türkçe 3-4 cümlelik özet yaz. Sadece JSON dizisi döndür, başka metin yazma: [{"t":"başlık","s":"kaynak","d":"YYYY-MM-DD","x":"özet","l":"url"}]`}]})}),60000),j=await r.json();
@@ -671,15 +727,15 @@ async function uniNews(u,mode,force){const k=u.d+mode,h=UN.c[k];if(h&&!force&&Da
  try{v=await (fr?A:B)()}catch(e1){try{v=await (fr?B:A)()}catch(e2){throw new Error((fr?'Claude: ':'Servis: ')+e1.message+' | '+(fr?'Servis: ':'Claude: ')+e2.message)}}
  UN.c[k]={t:Date.now(),v};return v}
 async function uniRead(i){const it=UN.l[i];if(!it)return;const d=it.d?new Date(it.d):null;
- dlg(`<h3 style="margin-top:0">${e(it.t)}</h3><small class="m">${e([it.s,d&&!isNaN(d)?d.toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'}):''].filter(Boolean).join(' · '))}</small><div id="rd" style="margin-top:10px;max-height:60vh;overflow:auto">${it.x?`<p>${e(it.x.replace(/<[^>]+>/g,''))}</p>`:''}<small class="m" id="rl">İçerik yükleniyor…</small></div><div class="row"><button onclick="dlg()">Kapat</button></div>`);
- if(it.ai){$('rl')?.remove();return}
+ dlg(`<h3 style="margin-top:0">${e(it.t)}</h3><small class="m">${e([it.s,d&&!isNaN(d)?d.toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'}):''].filter(Boolean).join(' · '))}</small><div id="rd" style="margin-top:10px;max-height:60vh;overflow:auto">${it.x?`<p>\${e(it.x.replace(/<[^>]+>/g,''))}</p>`:''}<small class="m" id="rl">İçerik yükleniyor…</small></div><div class="row"><button onclick="dlg()">Kapat</button></div>`);
+ if(it.ai){\$('rl')?.remove();return}
  try{const b=it.l,doc=new DOMParser().parseFromString(await pxGet(b),'text/html');doc.querySelectorAll('script,style,nav,header,footer,aside,form,iframe,noscript,svg').forEach(n=>n.remove());
   const root=doc.querySelector('article')||doc.querySelector('main')||doc.querySelector('[class*=content],[id*=content]')||doc.body,
   ps=[...root.querySelectorAll('h2,h3,p,li')].map(n=>({h:/^H/.test(n.tagName),t:n.textContent.replace(/\s+/g,' ').trim()})).filter(x=>x.h?x.t.length>3:x.t.length>45),og=doc.querySelector('meta[property="og:image"]')?.content;let im='';try{if(og)im=new URL(og,b).href}catch(x){}
-  const body=ps.slice(0,40).map(x=>x.h?`<h4>${e(x.t)}</h4>`:`<p>${e(x.t)}</p>`).join('');if(!$('rd'))return;
-  $('rd').innerHTML=(im?`<img src="${e(im)}" referrerpolicy="no-referrer" style="max-width:100%;border-radius:12px;margin-bottom:8px" onerror="this.remove()">`:'')+(body||`<p>${e((it.x||'').replace(/<[^>]+>/g,''))}</p><small class="m">Bu sayfanın metni uygulamaya alınamadı.</small>`)}
- catch(x){const r=$('rl');if(r)r.textContent='Sayfa içeriği alınamadı: '+(x.message||'')}}
-async function uniFill(){const b=$('unb');if(!b||!W.uni)return;b.innerHTML='<small class="m">Yükleniyor…</small>';
+  const body=ps.slice(0,40).map(x=>x.h?`<h4>${e(x.t)}</h4>`:`<p>${e(x.t)}</p>`).join('');if(!\$('rd'))return;
+  \$('rd').innerHTML=(im?`<img src="${e(im)}" referrerpolicy="no-referrer" style="max-width:100%;border-radius:12px;margin-bottom:8px" onerror="this.remove()">`:'')+(body||`<p>${e((it.x||'').replace(/<[^>]+>/g,''))}</p><small class="m">Bu sayfanın metni uygulamaya alınamadı.</small>`)}
+ catch(x){const r=\$('rl');if(r)r.textContent='Sayfa içeriği alınamadı: '+(x.message||'')}}
+async function uniFill(){const b=\$('unb');if(!b||!W.uni)return;b.innerHTML='<small class="m">Yükleniyor…</small>';
  try{const v=await uniNews(W.uni,'ad');UN.l=v;b.innerHTML=v.length?v.slice(0,4).map(uniRow).join('')+`<button onclick="cur.m='uni';render()" style="margin:6px 0 4px">Tümünü gör →</button>`:'<small class="m">Haber bulunamadı.</small>'}catch(x){b.innerHTML='<small class="m">Haberler şu an alınamadı (internet gerekir).</small>'}}
 const uniBugun=()=>W.uni?`<section class="sec"><div class="sh"><i>🏛️</i><b>${e(uniFull(W.uni))} · son gelişmeler</b></div><div id="unb"></div></section>`:`<section class="sec"><div class="sh"><i>🏛️</i><b>Üniversiteni seç</b></div><div class="it" onclick="cur.m='uni';render()"><div><b>Üniversiteni bağla</b><small>Haberleri ve duyuruları burada gör</small></div></div></section>`;
 function uniTab(m){UN.mode=m;document.querySelectorAll('.utb').forEach(x=>x.classList.toggle('on',x.dataset.m===m));uniList(false)}
@@ -688,15 +744,15 @@ function uniWebGo(i){UN.web.cur=i>=0&&W.uni.links&&W.uni.links[i]?W.uni.links[i]
 function uniWebOpen(){window.open(UN.web.cur||uniUrl(W.uni),'_blank','noopener')}
 function uniLinkAdd(){const n=prompt('Bağlantı adı (örn. Duyurular):');if(!n)return;let l=prompt('Sayfa adresi (örn. '+W.uni.d+'/duyurular):');if(!l)return;l=l.trim();if(!/^https?:\/\//i.test(l))l='https://'+l;upd({uni:{...W.uni,links:[...(W.uni.links||[]),{n:n.trim(),l}]}})}
 function uniLinkDel(i){if(!confirm('Bu bağlantı silinsin mi?'))return;UN.web.cur='';upd({uni:{...W.uni,links:(W.uni.links||[]).filter((x,j)=>j!==i)}})}
-function uniWeb(){const b=$('un');if(!b||!W.uni)return;const u=W.uni,ls=u.links||[];
+function uniWeb(){const b=\$('un');if(!b||!W.uni)return;const u=W.uni,ls=u.links||[];
  if(UN.web.d!==u.d){UN.web.d=u.d;UN.web.cur=''}
  const cur=UN.web.cur||uniUrl(u);
- b.innerHTML=`<div class="row" style="justify-content:flex-start;flex-wrap:wrap;gap:6px;margin-bottom:8px"><button onclick="uniWebGo(-1)">🏠 Ana sayfa</button>${ls.map((l,i)=>`<span style="display:inline-flex;gap:2px"><button onclick="uniWebGo(${i})">${e(l.n)}</button><button onclick="uniLinkDel(${i})" title="Sil">✕</button></span>`).join('')}<button onclick="uniLinkAdd()">➕ Bağlantı</button><button onclick="uniWebOpen()">↗️ Tarayıcıda aç</button></div>
+ b.innerHTML=`<div class="row" style="justify-content:flex-start;flex-wrap:wrap;gap:6px;margin-bottom:8px"><button onclick="uniWebGo(-1)">🏠 Ana sayfa</button>${ls.map((l,i)=>`<span style="display:inline-flex;gap:2px"><button onclick="uniWebGo(${i})">${e(l.n)}</button><button onclick="uniLinkDel(\${i})" title="Sil">✕</button></span>`).join('')}<button onclick="uniLinkAdd()">➕ Bağlantı</button><button onclick="uniWebOpen()">↗️ Tarayıcıda aç</button></div>
  <div style="position:relative"><iframe id="uwi" referrerpolicy="no-referrer" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox" style="width:100%;height:68vh;border:1px solid rgba(128,128,128,.35);border-radius:12px;background:#fff"></iframe><div id="uwm" style="display:none;position:absolute;inset:0;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;padding:20px;border-radius:12px;background:rgba(0,0,0,.78);color:#fff"><b>Site yüklenemedi</b><small>Bağlantı yavaş olabilir ya da bu site uygulama içinde açılmaya izin vermiyor.</small><button onclick="uniWebOpen()">↗️ Tarayıcıda aç</button></div></div>
  <p class="m"><small>Sayfa boş ya da hatalı görünüyorsa site uygulama içinde açılmaya izin vermiyordur; “Tarayıcıda aç” ile normal şekilde açabilirsin.</small></p>`;
  const f=$('uwi'),m=$('uwm');let ok=0;f.onload=()=>{ok=1;m.style.display='none'};f.src=cur;
  setTimeout(()=>{if(!ok&&$('uwm'))$('uwm').style.display='flex'},8000)}
-async function uniList(force){const b=$('un');if(!b)return;if(UN.mode==='web'){uniWeb();return}b.innerHTML='<div class="empty">Yükleniyor…</div>';
+async function uniList(force){const b=\$('un');if(!b)return;if(UN.mode==='web'){uniWeb();return}b.innerHTML='<div class="empty">Yükleniyor…</div>';
  try{const v=await uniNews(W.uni,UN.mode,force);UN.l=v;b.innerHTML=v.length?v.map(uniRow).join(''):'<div class="empty">Sonuç bulunamadı.'+(UN.mode==='site'?'<br><small>Bu sitenin duyuruları otomatik okunamadı. “Haberler” sekmesini dene ya da adresi düzelt.</small>':'')+'</div>'}
  catch(x){b.innerHTML='<div class="empty">Alınamadı.<br><small>İnternet erişimi yok ya da aracı servisler yanıt vermedi. '+e(x.message||'')+'</small></div>'}}
 async function uniPage(){
