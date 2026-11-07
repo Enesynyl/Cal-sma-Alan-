@@ -284,10 +284,14 @@ body.dffs #dfroot>.bar button,body.dffs #dfroot>.row button{padding:6px 12px}
 .dftxt:empty:before{content:attr(data-placeholder);color:var(--mu);opacity:.65;pointer-events:none}
 .df-color-label{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--mu)}.df-color-label input{width:42px;height:34px;padding:2px;margin:0}
 
+@keyframes startupSpin{to{transform:rotate(360deg)}}
+#startup-loader{position:fixed;inset:0;z-index:20000;display:grid;place-items:center;background:var(--bg,#f6f5f1);opacity:1;visibility:visible;transition:opacity .28s,visibility .28s}
+#startup-loader.done{opacity:0;visibility:hidden;pointer-events:none}
+.startup-spinner{width:46px;height:46px;border:4px solid #1d6b5730;border-top-color:#1d6b57;border-radius:50%;animation:startupSpin .8s linear infinite}
 </style>
 </head>
 <body data-auth-required="1"><script>try{if(localStorage.getItem("fbHas")==="1")document.body.dataset.authRequired="0"}catch(e){}</script>
-<div class="wrap" id="app"></div>
+<div id="startup-loader" role="status" aria-label="Yükleniyor"><span class="startup-spinner"></span></div><script>window.appLocalReady=false;window.appCloudReady=false;window.appLocalReadyDone=()=>{window.appLocalReady=true;window.tryFinishStartup?.()};window.appCloudReadyDone=()=>{window.appCloudReady=true;window.tryFinishStartup?.()};window.tryFinishStartup=()=>{if(window.appLocalReady&&window.appCloudReady)document.getElementById("startup-loader")?.classList.add("done")};setTimeout(window.appCloudReadyDone,8000);</script><div class="wrap" id="app"></div>
 <dialog id="dl"></dialog>
 <script>
 const $=i=>document.getElementById(i),uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
@@ -320,7 +324,7 @@ const TL={program:'Haftalık program',hesap:'📈 Not hesabı',ders:'Ders listes
 const ttl=(t,r)=>T[t].t?T[t].t(r):r[T[t].f[0][0]]||'';
 const sub=(t,r)=>[...T[t].f.slice(1).filter(x=>x[2]!=='area'&&r[x[0]]).slice(0,3),...(W.extra?.[t]||[]).filter(x=>r[x[0]])].map(x=>r[x[0]]).join(' · ');
 /* ---- Başlangıç ---- */
-async function init(){db=await openDB();navigator.storage?.persist?.();const th=await P(tx('meta').get('theme'));if(th?.v)document.documentElement.dataset.theme=th.v;const pn=await P(tx('meta').get('pin'));if(pn)return lock(pn.v);boot()}
+async function init(){db=await openDB();navigator.storage?.persist?.();const th=await P(tx('meta').get('theme'));if(th?.v)document.documentElement.dataset.theme=th.v;const pn=await P(tx('meta').get('pin'));if(pn){lock(pn.v);window.appLocalReadyDone?.();return}await boot();window.appLocalReadyDone?.()}
 async function boot(){const L=await all('ws');for(const x of L)if(!x.u1){x.u1=1;if(!x.mods.includes('uni'))x.mods.splice(Math.min(1,x.mods.length),0,'uni');await put('ws',x)}if(!(await P(tx('meta').get('mig2')))){for(const r of await all('rec'))if(r.type==='hatirlatma')await put('rec',{...r,type:'gorev'});await put('meta',{k:'mig2',v:1})}if(!(await P(tx('meta').get('mig3')))){for(const r of await all('rec'))if(r.type==='dnot')await put('rec',{...r,type:'not',ad:r.konu||'Ders notu',ts:r.ts||parseInt(r.id.slice(0,-5),36)||Date.now()});await put('meta',{k:'mig3',v:1})}for(const x of L)if(x.mode!=='ogr'||!x.v2){x.mode='ogr';if(!x.v2){x.v2=1;x.mods=[...new Set([...x.mods,'kart','odak'])]}await put('ws',x)}if(!L.length)return wz();const m=await P(tx('meta').get('last'));W=L.find(x=>x.id===m?.v)||L[0];render()}
 function wz(){$('app').innerHTML=`<div class="wz"><h1>Çalışma alanınıza ad verin.</h1><p class="m">Verileriniz yalnızca bu cihazdaki yerel veritabanında (IndexedDB) saklanır. Hesap ve internet gerekmez.</p><label>Çalışma alanı adı<input id="wn" placeholder="Üniversite"></label><div class="row"><button class="p" onclick="mk()">Oluştur</button></div></div>`}
 async function mk(){const nm=($('wn')?.value||'').trim()||'Üniversite';W={id:uid(),name:nm,mode:'ogr',mods:[...AV.ogr],v2:1};await put('ws',W);await put('meta',{k:'last',v:W.id});WZ={};cur.m=null;render()}
@@ -859,21 +863,19 @@ function fbUi(){const u=FB&&FB.user,t=+lsg('fbTs');
  fbLoad().catch(x=>{const m=$('fbm');if(m)m.textContent=fbErr(x)})
 function fbTab(n){FBM=n;$('fbn').style.display=n===2?'block':'none';$('fbGo').textContent=n===2?'Hesap oluştur':'Giriş yap';$('fbt1').className=n===1?'p':'';$('fbt2').className=n===2?'p':''}
 const fbSay=t=>{const s=$('fbm');if(s)s.textContent=t};
-async function fbFirst(u,nm){const f=FB,ow=lsg('fbOwner'),dirtyDevice=(ow&&ow!==u.uid)||(!ow&&lsg('fbHas')==='1');if(dirtyDevice)await fbWipe();lss('fbOwner',u.uid);await f.fs.setDoc(fbRef(f,u,'profile'),{ad:nm||u.displayName||'',email:u.email||'',saglayici:(u.providerData[0]||{}).providerId||'',olusturma:Date.now()});await fbUp();lss('fbAuto','1');lss('fbDevice_'+u.uid,'1');lss('fbHas','1');lss('fbSkip','1');fbListen(f,u);toast('☁️ Hesabın oluşturuldu, verilerin Firebase’e kaydedildi ✅');if(dirtyDevice){location.reload();return}fbUi()}
-async function fbAfter(u,silent){const f=FB,pr=fbRef(f,u,'profile'),s=await f.fs.getDoc(pr);lss('fbHas','1');lss('fbSkip','1');if(!s.exists())return fbFirst(u,u.displayName||'');await f.fs.setDoc(pr,{son:Date.now()},{merge:true});const ow=lsg('fbOwner'),swapped=!!ow&&ow!==u.uid;if(swapped)await fbWipe();lss('fbOwner',u.uid);const m=await f.fs.getDoc(fbRef(f,u,'meta')),deviceKey='fbDevice_'+u.uid,firstOnDevice=lsg(deviceKey)!=='1';lss('fbAuto','1');
+async function fbFirst(u,nm,silent=false){const f=FB,ow=lsg('fbOwner'),dirtyDevice=(ow&&ow!==u.uid)||(!ow&&lsg('fbHas')==='1');if(dirtyDevice)await fbWipe();lss('fbOwner',u.uid);await f.fs.setDoc(fbRef(f,u,'profile'),{ad:nm||u.displayName||'',email:u.email||'',saglayici:(u.providerData[0]||{}).providerId||'',olusturma:Date.now()});await fbUp();lss('fbAuto','1');lss('fbDevice_'+u.uid,'1');lss('fbHas','1');lss('fbSkip','1');fbListen(f,u);toast('☁️ Hesabın oluşturuldu, verilerin Firebase’e kaydedildi ✅');if(dirtyDevice){location.reload();return}if(!silent)fbUi()}
+async function fbAfter(u,silent){const f=FB,pr=fbRef(f,u,'profile'),s=await f.fs.getDoc(pr);lss('fbHas','1');lss('fbSkip','1');if(!s.exists())return fbFirst(u,u.displayName||'',silent);await f.fs.setDoc(pr,{son:Date.now()},{merge:true});const ow=lsg('fbOwner'),swapped=!!ow&&ow!==u.uid;if(swapped)await fbWipe();lss('fbOwner',u.uid);const m=await f.fs.getDoc(fbRef(f,u,'meta')),deviceKey='fbDevice_'+u.uid,firstOnDevice=lsg(deviceKey)!=='1';lss('fbAuto','1');
  if(m.exists()){const localTs=+lsg('fbTs')||0;if(firstOnDevice||m.data().ts>localTs){await fbDown();return}lss(deviceKey,'1');if(lsg('fbDirty')==='1')await fbUp(true).catch(()=>{});fbListen(f,u);if(!silent)fbUi();return}
  lss(deviceKey,'1');await fbUp();if(swapped){location.reload();return}fbListen(f,u);if(!silent)fbUi()}async function fbEmail(){const em=$('fbE').value.trim(),pw=$('fbP').value,nm=$('fbN').value.trim();if(!em||!pw)return fbSay('E-posta ve şifre yaz');if(FBM===2&&!nm)return fbSay('Adını yaz');if(FBM===2&&pw.length<6)return fbSay('Şifre en az 6 karakter olmalı');
  try{fbSay('Bağlanıyor…');const f=await fbLoad();if(FBM===2){const c=await f.au.createUserWithEmailAndPassword(f.auth,em,pw);await f.au.updateProfile(c.user,{displayName:nm});await fbFirst(c.user,nm)}else{const c=await f.au.signInWithEmailAndPassword(f.auth,em,pw);await fbAfter(c.user)}}catch(x){fbSay(fbErr(x))}}
-function fbGate(){if(lsg('fbHas')){document.body.dataset.authRequired="0";}else document.body.dataset.authRequired="1";if(document.body.dataset.fbGate)return;document.body.dataset.fbGate='1';fbLoad().then(f=>{if(!f.auth.currentUser)fbUi()}).catch(x=>{fbUi();const m=$('fbm');if(m)m.textContent=fbErr(x)})}
-function fbGate(){if(lsg('fbHas')){document.body.dataset.authRequired="0";}else document.body.dataset.authRequired="1";if(document.body.dataset.fbGate)return;document.body.dataset.fbGate='1';fbLoad().then(f=>{if(!f.auth.currentUser)fbUi()}).catch(x=>{fbUi();const m=$('fbm');if(m)m.textContent=fbErr(x)})}
+function fbGate(){document.body.dataset.authRequired='0';if(document.body.dataset.fbGate)return;document.body.dataset.fbGate='1';window.appCloudReadyDone?.()}
 async function fbReset(){const em=$('fbE')&&$('fbE').value.trim();if(!em)return fbSay('Önce e-postanı yaz');try{const f=await fbLoad();await f.au.sendPasswordResetEmail(f.auth,em);fbSay('Şifre sıfırlama bağlantısı e-postana gönderildi ✅')}catch(x){fbSay(fbErr(x))}}
 async function fbAct(a){try{fbSay('Bağlanıyor…');const f=await fbLoad();
  if(a==='in'){const c=await f.au.signInWithPopup(f.auth,new f.au.GoogleAuthProvider());await fbAfter(c.user)}
  else if(a==='out'){fbSay('Çıkış yapılıyor…');if(lsg('fbDirty')==='1'&&f.auth.currentUser){try{await fbUp(true)}catch(x){if(x.message!=='conflict'){toast('Son değişiklikler buluta gönderilemedi, çıkış yapılmadı');return fbSay('Son değişiklikler buluta gönderilemedi, çıkış yapılmadı: '+fbErr(x))}}}await f.au.signOut(f.auth);await fbWipe();lss('fbOwner','');lss('fbAuto','0');location.reload()}
  else if(a==='up'){fbSay('Yükleniyor…');await fbUp();lss('fbAuto','1');const c=$('fba');if(c)c.checked=true;fbSay('Buluta yedeklendi ✅ Otomatik yedek açık.')}
  else ask('Bulut verisi bu cihazdaki verinin yerine geçecek. Emin misin?',async()=>{try{await fbDown()}catch(x){toast(fbErr(x));fbUi()}})}catch(x){fbSay(fbErr(x))}}
-{let n=0;const iv=setInterval(()=>{if(++n>40)return clearInterval(iv);if(typeof W!=='undefined'&&W&&W.id){clearInterval(iv);if(!lsg('fbSkip')&&lsg('fbAuto')!=='1'&&!$('dl').open)setTimeout(fbUi,700)}},500)}
-fbLoad().then(f=>{if(f.auth.currentUser)fbAfter(f.auth.currentUser,true).catch(x=>{fbUi();fbSay(fbErr(x))});else fbGate()}).catch(x=>{fbGate();setTimeout(()=>fbSay(fbErr(x)),0)});
+fbLoad().then(f=>{document.body.dataset.authRequired='0';if(f.auth.currentUser)return fbAfter(f.auth.currentUser,true).catch(x=>{console.warn('Bulut eşitlemesi:',x)}).finally(()=>window.appCloudReadyDone?.());fbGate()}).catch(x=>{console.warn('Bulut bağlantısı:',x);fbGate()});
 let VK='';{const _r=render;render=async function(){const k=cur.m+'|'+cur.t,ch=k!==VK;VK=k;const x=await _r.apply(this,arguments);if(ch){const m=document.querySelector('.main');if(m){m.classList.remove('vin');void m.offsetWidth;m.classList.add('vin')}}return x}}
 init();
 
