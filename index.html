@@ -186,6 +186,33 @@ body[data-auth-required="1"] #app{visibility:hidden}body[data-auth-required="1"]
 .side .nav button.on .ib{box-shadow:0 0 0 2px var(--ac)}
 .side .nav2{padding-top:12px;border-top:1px solid var(--bd)}
 @media(min-width:700px){.side{flex-basis:228px;width:228px}.side .nav button,.bgon .side .nav button{padding:8px 14px 8px 8px}.side .wsb{padding:8px 14px 8px 8px}}
+
+/* ---- Defter tam ekran + yüzen menü ---- */
+body.dffs .wrap{max-width:none;padding:0}
+body.dffs .shell{display:block}
+body.dffs .main{padding:8px 12px 8px 24px}
+body.dffs .main>h1,body.dffs .main>p.m{display:none}
+body.dffs #dfroot{display:flex;flex-direction:column;height:calc(100dvh - 16px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))}
+body.dffs #dfroot>.dnb{flex:1;min-height:0;display:flex;flex-direction:column}
+body.dffs #dfroot .dnb>.pgc{flex:1;height:auto;min-height:0}
+body.dffs #dfroot .pgc textarea{height:calc(100% - 56px)}
+body.dffs .side{position:fixed;left:10px;top:calc(12px + env(safe-area-inset-top,0px));z-index:60;transform:translateX(calc(-100% - 30px));pointer-events:none;transition:transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s;margin:0}
+body.dffs.sopen .side{transform:none;pointer-events:auto;box-shadow:0 18px 60px #00000040}
+#sedge,#sscrim{display:none;position:fixed;z-index:54}
+body.dffs #sedge{display:block;left:0;top:0;bottom:0;width:16px}
+body.dffs #sedge::after{content:'';position:absolute;left:4px;top:50%;width:5px;height:56px;margin-top:-28px;border-radius:4px;background:var(--mu);opacity:.4;transition:opacity .2s}
+body.dffs #sedge:hover::after{opacity:.8}
+body.dffs.sopen #sedge{display:none}
+#sscrim{inset:0;z-index:55;background:#00000026}
+@media(pointer:coarse){body.dffs #sedge{width:26px}body.dffs.sopen #sscrim{display:block}}
+
+/* ---- Defter yazı alanı + renk çubuğu ---- */
+.pgc .dft{display:block;margin:0;width:100%;height:504px;border:0;border-radius:0;background:transparent;color:inherit;padding:0 14px 0 50px;font:16px/28px Georgia,'Segoe Print',serif;position:relative;z-index:1;overflow-y:auto;outline:0;white-space:pre-wrap;word-break:break-word;-webkit-user-select:text;user-select:text}
+.pgc.kareli .dft,.pgc.noktali .dft,.pgc.duz .dft,.pgc.koyu .dft{padding-left:14px}
+.pgc .dft:empty::before{content:attr(data-ph);opacity:.55;pointer-events:none}
+.dtb .cs{width:28px;height:28px;padding:0;border-radius:50%;border:2px solid var(--bd);display:inline-grid;place-items:center;font-size:14px;cursor:pointer}
+.dtb .cs.cp{background:var(--sf)}
+body.dffs #dfroot .pgc .dft{height:calc(100% - 56px)}
 </style>
 </head>
 <body data-auth-required="1"><script>try{if(localStorage.getItem("fbHas")==="1")document.body.dataset.authRequired="0"}catch(e){}</script>
@@ -343,7 +370,7 @@ async function dfDraw(fl){const pgm=!!$('dfroot'),ds=[...(await recs(W.id,'ders'
  if(!k.p.length){k.p.push({id:uid(),t:''});dfSv()}
  DF.p=Math.max(0,Math.min(DF.p,k.p.length-1));const g=k.p[DF.p];
  g.o=g.o||[];const bg=g.bg||'cizgili',BGS={cizgili:'📏 Çizgili',kareli:'🔲 Kareli',noktali:'⚪ Noktalı',duz:'⬜ Düz',sari:'🟨 Sarı kâğıt',koyu:'🌙 Koyu'},CL=['#222222','#d33333','#1f6feb','#1a8f5a','#e8a317'],SK=['⭐','❤️','📌','✅','❗','💡','📚','🎯','🔥','😊','⚠️','📝','🌸','🏆'];
- dfD(`<div class="bar"><button onclick="DF.k=null;DF.pen=0;dfDraw()">←</button><h3 style="margin:0">📑 ${e(k.ad)}</h3>${X}</div><div class="dtb"><label class="ph2">🖼️ Foto<input type="file" accept="image/*" hidden onchange="dfImg(this)"></label><button onclick="DF.stk=!DF.stk;dfDraw()">😊 Sticker</button><button class="${DF.pen?'p':''}" onclick="DF.pen=!DF.pen;DF.sel=null;dfDraw()">✏️ Kalem</button><select onchange="dfBg(this.value)">${Object.entries(BGS).map(([v,n])=>`<option value="${v}" ${v===bg?'selected':''}>${n}</option>`).join('')}</select></div>${DF.stk?`<div class="dtb">${SK.map(s=>`<button onclick="dfStk('${s}')">${s}</button>`).join('')}</div>`:''}${DF.pen?`<div class="dtb">${CL.map(c=>`<button onclick="DF.col='${c}';DF.er=0;dfDraw()" style="background:${c};width:30px;height:30px;padding:0;${DF.col===c&&!DF.er?'outline:3px solid var(--ac)':''}"></button>`).join('')}${[2,5,10].map(w=>`<button onclick="DF.wd=${w};dfDraw()" class="${(DF.wd||2)===w?'p':''}">${w===2?'ince':w===5?'orta':'kalın'}</button>`).join('')}<button class="${DF.er?'p':''}" onclick="DF.er=!DF.er;dfDraw()">🧽 Silgi</button><button onclick="dfUndo()">↩️</button><button onclick="dfArm('ink',dfClr)">🗑️ Çizimi sil</button></div>`:''}<div class="dtb" id="dfs" style="display:${DF.sel?'flex':'none'}"><span class="m">Seçili:</span><button onclick="dfSz(-1)">➖</button><button onclick="dfSz(1)">➕</button><button onclick="dfRs()">↺ Düzelt</button><button onclick="dfOd()">🗑️ Sil</button></div><div class="dnb"><div class="dspir"></div><div id="dfp" class="pgc ${bg} ${fl?'fl'+fl:''}"><input class="dti" placeholder="Başlık" value="${e(g.ti||'')}" oninput="dfTi(this.value)"><textarea id="dft" placeholder="Notunu buraya yaz…" oninput="dfIn(this.value)" onfocus="if(DF.sel){DF.sel=null;dfMark()}">${e(g.t)}</textarea><div id="dfo" onpointerdown="dfDrag(event)"></div><canvas id="dfc" class="${DF.pen?'on':''}"></canvas></div></div><div class="bar" style="margin-top:8px"><button onclick="dfGo(-1)" ${DF.p?'':'disabled'}>◀</button><span class="m">Sayfa ${DF.p+1} / ${k.p.length}</span><button onclick="dfGo(1)" ${DF.p<k.p.length-1?'':'disabled'}>▶</button></div><div class="row"><button onclick="dfPg()">＋ Yeni sayfa</button><button onclick="dfArm('p'+DF.p,dfPgDel)">🗑️ Sayfayı sil</button></div>`);setTimeout(dfInit,0)}
+ dfD(`<div class="bar"><button onclick="DF.k=null;DF.pen=0;dfDraw()">←</button><h3 style="margin:0">📑 ${e(k.ad)}</h3>${X}</div><div class="dtb"><label class="ph2">🖼️ Foto<input type="file" accept="image/*" hidden onchange="dfImg(this)"></label><button onclick="DF.stk=!DF.stk;dfDraw()">😊 Sticker</button><button class="${DF.pen?'p':''}" onclick="DF.pen=!DF.pen;DF.sel=null;dfDraw()">✏️ Kalem</button><select onchange="dfBg(this.value)">${Object.entries(BGS).map(([v,n])=>`<option value="${v}" ${v===bg?'selected':''}>${n}</option>`).join('')}</select></div><div class="dtb" id="dfcol"><span class="m">🎨 Yazı rengi:</span>${TC.map(c=>`<button class="cs" title="${c}" onpointerdown="event.preventDefault()" onclick="dfCol('${c}')" style="background:${c}"></button>`).join('')}<label class="cs cp" title="Özel renk" style="margin:0">🌈<input type="color" onchange="dfCol(this.value)" hidden></label><button onpointerdown="event.preventDefault()" onclick="dfCol(null)">Varsayılan</button></div>${DF.stk?`<div class="dtb">${SK.map(s=>`<button onclick="dfStk('${s}')">${s}</button>`).join('')}</div>`:''}${DF.pen?`<div class="dtb">${CL.map(c=>`<button onclick="DF.col='${c}';DF.er=0;dfDraw()" style="background:${c};width:30px;height:30px;padding:0;${DF.col===c&&!DF.er?'outline:3px solid var(--ac)':''}"></button>`).join('')}${[2,5,10].map(w=>`<button onclick="DF.wd=${w};dfDraw()" class="${(DF.wd||2)===w?'p':''}">${w===2?'ince':w===5?'orta':'kalın'}</button>`).join('')}<button class="${DF.er?'p':''}" onclick="DF.er=!DF.er;dfDraw()">🧽 Silgi</button><button onclick="dfUndo()">↩️</button><button onclick="dfArm('ink',dfClr)">🗑️ Çizimi sil</button></div>`:''}<div class="dtb" id="dfs" style="display:${DF.sel?'flex':'none'}"><span class="m">Seçili:</span><button onclick="dfSz(-1)">➖</button><button onclick="dfSz(1)">➕</button><button onclick="dfRs()">↺ Düzelt</button><button onclick="dfOd()">🗑️ Sil</button></div><div class="dnb"><div class="dspir"></div><div id="dfp" class="pgc ${bg} ${fl?'fl'+fl:''}"><input class="dti" placeholder="Başlık" value="${e(g.ti||'')}" oninput="dfTi(this.value)"><div id="dft" class="dft" contenteditable="true" data-ph="Notunu buraya yaz…" oninput="dfIn2(this)" onpaste="dfPaste(event)" onfocus="if(DF.sel){DF.sel=null;dfMark()}">${dfHtml(g)}</div><div id="dfo" onpointerdown="dfDrag(event)"></div><canvas id="dfc" class="${DF.pen?'on':''}"></canvas></div></div><div class="bar" style="margin-top:8px"><button onclick="dfGo(-1)" ${DF.p?'':'disabled'}>◀</button><span class="m">Sayfa ${DF.p+1} / ${k.p.length}</span><button onclick="dfGo(1)" ${DF.p<k.p.length-1?'':'disabled'}>▶</button></div><div class="row"><button onclick="dfPg()">＋ Yeni sayfa</button><button onclick="dfArm('p'+DF.p,dfPgDel)">🗑️ Sayfayı sil</button></div>`);setTimeout(dfInit,0)}
 const dfCur=()=>{const k=dfK();return k&&k.p[DF.p]},dfSel=()=>(dfCur().o||[]).find(z=>z.id===DF.sel);
 const dfTi=v=>{const g=dfCur();if(g){g.ti=v;clearTimeout(dfT);dfT=setTimeout(dfSv,400)}};
 function dfBg(v){dfCur().bg=v;$('dfp').className='pgc '+v;dfSv()}
@@ -765,6 +792,32 @@ const uniCalCache={};function uniCalText(doc){const root=doc.querySelector('main
  <div class="bar"><div class="row" style="gap:6px"><button class="utb${UN.mode==='cal'?' on':''}" data-m="cal" onclick="uniTab('cal')">📅 Akademik Takvim</button><button class="utb${UN.mode==='web'?' on':''}" data-m="web" onclick="uniTab('web')">🌐 Web sitesi</button></div></div><div id="un"><div class="card"><h3>📅 ${e(uniFull(u))} akademik takvimi</h3><p class="m">Resmî takvim bu sekmede görüntülenir.</p><div id="ucbody">${u.d==='nisantasi.edu.tr'?'<h3>2026–2027 Lisans ve Ön Lisans Akademik Takvimi</h3><iframe title="Resmî akademik takvim" src="https://www.nisantasi.edu.tr/akademik-takvim?dil=tr" style="width:100%;height:75vh;border:1px solid var(--bd);border-radius:12px;background:white"></iframe><p><a target="_blank" rel="noopener" href="https://www.nisantasi.edu.tr/Images/AkademikTakvimYillar/2026-2027-egitim-ogretim-yili-akademik-takvimi-icin-tiklayiniz_67956.pdf">PDF’yi yeni sekmede aç</a></p>':'<div class="empty">Üniversitenin resmî akademik takvimi aranıyor…</div>'}</div></div></div>
  <div class="row" style="justify-content:flex-start;flex-wrap:wrap;margin-top:14px"><button onclick="upd({uni:null})">Üniversiteyi değiştir</button><button onclick="uniFix()">✏️ Adresi düzelt</button></div><p class="m"><small>Akademik takvim seçtiğin üniversitenin resmî sitesinden alınıp burada görüntülenir. “Web sitesi” sekmesinden üniversitenin sitesini açabilirsin.</small></p>`}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'&&lsg('fbDirty')==='1'&&FB&&FB.auth.currentUser){clearTimeout(FBT);fbUp(true).catch(()=>{})}});
+
+/* ---- Defter tam ekran: sol kenardan yüzen menü ---- */
+{const B=document.body,ed=document.createElement('div'),sc=document.createElement('div');ed.id='sedge';sc.id='sscrim';B.append(ed,sc);
+ const fs=()=>B.classList.contains('dffs'),op=()=>B.classList.contains('sopen'),open=v=>B.classList.toggle('sopen',!!v&&fs());
+ const want=()=>cur.m==='not'&&cur.t==='not'&&!!DF.k&&!!$('dfroot');
+ const _dfD=dfD;dfD=function(){const on=cur.m==='not'&&cur.t==='not'&&!!DF.k&&!!$('dfroot');B.classList.toggle('dffs',on);if(!on)B.classList.remove('sopen');return _dfD.apply(this,arguments)};
+ const _r2=render;render=async function(){B.classList.toggle('dffs',cur.m==='not'&&cur.t==='not'&&!!DF.k);B.classList.remove('sopen');const x=await _r2.apply(this,arguments);if(!want()){B.classList.remove('dffs','sopen')}return x};
+ ed.addEventListener('mouseenter',()=>open(1));ed.addEventListener('click',()=>open(!op()));sc.addEventListener('click',()=>open(0));
+ document.addEventListener('mousemove',e=>{if(!fs())return;if(e.clientX<=6)open(1);else if(op()){const s=document.querySelector('.side'),w=s?s.getBoundingClientRect().right:240;if(e.clientX>w+40)open(0)}});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&op())open(0)});
+ let tx=null,ty=0;
+ document.addEventListener('touchstart',e=>{const t=e.touches[0];tx=fs()&&(op()||t.clientX<=26)?t.clientX:null;ty=t.clientY},{passive:true});
+ document.addEventListener('touchmove',e=>{if(tx===null)return;const t=e.touches[0],dx=t.clientX-tx,dy=Math.abs(t.clientY-ty);if(dy>70){tx=null;return}if(!op()&&dx>40){open(1);tx=null}else if(op()&&dx<-40){open(0);tx=null}},{passive:true});
+ document.addEventListener('touchend',()=>{tx=null},{passive:true})}
+
+/* ---- Defter: yazı rengi ---- */
+const TC=['#222222','#d33333','#1f6feb','#1a8f5a','#e8a317','#8b5cf6','#ec4899','#ffffff'];
+function dfClean(h){const t=document.createElement('template');t.innerHTML=h;const OK=['SPAN','B','I','U','BR','DIV','P','FONT','STRONG','EM'];
+ (function w(n){[...n.childNodes].forEach(c=>{if(c.nodeType===3)return;if(c.nodeType!==1){c.remove();return}if(!OK.includes(c.tagName)){c.replaceWith(document.createTextNode(c.textContent));return}
+  [...c.attributes].forEach(a=>{const k=a.name.toLowerCase();if(k==='style'){const m=/(?:^|;)\s*color\s*:\s*(#[0-9a-f]{3,8}|rgb\([\d\s,.%]+\)|[a-z]+)\s*(?:;|$)/i.exec(a.value);if(m)c.setAttribute('style','color:'+m[1]);else c.removeAttribute('style')}else if(k==='color'&&/^(#[0-9a-f]{3,8}|[a-z]+)$/i.test(a.value)){}else c.removeAttribute(a.name)});w(c)})})(t.content);return t.innerHTML}
+const dfHtml=g=>g.h!==undefined?dfClean(g.h):e(g.t||'').replace(/\n/g,'<br>');
+function dfIn2(el){const k=dfK(),g=k&&k.p[DF.p];if(!g)return;if(!el.innerText.trim()&&!/<(span|font|b|i|u)/i.test(el.innerHTML))el.innerHTML='';g.h=el.innerHTML;g.t=el.innerText.replace(/\u00a0/g,' ');clearTimeout(dfT);dfT=setTimeout(dfSv,400)}
+function dfPaste(ev){ev.preventDefault();document.execCommand('insertText',false,(ev.clipboardData||window.clipboardData).getData('text'))}
+let DFR=null;document.addEventListener('selectionchange',()=>{const s=getSelection(),d=$('dft');if(d&&s.rangeCount&&d.contains(s.anchorNode))DFR=s.getRangeAt(0).cloneRange()});
+function dfCol(c){const d=$('dft');if(!d)return;d.focus();if(DFR){const s=getSelection();s.removeAllRanges();s.addRange(DFR)}
+ document.execCommand('styleWithCSS',false,true);if(c)document.execCommand('foreColor',false,c);else document.execCommand('removeFormat',false,null);dfIn2(d)}
 </script>
 </body>
 </html>
