@@ -4,6 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Çalışma Alanım</title>
+<meta name="application-name" content="Çalışma Alanım">
+<meta name="apple-mobile-web-app-title" content="Çalışma Alanım">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#1d6b57">
+<link rel="icon" type="image/svg+xml" href="/logo.svg">
+<link rel="icon" type="image/png" sizes="192x192" href="/app-icon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
 <style>
 :root{--bg:#f6f5f1;--sf:#fff;--tx:#1d1d1b;--mu:#6b6a63;--ac:#1d6b57;--ac2:#e3f1ec;--bd:#dedcd4;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161715;--sf:#202220;--tx:#eeeee9;--mu:#9a998f;--ac:#4fc3a1;--ac2:#1f3a32;--bd:#35372f;color-scheme:dark}}
@@ -51,6 +59,7 @@ button{border-radius:14px;transition:transform .15s,background .15s}button:activ
 .deadline-subtime{font-size:17px;line-height:1.1;font-weight:750;margin-top:-7px;margin-bottom:12px}
 .deadline-name{font-size:14px;font-weight:650;overflow-wrap:anywhere}
 .deadline-kind{font-size:11px;color:var(--mu);margin-top:3px}
+.brandmark{width:36px;height:36px;display:block;flex:none;border-radius:11px;box-shadow:0 2px 7px #0002}
 .top select{border-radius:99px;padding:9px 16px;background:var(--sf);border-color:transparent;box-shadow:0 4px 14px #0000000f}
 .nav button{display:inline-flex;align-items:center;gap:6px;padding:6px 14px 6px 6px;border-color:transparent;box-shadow:0 3px 10px #0000000d}
 .ib{font-style:normal;display:inline-grid;place-items:center;width:28px;height:28px;border-radius:var(--ibr,50%);background:var(--ibg,var(--ac2));font-size:15px}
@@ -266,7 +275,7 @@ async function render(){
  if(!cur.m||(cur.m!=='ayar'&&cur.m!=='duzen'&&cur.m!=='bugun'&&!ms.includes(cur.m)))cur.m='bugun';
  const tabs=M[cur.m]?.[2]||[cur.m];if(!tabs.includes(cur.t))cur.t=tabs[0];
  const body=cur.m==='bugun'?await bugun():cur.m==='uni'?await uniPage():cur.m==='duzen'?await duzen(L):cur.m==='ayar'?await ayar(L):cur.t==='ay'?await ay():cur.t==='program'?await program():cur.t==='odak'?await odak():cur.t==='calis'?await calis():cur.t==='not'?await defter():cur.t==='hesap'?await hesap():await list(cur.t);
- $('app').innerHTML=`<div class="shell"><aside class="side"><div class="wsb" title="${e(W.name)}"><i class="ib">${W.icon||'🎓'}</i><span class="lb">${e(W.name)}</span></div>
+ $('app').innerHTML=`<div class="shell"><aside class="side"><div class="wsb" title="${e(W.name)}">${W.icon?`<i class="ib">${e(W.icon)}</i>`:'<img class="brandmark" src="/logo.svg" alt="Çalışma Alanım">'}<span class="lb">${e(W.name)}</span></div>
  <div class="nav"><button title="Bugün" class="${cur.m==='bugun'?'on':''}" onclick="cur.m='bugun';render()"><i class="ib">🏠</i><span class="lb">Bugün</span></button>${ms.map(k=>`<button title="${e(mn(k))}" class="${cur.m===k?'on':''}" onclick="cur.m='${k}';cur.t=null;cur.q='';cur.d='';render()"><i class="ib">${mi(k)}</i><span class="lb">${mn(k)}</span></button>`).join('')}</div>
  <div class="nav nav2"><button title="Düzen" class="${cur.m==='duzen'?'on':''}" onclick="cur.m='duzen';render()"><i class="ib">🎛️</i><span class="lb">Düzen</span></button><button title="Ayarlar" class="${cur.m==='ayar'?'on':''}" onclick="cur.m='ayar';render()"><i class="ib">⚙️</i><span class="lb">Ayarlar</span></button></div></aside>
  <main class="main">${tabs.length>1&&cur.m!=='ayar'?`<div class="tabs">${tabs.map(t=>`<button class="${cur.t===t?'on':''}" onclick="cur.t='${t}';cur.q='';cur.d='';render()">${TL[t]}</button>`).join('')}</div>`:''}${body}</main></div>`;
