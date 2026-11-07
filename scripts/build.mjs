@@ -1,0 +1,13 @@
+import { cp, mkdir, readFile, writeFile } from 'node:fs/promises';
+import path from 'node:path';
+const root=process.cwd();
+const read=async p=>readFile(path.join(root,p),'utf8');
+const jsOrder=["src/js/core.js","src/js/pages/dashboard.js","src/js/spotify.js","src/js/pages/settings-schedule.js","src/js/reminders.js","src/js/pages/notes.js","src/js/pages/study-questions.js","src/js/pages/focus.js","src/js/pages/study-cards.js","src/js/pages/grades.js","src/js/pages/classes.js","src/js/cloud-sync.js","src/js/pages/university.js","src/js/pages/notebook-fullscreen.js","src/js/pages/obis.js"];
+const cssOrder=["src/css/base.css","src/css/notebook.css","src/css/dashboard.css","src/css/navigation.css","src/css/notebook-fullscreen.css"];
+const [template,...js]=await Promise.all(['src/index.template.html',...jsOrder].map(read));
+const css=await Promise.all(cssOrder.map(read));
+await mkdir('dist',{recursive:true});
+await writeFile('dist/index.html',template);
+await writeFile('dist/app.js',js.join('\n'));
+await writeFile('dist/app.css',css.join('\n'));
+for(const f of ['logo.svg','app-icon-192.png','app-icon-512.png','apple-touch-icon.png','site.webmanifest'])await cp(f,path.join('dist',f));

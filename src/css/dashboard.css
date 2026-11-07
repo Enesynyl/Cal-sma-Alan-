@@ -1,0 +1,24 @@
+/* ---- Bugün sayfası ---- */
+.hero{position:relative;overflow:hidden;border-radius:26px;padding:20px 20px 18px;margin:0 0 14px;background:linear-gradient(135deg,var(--ac2),color-mix(in srgb,var(--sf) 82%,var(--ac) 18%));box-shadow:0 6px 24px #0000000f}
+.hero h1{margin:0;font-size:26px;line-height:1.2;padding-right:110px}
+.hero p{margin:6px 0 0}.hero .sum{font-size:15px;color:var(--tx);margin-top:10px;font-weight:600}
+.hero .hb{position:absolute;top:14px;right:14px;display:flex;gap:6px}
+.hero .big{position:absolute;right:-8px;bottom:-24px;font-size:100px;opacity:.12;pointer-events:none}
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+@media(max-width:560px){.tiles{grid-template-columns:repeat(2,1fr)}.hero h1{font-size:22px}}
+.tile{cursor:pointer;background:var(--sf);border-radius:20px;padding:14px;box-shadow:0 4px 18px #0000000f;border-left:5px solid var(--c,var(--ac))}
+.tile b{display:block;font-size:28px;line-height:1.1;margin-top:2px}.tile small{color:var(--mu)}.tile i{font-style:normal;float:right;font-size:22px}
+.tile.z{opacity:.65}
+.sec{background:var(--sf);border-radius:22px;padding:6px 14px 10px;margin:0 0 14px;box-shadow:0 4px 18px #0000000f}
+.bgon .tile,.bgon .sec{background:color-mix(in srgb,var(--sf) 78%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.sh{display:flex;align-items:center;gap:10px;padding:10px 2px 4px}
+.sh i{font-style:normal;display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:var(--ac2);font-size:16px}
+.sh b{flex:1;font-size:15px}
+.cnt{background:var(--ac2);color:var(--ac);border-radius:99px;padding:2px 10px;font-size:12px;font-weight:700}
+.sec.late .sh i,.sec.late .cnt{background:#fde8e8;color:#c92a2a}
+.sec .it{box-shadow:none;border:0;border-radius:14px;background:color-mix(in srgb,var(--ac2) 45%,transparent);backdrop-filter:none}
+.sec.late .it{background:#fde8e833}
+.vin :is(.hero,.tile,.sec){animation:up .42s cubic-bezier(.2,.8,.2,1) both}
+.vin .tile:nth-child(2){animation-delay:.05s}.vin .tile:nth-child(3){animation-delay:.1s}.vin .tile:nth-child(4){animation-delay:.15s}
+.utb.on{background:var(--ac2);border-color:var(--ac);color:var(--ac);font-weight:600}
+body[data-auth-required="1"] #app{visibility:hidden}body[data-auth-required="1"] #dl{z-index:9999}

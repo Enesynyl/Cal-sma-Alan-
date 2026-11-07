@@ -1,0 +1,15 @@
+/* ---- Tablet tarzı kenar çubuğu ---- */
+.shell{gap:16px}
+.side{top:12px;align-self:flex-start;height:auto;max-height:calc(100dvh - 24px);min-height:calc(100dvh - 24px);margin:0;padding:14px 10px calc(14px + env(safe-area-inset-bottom,0px));gap:12px;background:var(--sf);border:1px solid var(--bd);border-radius:28px;box-shadow:0 10px 34px #00000016;flex-basis:76px;width:76px}
+.bgon .side{background:color-mix(in srgb,var(--sf) 78%,transparent);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.side .wsb{background:var(--bg);box-shadow:none;border-radius:18px;padding:8px;border:1px solid var(--bd)}
+.bgon .side .wsb{background:color-mix(in srgb,var(--bg) 60%,transparent);backdrop-filter:none}
+.side .nav{gap:4px}
+.side .nav button,.bgon .side .nav button{position:relative;background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:none;border:0;border-radius:18px;padding:8px;gap:12px;font-weight:500;color:var(--mu)}
+.side .nav .ib{width:34px;height:34px;font-size:18px}
+.side .nav button.on,.bgon .side .nav button.on{background:var(--ac2);color:var(--tx);font-weight:650}
+.side .nav button.on::before{content:'';position:absolute;left:-10px;top:24%;bottom:24%;width:4px;border-radius:0 4px 4px 0;background:var(--ac)}
+.side .nav button.on .ib{box-shadow:0 0 0 2px var(--ac)}
+.side .nav2{padding-top:12px;border-top:1px solid var(--bd)}
+@media(min-width:700px){.side{flex-basis:228px;width:228px}.side .nav button,.bgon .side .nav button{padding:8px 14px 8px 8px}.side .wsb{padding:8px 14px 8px 8px}}
+
