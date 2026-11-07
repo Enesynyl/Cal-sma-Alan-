@@ -1,0 +1,11 @@
+{
+  "auth": {
+    "providers": {
+      "emailPassword": true,
+      "googleSignIn": {
+        "oAuthBrandDisplayName": "Çalışma Alanım",
+        "supportEmail": "calismaalanim451@gmail.com"
+      }
+    }
+  }
+}
