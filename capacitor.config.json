@@ -1,0 +1,7 @@
+{
+  "appId": "com.enesynyl.calismaalanim",
+  "appName": "Çalışma Alanım",
+  "webDir": "dist",
+  "server": { "androidScheme": "https" }
+}
+

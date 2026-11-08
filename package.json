@@ -3,6 +3,22 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "node scripts/build.mjs"
+    "build": "node scripts/build.mjs",
+    "cap:sync": "cap sync",
+    "cap:assets": "capacitor-assets generate --ios --android --iconBackgroundColor '#1d6b57' --iconBackgroundColorDark '#1d6b57' --splashBackgroundColor '#f6f5f1' --splashBackgroundColorDark '#1d1c1b'",
+    "cap:android": "cap open android",
+    "cap:ios": "cap open ios"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.0.0",
+    "@capacitor/core": "^8.0.0",
+    "@capacitor/ios": "^8.0.0",
+    "@jacquesbeets/capacitor-spotify": "0.4.1"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "^4.0.0",
+    "@capacitor/cli": "^8.0.0",
+    "esbuild": "^0.25.0"
   }
 }
+
