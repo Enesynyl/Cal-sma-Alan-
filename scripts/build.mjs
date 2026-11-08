@@ -10,4 +10,5 @@ await mkdir('dist',{recursive:true});
 await writeFile('dist/index.html',template);
 await writeFile('dist/app.js',js.join('\n'));
 await writeFile('dist/app.css',css.join('\n'));
-for(const f of ['logo.svg','app-icon-192.png','app-icon-512.png','apple-touch-icon.png','site.webmanifest'])await cp(f,path.join('dist',f));
+for(const f of ['logo.svg','app-icon-192.png','app-icon-512.png','apple-touch-icon.png','site.webmanifest','src/data/uni-programs.json'])await cp(f,path.join('dist',path.basename(f)));
+

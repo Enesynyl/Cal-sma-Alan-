@@ -27,6 +27,7 @@ textarea{min-height:70px}label{display:block;margin:10px 0;font-size:13px;color:
 .st{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:12px}.st b{font-size:24px;display:block}
 .wz{max-width:520px;margin:0 auto;padding:30px 16px}
 .fb-password{display:flex;align-items:center;gap:6px}.fb-password input{min-width:0;flex:1}.fb-password button{flex:none;margin-top:4px;width:42px;height:42px;padding:0}
+.fb-education-buttons{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}.fb-education-buttons button{flex:1 1 160px}.fb-education-buttons button:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
 .cd{display:block;width:100%;text-align:left;font-size:17px;padding:16px;margin:10px 0}.cd.on{border-color:var(--ac);background:var(--ac2)}
 .chk{display:flex;gap:10px;align-items:center;margin:6px 0;color:var(--tx);font-size:15px}.chk input{width:auto;margin:0}
 .row{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
