@@ -5,7 +5,7 @@ async function fbWipe(){FBQ=1;if(FBLS){FBLS();FBLS=null}clearTimeout(FBT);for(co
 function lsg(k){try{return localStorage.getItem(k)}catch(x){return null}}
 function lss(k,v){try{localStorage.setItem(k,v)}catch(x){}}
 let FBR=null;function fbLoad(){return FBR||(FBR=fbLoad0().catch(x=>{FBR=null;throw x}))}async function fbLoad0(){const B='https://www.gstatic.com/firebasejs/10.12.2/',[a,au,fs]=await Promise.all([import(B+'firebase-app.js'),import(B+'firebase-auth.js'),import(B+'firebase-firestore.js')]),app=a.initializeApp(FBCFG);
- let auth;try{auth=au.initializeAuth(app,{persistence:[au.indexedDBLocalPersistence,au.browserLocalPersistence,au.browserSessionPersistence]})}catch(x){auth=au.getAuth(app)}
+ let auth;try{auth=au.initializeAuth(app,{persistence:[au.indexedDBLocalPersistence,au.browserLocalPersistence,au.browserSessionPersistence],popupRedirectResolver:au.browserPopupRedirectResolver})}catch(x){auth=au.getAuth(app)}
  await (auth.authStateReady?auth.authStateReady():new Promise(r=>{const un=au.onAuthStateChanged(auth,()=>{un();r()})}));
  FB={au,fs,auth,db:fs.getFirestore(app),user:auth.currentUser};au.onAuthStateChanged(auth,u=>{FB.user=u;fbUpd()});return FB}
 function fbEditing(){const a=document.activeElement;return !!a&&(a.matches('input,textarea,select,[contenteditable=true]')||a.isContentEditable)}function fbListen(f,u){if(FBLS)FBLS();FBLS=f.fs.onSnapshot(fbRef(f,u,'meta'),snap=>{if(!snap.exists()||FBQ||FBP)return;const d=snap.data();if(d.ts>(+lsg('fbTs')||0)){if(lsg('fbDirty')==='1'||fbEditing()){lss('fbPending','1');return}fbDown().catch(x=>toast(fbErr(x)))}},x=>{console.warn('Firebase eşitleme dinleyicisi:',x);toast('Firebase eşitleme hatası: '+fbErr(x))})}
