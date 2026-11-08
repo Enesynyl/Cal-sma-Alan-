@@ -26,6 +26,7 @@ textarea{min-height:70px}label{display:block;margin:10px 0;font-size:13px;color:
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
 .st{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:12px}.st b{font-size:24px;display:block}
 .wz{max-width:520px;margin:0 auto;padding:30px 16px}
+.fb-password{display:flex;align-items:center;gap:6px}.fb-password input{min-width:0;flex:1}.fb-password button{flex:none;margin-top:4px;width:42px;height:42px;padding:0}
 .cd{display:block;width:100%;text-align:left;font-size:17px;padding:16px;margin:10px 0}.cd.on{border-color:var(--ac);background:var(--ac2)}
 .chk{display:flex;gap:10px;align-items:center;margin:6px 0;color:var(--tx);font-size:15px}.chk input{width:auto;margin:0}
 .row{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
@@ -93,4 +94,5 @@ body.focus-active{overflow:hidden}
 .bgon .it,.bgon .card,.bgon .st,.bgon .cal div,.bgon .top select,.bgon .nav button{background:color-mix(in srgb,var(--sf) 78%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
 .bgon .nav button.on{background:var(--ac2)}
 .cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}.cal i{font-style:normal;text-align:center;font-size:12px;color:var(--mu)}.cal div{background:var(--sf);border:1px solid var(--bd);border-radius:8px;min-height:62px;padding:3px;overflow:hidden;font-size:11px}.cal div.o{opacity:.4}.cal div.td{border-color:var(--ac)}.cal span{display:block;background:var(--ac2);border-radius:4px;padding:0 3px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
 
