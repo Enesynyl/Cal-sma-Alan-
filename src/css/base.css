@@ -432,3 +432,116 @@ body:not(.login-mode) .bgon .nav button{
  backdrop-filter:blur(14px) saturate(112%);
  -webkit-backdrop-filter:blur(14px) saturate(112%);
 }
+
+
+/* ---- Painterly pastel dashboard finish: visible pigment, airy surfaces ---- */
+body:not(.login-mode){
+ background-color:#f8f0e7;
+ background-image:
+  radial-gradient(ellipse at 8% 8%,rgba(232,164,160,.23),transparent 26%),
+  radial-gradient(ellipse at 88% 12%,rgba(231,183,104,.23),transparent 25%),
+  radial-gradient(ellipse at 82% 88%,rgba(151,184,177,.20),transparent 28%),
+  radial-gradient(ellipse at 24% 92%,rgba(184,159,197,.16),transparent 26%),
+  linear-gradient(135deg,#faf2e8 0%,#f5e9df 52%,#f7efe5 100%);
+ background-attachment:fixed;
+}
+body:not(.login-mode) .wrap{width:100%;max-width:none;padding:14px 18px}
+body:not(.login-mode) .shell{display:flex;gap:18px;align-items:stretch;min-height:calc(100dvh - 28px)}
+body:not(.login-mode) .main{flex:1;min-width:0;padding:10px 4px 24px}
+body:not(.login-mode) .side{
+ flex:0 0 228px;width:228px;min-height:calc(100dvh - 28px);
+ background:
+  radial-gradient(ellipse at 15% 12%,rgba(221,157,157,.22),transparent 34%),
+  radial-gradient(ellipse at 90% 88%,rgba(228,184,111,.22),transparent 34%),
+  linear-gradient(155deg,rgba(255,251,245,.96),rgba(246,232,220,.94));
+ border:1px solid rgba(218,188,172,.72);
+ box-shadow:0 12px 36px rgba(107,75,68,.10);
+}
+body:not(.login-mode) .side .wsb{
+ background:
+  linear-gradient(120deg,rgba(255,255,255,.82),rgba(246,223,213,.85)),
+  repeating-linear-gradient(165deg,transparent 0 18px,rgba(190,129,125,.07) 19px 22px);
+ border:1px solid #e7cfc2;border-radius:22px;
+}
+body:not(.login-mode) .side .nav button{border-radius:17px;min-height:44px}
+body:not(.login-mode) .side .nav button.on{
+ background:
+  linear-gradient(110deg,rgba(199,112,131,.28),rgba(231,190,137,.35)),
+  repeating-linear-gradient(165deg,transparent 0 13px,rgba(173,94,108,.08) 14px 16px);
+ border:1px solid rgba(190,124,130,.45);color:#68434d;
+ box-shadow:0 5px 15px rgba(153,93,107,.11);
+}
+body:not(.login-mode) .hero{
+ background:
+  radial-gradient(ellipse at 90% 10%,rgba(220,158,93,.48),transparent 28%),
+  radial-gradient(ellipse at 72% 90%,rgba(167,112,130,.28),transparent 35%),
+  repeating-linear-gradient(164deg,transparent 0 27px,rgba(255,255,255,.15) 28px 31px),
+  linear-gradient(112deg,#f2d8c9 0%,#f4e4ce 48%,#e9d4d4 100%);
+ border:1px solid rgba(211,166,146,.72);border-radius:27px;
+ box-shadow:0 10px 26px rgba(114,76,66,.09),inset 0 1px 0 rgba(255,255,255,.7);
+}
+body:not(.login-mode) .hero::after{
+ content:"";position:absolute;right:1.5%;top:4%;width:26%;height:90%;pointer-events:none;opacity:.78;
+ background:
+  radial-gradient(ellipse at 52% 26%,#e8b36b 0 19%,transparent 20%),
+  radial-gradient(ellipse at 65% 48%,#a94f59 0 22%,transparent 23%),
+  radial-gradient(ellipse at 38% 67%,#607b7d 0 20%,transparent 21%),
+  linear-gradient(128deg,transparent 0 18%,rgba(255,255,255,.22) 19% 24%,transparent 25% 48%,rgba(185,117,125,.28) 49% 56%,transparent 57%);
+ filter:blur(.3px);mix-blend-mode:multiply;
+}
+body:not(.login-mode) .tiles{gap:12px}
+body:not(.login-mode) .tile{
+ position:relative;overflow:hidden;border-radius:23px;padding:15px 16px;
+ box-shadow:0 7px 20px rgba(100,73,64,.08),inset 0 1px 0 rgba(255,255,255,.8);
+}
+body:not(.login-mode) .tile::after,
+body:not(.login-mode) .sec::after{
+ content:"";position:absolute;inset:0;pointer-events:none;opacity:.48;
+ background:repeating-linear-gradient(163deg,transparent 0 24px,rgba(255,255,255,.28) 25px 28px,transparent 29px 48px);
+ mix-blend-mode:soft-light;
+}
+body:not(.login-mode) .tile:nth-child(4n+1){background:radial-gradient(ellipse at 85% 10%,rgba(213,128,144,.34),transparent 45%),linear-gradient(135deg,#f8e2df,#f4d9d6)}
+body:not(.login-mode) .tile:nth-child(4n+2){background:radial-gradient(ellipse at 85% 10%,rgba(230,174,89,.38),transparent 45%),linear-gradient(135deg,#f9edcf,#f4dfb7)}
+body:not(.login-mode) .tile:nth-child(4n+3){background:radial-gradient(ellipse at 85% 10%,rgba(112,166,190,.34),transparent 45%),linear-gradient(135deg,#e2edf0,#d3e4e9)}
+body:not(.login-mode) .tile:nth-child(4n){background:radial-gradient(ellipse at 85% 10%,rgba(130,171,137,.34),transparent 45%),linear-gradient(135deg,#e7eee0,#dbe8d6)}
+body:not(.login-mode) .tile b{color:#59414a}
+body:not(.login-mode) .tile i{filter:saturate(.85)}
+body:not(.login-mode) .sec{
+ position:relative;overflow:hidden;border:1px solid rgba(220,192,174,.8);
+ background:
+  radial-gradient(ellipse at 8% 95%,rgba(185,151,190,.19),transparent 34%),
+  radial-gradient(ellipse at 95% 4%,rgba(231,183,104,.22),transparent 30%),
+  linear-gradient(135deg,#fffaf3,#f5e8dc);
+ box-shadow:0 8px 24px rgba(104,75,66,.08),inset 0 1px 0 rgba(255,255,255,.85);
+}
+body:not(.login-mode) .sec .it{
+ background:rgba(255,251,245,.64);border:1px solid rgba(224,202,188,.52);
+}
+body:not(.login-mode) .cal div{
+ background:linear-gradient(145deg,rgba(255,251,244,.96),rgba(246,231,215,.88));
+ border:1px solid rgba(221,194,175,.72);border-radius:11px;
+}
+body:not(.login-mode) .cal div.td{
+ background:linear-gradient(145deg,#e9b8bd,#d995a2);color:#603d49;border:2px solid #c57e8e;
+}
+body:not(.login-mode) .hd{color:#a36c79}
+body:not(.login-mode) button.p{
+ background:linear-gradient(130deg,#b86c83,#9d536d);border-color:#a65c74;color:white;
+ box-shadow:0 5px 14px rgba(147,76,99,.2);
+}
+body:not(.login-mode) input,
+body:not(.login-mode) select,
+body:not(.login-mode) textarea{
+ background:rgba(255,251,245,.86);border-color:#e3cfc1;
+}
+@media(max-width:900px){
+ body:not(.login-mode) .wrap{padding:10px}
+ body:not(.login-mode) .shell{gap:10px}
+ body:not(.login-mode) .side{flex-basis:76px;width:76px}
+}
+@media(max-width:520px){
+ body:not(.login-mode) .wrap{padding:8px}
+ body:not(.login-mode) .main{padding:6px 0 18px}
+ body:not(.login-mode) .side{flex-basis:56px;width:56px}
+ body:not(.login-mode) .hero::after{width:30%;opacity:.42}
+}
