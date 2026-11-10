@@ -775,3 +775,38 @@ body:not(.login-mode) :focus-visible{outline:2px solid #96334d;outline-offset:2p
 @media(min-width:521px){
  body:not(.login-mode) .home-calendar{background:rgba(255,247,235,.97)!important}
 }
+
+
+/* FINAL CONTRAST FIX: task / list item titles were inheriting faded styles */
+body:not(.login-mode) .it{
+ background:rgba(255,249,240,.99)!important;
+ color:#38232b!important;
+ opacity:1!important;
+}
+body:not(.login-mode) .it :is(div,span,p,b,strong,small,label,em){
+ color:#38232b!important;
+ opacity:1!important;
+ text-shadow:none!important;
+ filter:none!important;
+}
+body:not(.login-mode) .it :is(small,.m,.muted,.meta,.date,.sub){
+ color:#665057!important;
+ opacity:1!important;
+}
+body:not(.login-mode) .it :is(.done,.completed,.finished,.muted-text){
+ color:#665057!important;
+ opacity:1!important;
+}
+body:not(.login-mode) .it :is(.title,.name,.task-title,.subject,.text){
+ color:#38232b!important;
+ opacity:1!important;
+ font-weight:650!important;
+}
+body:not(.login-mode) .it::before,
+body:not(.login-mode) .it::after{opacity:1}
+body:not(.login-mode) :is(.card,.st,.sec,.panel,.box,.modal,.sheet,.section,.deadline-tile,.focus-stat){
+ color:#38232b;
+}
+body:not(.login-mode) :is(.card,.st,.sec,.panel,.box,.modal,.sheet,.section,.deadline-tile,.focus-stat) :is(h1,h2,h3,h4,p,b,strong,span,label,small){
+ text-shadow:none;
+}
