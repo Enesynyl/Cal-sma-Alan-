@@ -549,7 +549,7 @@ body:not(.login-mode) textarea{
 
 /* ===== Reference-led painterly dashboard redesign ===== */
 :root{--bg:#f8eee3;--sf:#fff8ef;--tx:#4b2d35;--mu:#826b68;--ac:#8f2945;--ac2:#f2d9d2;--bd:#e6cbbb;color-scheme:light}
-body:not(.login-mode){background-color:#f8eee3!important;background-image:none!important;color:#4b2d35}
+body:not(.login-mode){background-color:#f8eee3!important;color:#4b2d35}
 body:not(.login-mode)::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;background:url('/painterly-paper.svg') center/cover no-repeat;opacity:.72}
 body:not(.login-mode) #app{position:relative;z-index:1}
 body:not(.login-mode) .shell{display:flex;gap:18px;align-items:stretch;min-height:100dvh;padding:12px 14px 16px}
@@ -662,3 +662,9 @@ body:not(.login-mode) button.p{background:linear-gradient(135deg,#a63250,#7c233d
  body:not(.login-mode) .hero h1{font-size:19px}
  .home-day{font-size:12px}
 }
+
+
+:root[data-theme="dark"]{--bg:#292329;--sf:#393039;--tx:#f6e9e0;--mu:#c6adb0;--ac:#d68c9d;--ac2:#553b48;--bd:#705763;color-scheme:dark}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]):not([data-theme="dark"]){--bg:#292329;--sf:#393039;--tx:#f6e9e0;--mu:#c6adb0;--ac:#d68c9d;--ac2:#553b48;--bd:#705763;color-scheme:dark}}
+:root[data-theme="dark"] body:not(.login-mode){background-color:#292329!important;color:#f6e9e0}
+:root[data-theme="dark"] body:not(.login-mode)::before{opacity:.12}
