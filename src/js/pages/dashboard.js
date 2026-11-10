@@ -40,7 +40,7 @@ function todayEnhance(html){
  custom.forEach(w=>{const card=document.createElement('section');card.className='today-custom-card';const h=document.createElement('h3');h.textContent=w.title;const p=document.createElement('p');p.textContent=w.body;card.append(h,p);map.set(w.id,card);labels[w.id]=w.title});
  const order=[...(W.todayOrder||[]).filter(k=>map.has(k)),...defaults.filter(k=>map.has(k)&&!(W.todayOrder||[]).includes(k)),...custom.map(w=>w.id).filter(k=>map.has(k)&&!(W.todayOrder||[]).includes(k))];
  order.filter(k=>map.has(k)&&!hidden.includes(k)).forEach(id=>{
-  const wrap=document.createElement('div');wrap.className='today-widget'+(['toolbar','hero','tiles'].includes(id)?' today-wide':'');wrap.dataset.todayId=id;
+  const wrap=document.createElement('div');wrap.className='today-widget'+(id==='toolbar'?' today-wide':'');wrap.dataset.todayId=id;
   if(cur.todayEdit){
    const tools=document.createElement('div');tools.className='today-widget-tools';
    const drag=document.createElement('button');drag.type='button';drag.className='today-drag-handle';drag.textContent='⠿';drag.title='Sürükleyerek taşı';drag.setAttribute('aria-label','Sürükleyerek taşı');drag.addEventListener('pointerdown',todayDragStart);
