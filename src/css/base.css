@@ -105,3 +105,45 @@ body.login-mode #app{min-height:100vh;display:grid;place-items:center;padding:28
 .login-brand{text-align:center;margin:0 auto 24px}.login-brand img{width:72px;height:72px;border-radius:20px;box-shadow:0 8px 22px #54192d35}.login-brand h2{font-size:clamp(25px,5vw,34px);line-height:1.1;margin:10px 0 4px;font-weight:850;letter-spacing:-.04em;color:#311d1c}.login-brand p{margin:0;color:#75564b;font-size:13px;letter-spacing:.06em}
 .login-shell .wz{padding:0;max-width:none}.login-shell h1{font-size:24px;color:#342321}.login-shell .m{color:#765e55}.login-shell button.p{background:#8f203b;border-color:#8f203b}.login-shell input{background:#fffaf3;border-color:#d9bda9;color:#302321}.login-shell label{color:#684e45}
 @media(max-width:600px){body.login-mode{background-position:center;background-attachment:scroll}body.login-mode #app{padding:18px 12px}.login-shell{padding:22px 18px;border-radius:24px}.login-brand img{width:62px;height:62px}}
+
+
+/* Floating frosted-glass login islands */
+body.login-mode #app{padding:clamp(14px,3vh,30px) 14px;overflow-y:auto}
+body.login-mode .login-shell{width:min(100%,470px);display:flex;flex-direction:column;align-items:center;gap:10px;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
+body.login-mode .login-brand,
+body.login-mode .login-shell .wz>h1,
+body.login-mode .login-shell .wz>p,
+body.login-mode .login-shell label,
+body.login-mode .login-shell .row>button,
+body.login-mode .login-shell #fbm,
+body.login-mode .login-shell .wz>button{
+  background:rgba(255,248,238,.24);
+  border:1px solid rgba(255,255,255,.48);
+  border-radius:18px;
+  box-shadow:0 8px 24px rgba(42,18,22,.12),inset 0 1px 0 rgba(255,255,255,.24);
+  backdrop-filter:blur(18px) saturate(145%);
+  -webkit-backdrop-filter:blur(18px) saturate(145%);
+}
+body.login-mode .login-brand{width:auto;max-width:100%;padding:12px 22px;margin:0;gap:2px}
+body.login-mode .login-brand img{width:48px;height:48px;border-radius:14px;box-shadow:0 4px 12px #54192d25}
+body.login-mode .login-brand h2{font-size:clamp(21px,3vw,27px);margin:5px 0 1px}
+body.login-mode .login-brand p{font-size:11px}
+body.login-mode .login-shell .wz{display:contents}
+body.login-mode .login-shell .wz>h1{font-size:19px;line-height:1.2;padding:9px 16px;margin:0;color:#342321}
+body.login-mode .login-shell .wz>p{font-size:12px;padding:8px 14px;margin:0;color:#684e45;text-align:center}
+body.login-mode .login-shell .row{display:contents}
+body.login-mode .login-shell .row>button,
+body.login-mode .login-shell .wz>button{width:auto;min-height:36px;padding:7px 13px;margin:0;font-size:13px;color:#342321;background:rgba(255,248,238,.34);border-color:rgba(255,255,255,.55)}
+body.login-mode .login-shell button.p{background:rgba(143,32,59,.78);border-color:rgba(255,255,255,.45);color:#fff}
+body.login-mode .login-shell label{width:min(100%,430px);margin:0;padding:7px 12px;font-size:11px;color:#684e45}
+body.login-mode .login-shell input{font-size:13px;padding:7px 10px;margin-top:3px;min-height:34px;background:rgba(255,255,255,.42);border-color:rgba(255,255,255,.48);border-radius:10px;color:#302321}
+body.login-mode .login-shell .fb-password{gap:6px}
+body.login-mode .login-shell .fb-password button{width:34px;height:34px;min-height:34px;padding:0;border-radius:11px;background:rgba(255,248,238,.55);border:1px solid rgba(255,255,255,.6);font-size:13px}
+body.login-mode .login-shell #fbm{width:min(100%,430px);padding:7px 12px;margin:0;font-size:12px;color:#684e45}
+@media(max-width:600px){
+ body.login-mode #app{padding:12px 10px}
+ body.login-mode .login-shell{gap:8px}
+ body.login-mode .login-brand{padding:9px 16px}
+ body.login-mode .login-brand img{width:42px;height:42px}
+ body.login-mode .login-shell label{padding:6px 10px}
+}
