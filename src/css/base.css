@@ -669,4 +669,48 @@ body:not(.login-mode) button.p{background:linear-gradient(135deg,#a63250,#7c233d
 :root[data-theme="dark"] body:not(.login-mode){background-color:#292329!important;color:#f6e9e0}
 :root[data-theme="dark"] body:not(.login-mode)::before{opacity:.12}
 
-html.bgon body:not(.login-mode)::before{opacity:.18}
+html.bgon body:not(.login-mode)::before{opacity:.48}
+
+/* Tablet-first composition: keep the reference's vertical rail on iPad */
+@media (min-width:521px) and (max-width:900px){
+ body:not(.login-mode) .wrap{padding:8px!important}
+ body:not(.login-mode) .shell{display:flex!important;gap:10px!important;align-items:stretch!important;padding:8px!important}
+ body:not(.login-mode) .side{display:flex!important;position:sticky!important;top:8px!important;flex:0 0 154px!important;width:154px!important;height:calc(100dvh - 16px)!important;min-height:0!important;max-height:calc(100dvh - 16px)!important;flex-direction:column!important;overflow-y:auto!important;overflow-x:hidden!important;padding:9px 7px!important;margin:0!important;border-radius:20px!important}
+ body:not(.login-mode) .side .wsb{display:flex!important;flex:none!important;justify-content:flex-start!important;gap:6px!important;padding:7px 5px!important}
+ body:not(.login-mode) .side .wsb .lb{display:inline!important;font-size:12px!important;white-space:normal!important}
+ body:not(.login-mode) .side .brandmark{width:30px!important;height:30px!important}
+ body:not(.login-mode) .side .nav{display:flex!important;flex-direction:column!important;flex:none!important;gap:3px!important;overflow:visible!important}
+ body:not(.login-mode) .side .nav button{display:flex!important;width:100%!important;min-height:34px!important;flex:none!important;justify-content:flex-start!important;gap:6px!important;padding:4px 5px!important;border-radius:11px!important}
+ body:not(.login-mode) .side .nav .lb{display:inline!important;font-size:11px!important;line-height:1.2!important;white-space:normal!important}
+ body:not(.login-mode) .side .nav .ib{width:25px!important;height:25px!important;min-width:25px!important;font-size:14px!important;border-radius:8px!important}
+ body:not(.login-mode) .side .nav2{display:flex!important;margin-top:auto!important}
+ body:not(.login-mode) .main{min-width:0!important;flex:1!important;padding:0 1px 16px!important}
+ .home-toolbar{height:44px!important;margin-bottom:8px!important}
+ .home-address{min-width:0!important;width:auto!important;flex:1!important;font-size:11px!important;padding:6px 10px!important}
+ .home-tools{gap:4px!important}.home-tools>button{min-width:30px!important;height:30px!important;padding:4px!important}
+ .home-tools>button.home-profile{font-size:11px!important;padding:4px 8px!important}
+ body:not(.login-mode) .hero{min-height:138px!important;padding:17px 35% 14px 17px!important;border-radius:20px!important}
+ body:not(.login-mode) .hero::after{width:43%!important;opacity:1!important}
+ body:not(.login-mode) .hero h1{font-size:clamp(18px,2.3vw,25px)!important}
+ body:not(.login-mode) .hero p,body:not(.login-mode) .hero .sum{font-size:12px!important}
+ body:not(.login-mode) .tiles{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:7px!important;margin-bottom:10px!important}
+ body:not(.login-mode) .tile{min-height:78px!important;padding:9px!important;border-radius:15px!important}
+ body:not(.login-mode) .tile b{font-size:23px!important}
+ body:not(.login-mode) .tile small{font-size:10px!important}
+ body:not(.login-mode) .tile i{font-size:19px!important}
+ .home-columns{grid-template-columns:minmax(0,1.35fr) minmax(170px,.85fr)!important;gap:9px!important}
+ .home-right{position:static!important}
+ body:not(.login-mode) .home-left .sec,body:not(.login-mode) .home-plan,body:not(.login-mode) .home-calendar{padding:9px!important;border-radius:17px!important;margin-bottom:9px!important}
+ .home-plan-head>b{font-size:15px!important}
+ .home-plan-icon{width:32px!important;height:32px!important}
+ .home-calendar{padding:10px!important}
+ .home-cal-head>b{font-size:14px!important}
+ .home-weekdays{font-size:9px!important}.home-days{gap:2px!important}.home-day{font-size:10px!important}
+}
+@media(max-width:520px){
+ body:not(.login-mode) .shell{display:block!important}
+ body:not(.login-mode) .side{display:flex!important;flex-direction:row!important}
+ body:not(.login-mode) .side .wsb .lb,body:not(.login-mode) .side .nav .lb{display:none!important}
+ .home-columns{grid-template-columns:1fr!important}
+ .home-right{grid-row:1}
+}
