@@ -59,7 +59,7 @@ function todayEnhance(html){
   add.textContent='＋ Widget ekle';add.addEventListener('click',todayAddMenu);done.className='p';done.textContent='Bitti';done.addEventListener('click',()=>todayEditToggle(false));
   actions.append(add,done);bar.append(title,hint,actions);root.append(bar);
  }else{
-  const launch=document.createElement('button');launch.className='today-edit-launch';launch.textContent='☷ Bugün sayfasını düzenle';launch.addEventListener('click',()=>todayEditToggle(true));root.append(launch);
+  const launch=document.createElement('button');launch.className='today-edit-launch today-edit-floating';launch.textContent='☷ Bugün sayfasını düzenle';launch.setAttribute('aria-label','Bugün sayfasını düzenle');launch.addEventListener('click',()=>todayEditToggle(true));root.append(launch);
  }
  root.append(layout);return tpl.innerHTML;
 }
