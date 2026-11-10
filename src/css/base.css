@@ -810,3 +810,28 @@ body:not(.login-mode) :is(.card,.st,.sec,.panel,.box,.modal,.sheet,.section,.dea
 body:not(.login-mode) :is(.card,.st,.sec,.panel,.box,.modal,.sheet,.section,.deadline-tile,.focus-stat) :is(h1,h2,h3,h4,p,b,strong,span,label,small){
  text-shadow:none;
 }
+
+
+/* User-selected accent and icon styling: keep controls in sync with Düzen. */
+body:not(.login-mode) button.p,
+body:not(.login-mode) .home-add,
+body:not(.login-mode) .home-day.today,
+body:not(.login-mode) .side .nav button.on {
+  background:linear-gradient(135deg,var(--ac,#8f2945),color-mix(in srgb,var(--ac,#8f2945) 78%,#34212a))!important;
+  border-color:var(--ac,#8f2945)!important;
+  color:#fff!important;
+}
+body:not(.login-mode) .tabs button.on,
+body:not(.login-mode) .nav button.on:not(.side .nav button) {
+  background:var(--ac2,#f2d9d2)!important;
+  border-color:var(--ac,#8f2945)!important;
+  color:var(--ac,#8f2945)!important;
+}
+body:not(.login-mode) .side .nav .ib,
+body:not(.login-mode) .ib {
+  border-radius:var(--ibr,50%)!important;
+  background:var(--ibg,var(--ac2,#f2d9d2))!important;
+}
+body:not(.login-mode) .side .nav button.on .ib {
+  background:color-mix(in srgb,var(--ibg,var(--ac)) 72%,#fff 28%)!important;
+}
