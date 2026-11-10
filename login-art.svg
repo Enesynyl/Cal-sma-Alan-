@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1100" preserveAspectRatio="xMidYMid slice">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 1080" preserveAspectRatio="xMidYMid slice">
 <defs>
  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#b8d5d5"/><stop offset=".48" stop-color="#e9d5bd"/><stop offset="1" stop-color="#c6a2a0"/></linearGradient>
  <linearGradient id="wine" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#a43b52"/><stop offset="1" stop-color="#64243e"/></linearGradient>
