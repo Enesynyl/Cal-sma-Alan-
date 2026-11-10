@@ -41,3 +41,58 @@ body.dffs #dfroot>.bar button,body.dffs #dfroot>.row button{padding:6px 12px}
 #startup-loader{position:fixed;inset:0;z-index:20000;display:grid;place-items:center;background:var(--bg,#f6f5f1);opacity:1;visibility:visible;transition:opacity .28s,visibility .28s}
 #startup-loader.done{opacity:0;visibility:hidden;pointer-events:none}
 .startup-spinner{width:46px;height:46px;border:4px solid #1d6b5730;border-top-color:#1d6b57;border-radius:50%;animation:startupSpin .8s linear infinite}
+
+
+/* LAST-LOADED GLOBAL TEXT CONTRAST OVERRIDE
+   This file is loaded after base/dashboard/navigation styles. */
+body:not(.login-mode) #app .it,
+body:not(.login-mode) #app .it *,
+body:not(.login-mode) #app .card,
+body:not(.login-mode) #app .card *,
+body:not(.login-mode) #app .st,
+body:not(.login-mode) #app .st *{
+  text-shadow:none!important;
+}
+body:not(.login-mode) #app .it,
+body:not(.login-mode) #app .it > div,
+body:not(.login-mode) #app .it > div > b,
+body:not(.login-mode) #app .it b,
+body:not(.login-mode) #app .it strong,
+body:not(.login-mode) #app .it :is(.title,.name,.task-title,.subject,.text){
+  color:#35212a!important;
+  opacity:1!important;
+  filter:none!important;
+  -webkit-text-fill-color:#35212a!important;
+}
+body:not(.login-mode) #app .it small,
+body:not(.login-mode) #app .it .m,
+body:not(.login-mode) #app .it time,
+body:not(.login-mode) #app .it .meta{
+  color:#604b50!important;
+  opacity:1!important;
+  filter:none!important;
+  -webkit-text-fill-color:#604b50!important;
+}
+body:not(.login-mode) #app .it{
+  background:rgba(255,249,240,.99)!important;
+  border:1px solid #c9a58f!important;
+  box-shadow:0 4px 15px rgba(61,35,39,.12)!important;
+}
+body:not(.login-mode) #app .card,
+body:not(.login-mode) #app .st{
+  color:#35212a!important;
+}
+body:not(.login-mode) #app .card :is(h1,h2,h3,h4,b,strong,p,span,small,label),
+body:not(.login-mode) #app .st :is(h1,h2,h3,h4,b,strong,p,span,small,label){
+  color:#35212a!important;
+  opacity:1!important;
+  -webkit-text-fill-color:#35212a!important;
+}
+body:not(.login-mode) #app :is(.nav button.on,.home-add,button.p,.home-day.today){
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+}
+body:not(.login-mode) #app :is(input,textarea,select){
+  color:#35212a!important;
+  -webkit-text-fill-color:#35212a!important;
+}
