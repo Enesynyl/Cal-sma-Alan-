@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 430">
+<defs><filter id="paint"><feTurbulence baseFrequency=".04" numOctaves="2" seed="3" type="fractalNoise" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5"/></filter></defs>
+<g filter="url(#paint)" stroke="#633a3a" stroke-width="9" stroke-linejoin="round">
+ <path d="M90 20L500 0 680 140 640 420 120 430 15 220Z" fill="#d98a42"/>
+ <path d="M220 0L490 0 690 150 520 205 355 125Z" fill="#8f2944"/>
+ <path d="M360 50L610 80 670 250 550 370 390 330 310 180Z" fill="#efbd62"/>
+ <path d="M410 90L580 105 630 175 500 190 400 150Z" fill="#f7d9a6"/>
+ <path d="M420 160L560 140 615 180 500 205Z" fill="#302a31"/>
+ <path d="M430 215L520 235 470 280 420 260Z" fill="#a43d43"/>
+ <path d="M470 280Q525 310 575 275" fill="none" stroke="#5a2734" stroke-width="13"/>
+ <path d="M305 80L390 120 370 300 285 340 235 245Z" fill="#6d8583"/>
+ <path d="M260 220L355 250 320 380 210 360Z" fill="#f0c18d"/>
+ <path d="M90 30L270 15 300 120 175 210 45 160Z" fill="#e5a35a"/>
+ <path d="M40 270L200 220 260 420 35 420Z" fill="#8f2944"/>
+ <path d="M590 0L700 0 700 430 640 430 600 300Z" fill="#a64a43"/>
+</g>
+<g fill="none" stroke="#fff0d9" stroke-width="10" opacity=".55" stroke-linecap="round"><path d="M50 95Q150 20 240 55"/><path d="M520 30Q630 70 660 125"/><path d="M80 350Q150 310 210 365"/></g>
+</svg>
