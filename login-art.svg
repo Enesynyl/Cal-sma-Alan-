@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1100" preserveAspectRatio="xMidYMid slice">
+<defs>
+ <linearGradient id="paper" x2="1" y2="1"><stop stop-color="#f4d9b7"/><stop offset=".55" stop-color="#e8c6a5"/><stop offset="1" stop-color="#c99c7e"/></linearGradient>
+ <linearGradient id="wine" x2="1" y2="1"><stop stop-color="#a52e43"/><stop offset="1" stop-color="#5c172c"/></linearGradient>
+ <pattern id="grain" width="90" height="90" patternUnits="userSpaceOnUse"><circle cx="8" cy="15" r="1.5" fill="#fff" opacity=".16"/><circle cx="48" cy="53" r="1" fill="#5b2a27" opacity=".12"/><path d="M4 72l16-3M60 12l18 4" stroke="#fff" opacity=".12"/></pattern>
+</defs>
+<rect width="1600" height="1100" fill="url(#paper)"/>
+<!-- painterly cubist panels around a quiet central area -->
+<path d="M0 0h430l-80 260L0 360z" fill="url(#wine)"/><path d="M0 360 350 260l80 300L0 690z" fill="#d98a49"/>
+<path d="M0 690 430 560l110 310L0 1100z" fill="#6a2635"/><path d="M430 0 660 0 560 300 350 260z" fill="#dca45e"/>
+<path d="M1600 0h-390l70 260 320 110z" fill="#702039"/><path d="m1600 370-320-110-110 300 430 130z" fill="#c77a43"/>
+<path d="m1600 690-430-130-110 310 640 230z" fill="url(#wine)"/>
+<path d="M1190 0h-190l-90 260 270 0z" fill="#bd7045"/><path d="m1000 0 190 0-70 260-210 0z" fill="#e6b56f"/>
+<!-- abstract profile on right -->
+<path d="M1310 170c-110-95-250-35-260 95-8 95 45 142 95 174l-28 84 92 55 72-65c106-12 174-110 157-218-12-76-55-108-128-125z" fill="#f0c99f" stroke="#3d2928" stroke-width="18" stroke-linejoin="round"/>
+<path d="m1160 275 110-48 82 28-92 34z" fill="#382b2a"/><path d="m1235 405 100 18-76 46" fill="none" stroke="#7d3c37" stroke-width="15" stroke-linecap="round"/>
+<!-- left geometric sun / abstract flower -->
+<path d="M170 210 290 145l110 90-30 140-145 45-95-100z" fill="#e9b65e" stroke="#4b302d" stroke-width="16"/>
+<path d="m205 270 88-45 60 56-93 60z" fill="#a83a45"/><circle cx="286" cy="292" r="22" fill="#402c2a"/>
+<!-- book and cup near bottom -->
+<path d="M380 930q160-100 310-20v150q-155-75-310 15z" fill="#f4dfbd" stroke="#422d2b" stroke-width="16"/>
+<path d="M690 910q150-80 290 0v165q-145-75-290 0z" fill="#d9b18a" stroke="#422d2b" stroke-width="16"/>
+<path d="M1000 930h150v135h-150z" fill="#c87c43" stroke="#4a302c" stroke-width="14"/><path d="M1150 955q85-20 75 55-8 55-75 38" fill="none" stroke="#4a302c" stroke-width="16"/>
+<path d="M1075 900q-30-45 5-70t0-65" fill="none" stroke="#79504a" stroke-width="12" stroke-linecap="round"/>
+<rect width="1600" height="1100" fill="url(#grain)"/>
+</svg>
