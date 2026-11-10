@@ -91,7 +91,7 @@ function todayAddMenu(){
  const names={toolbar:'Üst çubuk',hero:'Karşılama alanı',tiles:'Özet kutuları',uni:'Üniversiteden son gelişmeler',plan:'Bugünkü Planım',exam:'Yaklaşan sınavlar',late:'Geciken işler',tasks:'Bugünün işleri',lessons:'Yaklaşan dersler',next7:'Önümüzdeki 7 gün',calendar:'Takvim'};
  const hidden=(W.todayHidden||[]).filter(id=>names[id]);
  let html='<h3>Widget ekle</h3><p class="m">Gizlediğin bölümleri yeniden ekleyebilir veya kendine özel bir bilgi kutusu oluşturabilirsin.</p>';
- html+=hidden.length?hidden.map(id=>'<div class="chk"><span>'+e(names[id])+'</span><button onclick="todayRestore(\\''+id+'\\')">＋ Ekle</button></div>').join(''):'<p class="m">Geri eklenecek gizli bölüm yok.</p>';
+ html+=hidden.length?hidden.map(id=>'<div class="chk"><span>'+e(names[id])+'</span><button onclick="todayRestore(&quot;'+id+'&quot;)">＋ Ekle</button></div>').join(''):'<p class="m">Geri eklenecek gizli bölüm yok.</p>';
  html+='<hr><label>Yeni widget başlığı<input id="twTitle" maxlength="60" placeholder="Örn. Hatırlatmalarım"></label><label>İçerik<textarea id="twBody" maxlength="1000" rows="4" placeholder="Kendine notlar veya hatırlatmalar yaz..."></textarea></label><div class="row"><button onclick="dlg()">Kapat</button><button class="p" onclick="todayCreateCustom()">Widget oluştur</button></div>';
  dlg(html);
 }
