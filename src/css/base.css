@@ -668,3 +668,5 @@ body:not(.login-mode) button.p{background:linear-gradient(135deg,#a63250,#7c233d
 @media(prefers-color-scheme:dark){:root:not([data-theme="light"]):not([data-theme="dark"]){--bg:#292329;--sf:#393039;--tx:#f6e9e0;--mu:#c6adb0;--ac:#d68c9d;--ac2:#553b48;--bd:#705763;color-scheme:dark}}
 :root[data-theme="dark"] body:not(.login-mode){background-color:#292329!important;color:#f6e9e0}
 :root[data-theme="dark"] body:not(.login-mode)::before{opacity:.12}
+
+html.bgon body:not(.login-mode)::before{opacity:.18}
