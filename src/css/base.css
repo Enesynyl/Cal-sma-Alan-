@@ -147,3 +147,57 @@ body.login-mode .login-shell #fbm{width:min(100%,430px);padding:7px 12px;margin:
  body.login-mode .login-brand img{width:42px;height:42px}
  body.login-mode .login-shell label{padding:6px 10px}
 }
+
+
+/* Higher-contrast glass surfaces: strengthen backgrounds, keep text colors unchanged */
+body.login-mode .login-brand,
+body.login-mode .login-shell .wz>h1,
+body.login-mode .login-shell .wz>p{
+  background:rgba(255,244,226,.58);
+  border-color:rgba(255,255,255,.72);
+  box-shadow:0 10px 26px rgba(48,20,25,.16),inset 0 1px 0 rgba(255,255,255,.48);
+}
+body.login-mode .login-shell label{
+  background:rgba(255,241,220,.48);
+  border-color:rgba(255,255,255,.72);
+  box-shadow:0 7px 20px rgba(48,20,25,.13),inset 0 1px 0 rgba(255,255,255,.42);
+}
+body.login-mode .login-shell .row>button,
+body.login-mode .login-shell .wz>button{
+  background:rgba(255,249,239,.82);
+  border:1px solid rgba(255,255,255,.9);
+  box-shadow:0 7px 18px rgba(48,20,25,.2),inset 0 1px 0 rgba(255,255,255,.8);
+  color:#342321;
+  font-weight:600;
+}
+body.login-mode .login-shell button.p,
+body.login-mode .login-shell #fbGo.p{
+  background:rgba(137,25,57,.96);
+  border-color:#f5d9dc;
+  box-shadow:0 8px 20px rgba(91,14,39,.34),inset 0 1px 0 rgba(255,255,255,.28);
+  color:#fff;
+}
+body.login-mode .login-shell #fbt2,
+body.login-mode .login-shell .row>button[onclick*="fbAct('in')"]{
+  background:rgba(255,235,211,.92);
+  border-color:rgba(255,255,255,.95);
+}
+body.login-mode .login-shell input{
+  background:rgba(255,252,246,.88);
+  border-color:rgba(255,255,255,.95);
+  box-shadow:inset 0 2px 5px rgba(62,34,25,.08);
+}
+body.login-mode .login-shell .fb-password button{
+  background:rgba(255,238,218,.94);
+  border-color:rgba(255,255,255,.95);
+  box-shadow:0 4px 12px rgba(48,20,25,.16);
+}
+body.login-mode .login-shell #fbm:not(:empty){
+  background:rgba(255,244,226,.78);
+  border-color:rgba(255,255,255,.82);
+}
+body.login-mode .login-shell button:focus-visible,
+body.login-mode .login-shell input:focus-visible{
+  outline:2px solid rgba(137,25,57,.75);
+  outline-offset:2px;
+}
