@@ -1,18 +1,32 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 430">
-<defs><filter id="paint"><feTurbulence baseFrequency=".04" numOctaves="2" seed="3" type="fractalNoise" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5"/></filter></defs>
-<g filter="url(#paint)" stroke="#633a3a" stroke-width="9" stroke-linejoin="round">
- <path d="M90 20L500 0 680 140 640 420 120 430 15 220Z" fill="#d98a42"/>
- <path d="M220 0L490 0 690 150 520 205 355 125Z" fill="#8f2944"/>
- <path d="M360 50L610 80 670 250 550 370 390 330 310 180Z" fill="#efbd62"/>
- <path d="M410 90L580 105 630 175 500 190 400 150Z" fill="#f7d9a6"/>
- <path d="M420 160L560 140 615 180 500 205Z" fill="#302a31"/>
- <path d="M430 215L520 235 470 280 420 260Z" fill="#a43d43"/>
- <path d="M470 280Q525 310 575 275" fill="none" stroke="#5a2734" stroke-width="13"/>
- <path d="M305 80L390 120 370 300 285 340 235 245Z" fill="#6d8583"/>
- <path d="M260 220L355 250 320 380 210 360Z" fill="#f0c18d"/>
- <path d="M90 30L270 15 300 120 175 210 45 160Z" fill="#e5a35a"/>
- <path d="M40 270L200 220 260 420 35 420Z" fill="#8f2944"/>
- <path d="M590 0L700 0 700 430 640 430 600 300Z" fill="#a64a43"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 470">
+<defs>
+ <filter id="paint"><feTurbulence type="fractalNoise" baseFrequency=".035 .055" numOctaves="2" seed="9" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="7"/></filter>
+ <filter id="paper"><feTurbulence type="fractalNoise" baseFrequency=".55" numOctaves="2" seed="4"/><feColorMatrix values="1 0 0 0 .2 0 1 0 0 .15 0 0 1 0 .1 0 0 0 .12 0"/></filter>
+</defs>
+<g filter="url(#paint)" stroke="#593b3c" stroke-width="8" stroke-linejoin="round">
+ <path d="M30 0H760V470H10L70 300 10 160Z" fill="#e8a14d"/>
+ <path d="M55 0H450L560 92 395 190 180 150 0 205Z" fill="#8d2e46"/>
+ <path d="M450 0H760V470H610L535 355 625 230 540 125Z" fill="#a13e48"/>
+ <path d="M370 25Q510 -15 635 72L700 205 635 390 500 447 360 355 320 200Z" fill="#efbf72"/>
+ <path d="M425 54L590 45 700 140 635 205 510 172 420 120Z" fill="#f8dbad"/>
+ <path d="M458 136Q530 95 620 132L666 168Q568 152 510 190Z" fill="#332b34"/>
+ <path d="M480 130Q555 98 630 133" fill="none" stroke="#4c3036" stroke-width="15"/>
+ <path d="M568 178L525 248 590 270 550 303" fill="none" stroke="#6b4240" stroke-width="17"/>
+ <path d="M510 318Q570 345 635 305" fill="none" stroke="#7f2f43" stroke-width="14"/>
+ <path d="M435 190L500 220 470 300 400 280Z" fill="#5c7b7d"/>
+ <path d="M380 205L455 260 425 390 325 370 300 275Z" fill="#e4a15d"/>
+ <path d="M320 80L425 35 480 100 420 180 330 160Z" fill="#c66c55"/>
+ <path d="M245 0L395 0 350 115 225 175 115 125Z" fill="#f4c47b"/>
+ <path d="M90 0L255 0 205 120 75 205 0 150Z" fill="#d77c43"/>
+ <path d="M0 220L145 155 260 220 205 355 20 420Z" fill="#a33349"/>
+ <path d="M20 390L210 330 295 470H0Z" fill="#e4b56d"/>
+ <path d="M650 0H760V470H705L680 340 735 225Z" fill="#742c43"/>
 </g>
-<g fill="none" stroke="#fff0d9" stroke-width="10" opacity=".55" stroke-linecap="round"><path d="M50 95Q150 20 240 55"/><path d="M520 30Q630 70 660 125"/><path d="M80 350Q150 310 210 365"/></g>
+<g fill="none" stroke-linecap="round" opacity=".62">
+ <path d="M35 70Q130 20 215 45M55 95Q150 48 230 72" stroke="#f9d9a4" stroke-width="11"/>
+ <path d="M480 25Q600 0 700 85M500 48Q620 20 720 105" stroke="#f4d3a5" stroke-width="10"/>
+ <path d="M30 340Q130 280 205 325M45 365Q140 310 220 350" stroke="#e9a36d" stroke-width="12"/>
+ <path d="M580 390Q655 350 730 385" stroke="#f4d4a7" stroke-width="10"/>
+</g>
+<rect width="760" height="470" filter="url(#paper)" opacity=".14"/>
 </svg>
