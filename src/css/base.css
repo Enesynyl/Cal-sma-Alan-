@@ -97,3 +97,11 @@ body.focus-active{overflow:hidden}
 .cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}.cal i{font-style:normal;text-align:center;font-size:12px;color:var(--mu)}.cal div{background:var(--sf);border:1px solid var(--bd);border-radius:8px;min-height:62px;padding:3px;overflow:hidden;font-size:11px}.cal div.o{opacity:.4}.cal div.td{border-color:var(--ac)}.cal span{display:block;background:var(--ac2);border-radius:4px;padding:0 3px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 
+
+/* Dedicated signed-out welcome screen */
+body.login-mode{background:#ead0b2 url('/login-art.svg') center/cover fixed no-repeat!important;min-height:100vh}
+body.login-mode #app{min-height:100vh;display:grid;place-items:center;padding:28px 16px}
+.login-shell{width:min(100%,520px);padding:26px 30px 28px;border:1px solid #ffffff80;border-radius:28px;background:rgba(250,239,224,.88);box-shadow:0 22px 70px #34141d35;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);color:#302321}
+.login-brand{text-align:center;margin:0 auto 24px}.login-brand img{width:72px;height:72px;border-radius:20px;box-shadow:0 8px 22px #54192d35}.login-brand h2{font-size:clamp(25px,5vw,34px);line-height:1.1;margin:10px 0 4px;font-weight:850;letter-spacing:-.04em;color:#311d1c}.login-brand p{margin:0;color:#75564b;font-size:13px;letter-spacing:.06em}
+.login-shell .wz{padding:0;max-width:none}.login-shell h1{font-size:24px;color:#342321}.login-shell .m{color:#765e55}.login-shell button.p{background:#8f203b;border-color:#8f203b}.login-shell input{background:#fffaf3;border-color:#d9bda9;color:#302321}.login-shell label{color:#684e45}
+@media(max-width:600px){body.login-mode{background-position:center;background-attachment:scroll}body.login-mode #app{padding:18px 12px}.login-shell{padding:22px 18px;border-radius:24px}.login-brand img{width:62px;height:62px}}
