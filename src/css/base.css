@@ -821,8 +821,7 @@ body:not(.login-mode) .side .nav button.on {
   border-color:var(--ac,#8f2945)!important;
   color:#fff!important;
 }
-body:not(.login-mode) .tabs button.on,
-body:not(.login-mode) .nav button.on:not(.side .nav button) {
+body:not(.login-mode) .tabs button.on {
   background:var(--ac2,#f2d9d2)!important;
   border-color:var(--ac,#8f2945)!important;
   color:var(--ac,#8f2945)!important;
