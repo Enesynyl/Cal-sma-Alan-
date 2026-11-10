@@ -1,26 +1,63 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1100" preserveAspectRatio="xMidYMid slice">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1200" preserveAspectRatio="xMidYMid slice">
 <defs>
- <linearGradient id="paper" x2="1" y2="1"><stop stop-color="#f4d9b7"/><stop offset=".55" stop-color="#e8c6a5"/><stop offset="1" stop-color="#c99c7e"/></linearGradient>
- <linearGradient id="wine" x2="1" y2="1"><stop stop-color="#a52e43"/><stop offset="1" stop-color="#5c172c"/></linearGradient>
- <pattern id="grain" width="90" height="90" patternUnits="userSpaceOnUse"><circle cx="8" cy="15" r="1.5" fill="#fff" opacity=".16"/><circle cx="48" cy="53" r="1" fill="#5b2a27" opacity=".12"/><path d="M4 72l16-3M60 12l18 4" stroke="#fff" opacity=".12"/></pattern>
+ <linearGradient id="paper" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f5dfc5"/><stop offset=".55" stop-color="#e8c9aa"/><stop offset="1" stop-color="#d8ad91"/></linearGradient>
+ <linearGradient id="burgundy" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#8e3043"/><stop offset="1" stop-color="#571d35"/></linearGradient>
+ <linearGradient id="ochre" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#edbd72"/><stop offset="1" stop-color="#c77b49"/></linearGradient>
+ <filter id="soft"><feGaussianBlur stdDeviation="9"/></filter>
+ <filter id="paint">
+  <feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="3" seed="8" result="noise"/>
+  <feDisplacementMap in="SourceGraphic" in2="noise" scale="8" xChannelSelector="R" yChannelSelector="G"/>
+ </filter>
+ <filter id="grain">
+  <feTurbulence type="fractalNoise" baseFrequency=".7" numOctaves="2" stitchTiles="stitch"/>
+  <feColorMatrix type="saturate" values="0"/>
+  <feComponentTransfer><feFuncA type="table" tableValues="0 .10"/></feComponentTransfer>
+  <feBlend in="SourceGraphic" mode="soft-light"/>
+ </filter>
 </defs>
-<rect width="1600" height="1100" fill="url(#paper)"/>
-<!-- painterly cubist panels around a quiet central area -->
-<path d="M0 0h430l-80 260L0 360z" fill="url(#wine)"/><path d="M0 360 350 260l80 300L0 690z" fill="#d98a49"/>
-<path d="M0 690 430 560l110 310L0 1100z" fill="#6a2635"/><path d="M430 0 660 0 560 300 350 260z" fill="#dca45e"/>
-<path d="M1600 0h-390l70 260 320 110z" fill="#702039"/><path d="m1600 370-320-110-110 300 430 130z" fill="#c77a43"/>
-<path d="m1600 690-430-130-110 310 640 230z" fill="url(#wine)"/>
-<path d="M1190 0h-190l-90 260 270 0z" fill="#bd7045"/><path d="m1000 0 190 0-70 260-210 0z" fill="#e6b56f"/>
-<!-- abstract profile on right -->
-<path d="M1310 170c-110-95-250-35-260 95-8 95 45 142 95 174l-28 84 92 55 72-65c106-12 174-110 157-218-12-76-55-108-128-125z" fill="#f0c99f" stroke="#3d2928" stroke-width="18" stroke-linejoin="round"/>
-<path d="m1160 275 110-48 82 28-92 34z" fill="#382b2a"/><path d="m1235 405 100 18-76 46" fill="none" stroke="#7d3c37" stroke-width="15" stroke-linecap="round"/>
-<!-- left geometric sun / abstract flower -->
-<path d="M170 210 290 145l110 90-30 140-145 45-95-100z" fill="#e9b65e" stroke="#4b302d" stroke-width="16"/>
-<path d="m205 270 88-45 60 56-93 60z" fill="#a83a45"/><circle cx="286" cy="292" r="22" fill="#402c2a"/>
-<!-- book and cup near bottom -->
-<path d="M380 930q160-100 310-20v150q-155-75-310 15z" fill="#f4dfbd" stroke="#422d2b" stroke-width="16"/>
-<path d="M690 910q150-80 290 0v165q-145-75-290 0z" fill="#d9b18a" stroke="#422d2b" stroke-width="16"/>
-<path d="M1000 930h150v135h-150z" fill="#c87c43" stroke="#4a302c" stroke-width="14"/><path d="M1150 955q85-20 75 55-8 55-75 38" fill="none" stroke="#4a302c" stroke-width="16"/>
-<path d="M1075 900q-30-45 5-70t0-65" fill="none" stroke="#79504a" stroke-width="12" stroke-linecap="round"/>
-<rect width="1600" height="1100" fill="url(#grain)"/>
+<rect width="1600" height="1200" fill="url(#paper)"/>
+<!-- soft, layered painterly color fields -->
+<g opacity=".92" filter="url(#paint)">
+ <path d="M-90 0H490L365 290 80 410-80 300Z" fill="url(#burgundy)"/>
+ <path d="M-80 380 350 260 510 520 360 760-90 800Z" fill="#d88b53"/>
+ <path d="M-70 800 360 710 560 1000 430 1260H-80Z" fill="#7c2c42"/>
+ <path d="M390-60 700-40 580 270 350 300Z" fill="#e5b66f"/>
+ <path d="M1680-30H1190L1260 280 1610 420Z" fill="url(#burgundy)"/>
+ <path d="M1680 400 1270 270 1110 550 1260 820 1680 850Z" fill="#cb8150"/>
+ <path d="M1680 830 1260 760 1120 1040 1300 1260H1680Z" fill="#70283d"/>
+ <path d="M1130-60 1450-40 1320 230 1110 280Z" fill="#e7b875"/>
+</g>
+<!-- loose brushed strokes soften the color blocks -->
+<g fill="none" stroke-linecap="round" opacity=".36" filter="url(#soft)">
+ <path d="M30 110Q220 70 390 145M-20 430Q190 350 380 420M50 900Q220 820 430 900" stroke="#f3c58b" stroke-width="34"/>
+ <path d="M1190 130Q1390 70 1570 180M1220 510Q1430 430 1610 520M1180 940Q1400 850 1600 930" stroke="#f0c49b" stroke-width="38"/>
+</g>
+<!-- abstract cubist face, kept to the far right so the login card stays readable -->
+<g transform="translate(1115 245) rotate(5)" filter="url(#paint)">
+ <path d="M175 15C55-35-75 50-75 190c0 110 60 180 140 210l-18 92 112 55 75-82c120-22 188-122 165-245C378 100 294 25 175 15Z" fill="#f1c99f" stroke="#765044" stroke-width="19" stroke-linejoin="round"/>
+ <path d="M5 165 115 105 210 137 105 188Z" fill="#382d2c"/>
+ <path d="M110 280 225 300 135 350" fill="none" stroke="#8b4050" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/>
+ <path d="M-45 210 15 245 5 315" fill="none" stroke="#d58d70" stroke-width="20" stroke-linecap="round"/>
+ <path d="M-15 65Q90 5 185 65" fill="none" stroke="#fff0d7" stroke-width="20" opacity=".55"/>
+</g>
+<!-- geometric flower/sun at left -->
+<g transform="translate(205 360) rotate(-12)" filter="url(#paint)">
+ <path d="M0-150 130-85 155 55 45 160-100 115-160-10-95-125Z" fill="#e7b15f" stroke="#6d3b37" stroke-width="17" stroke-linejoin="round"/>
+ <path d="M-72-45 18-95 85-20 12 65-65 32Z" fill="#a13b4b"/>
+ <circle cx="10" cy="-12" r="24" fill="#4a302e"/>
+</g>
+<!-- book and warm cup along the lower edge -->
+<g transform="translate(360 950)" filter="url(#paint)">
+ <path d="M0 45Q155-35 315 28V190Q150 125 0 215Z" fill="#f5dfbd" stroke="#755044" stroke-width="15" stroke-linejoin="round"/>
+ <path d="M315 28Q465-42 620 35V215Q460 125 315 190Z" fill="#d5aa85" stroke="#755044" stroke-width="15" stroke-linejoin="round"/>
+ <path d="M55 95Q150 48 250 82M55 135Q150 90 250 122M380 83Q470 45 560 86" fill="none" stroke="#b17a65" stroke-width="8" stroke-linecap="round" opacity=".7"/>
+</g>
+<g transform="translate(1040 1000)" filter="url(#paint)">
+ <path d="M0 0H155L140 160Q75 190 15 160Z" fill="url(#ochre)" stroke="#65433b" stroke-width="14"/>
+ <path d="M155 35Q245 8 225 95Q213 150 145 130" fill="none" stroke="#65433b" stroke-width="16"/>
+ <path d="M65-35Q35-85 75-125M105-35Q145-85 115-135" fill="none" stroke="#8a5c4e" stroke-width="10" stroke-linecap="round" opacity=".7"/>
+</g>
+<!-- tiny painterly flecks -->
+<g fill="#fff0d5" opacity=".55"><circle cx="500" cy="175" r="10"/><circle cx="1040" cy="170" r="7"/><circle cx="1460" cy="720" r="11"/><circle cx="730" cy="1080" r="9"/></g>
+<rect width="1600" height="1200" fill="#f2d7b8" opacity=".08" filter="url(#grain)"/>
 </svg>
