@@ -1,63 +1,59 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1200" preserveAspectRatio="xMidYMid slice">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1100" preserveAspectRatio="xMidYMid slice">
 <defs>
- <linearGradient id="paper" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f5dfc5"/><stop offset=".55" stop-color="#e8c9aa"/><stop offset="1" stop-color="#d8ad91"/></linearGradient>
- <linearGradient id="burgundy" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#8e3043"/><stop offset="1" stop-color="#571d35"/></linearGradient>
- <linearGradient id="ochre" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#edbd72"/><stop offset="1" stop-color="#c77b49"/></linearGradient>
- <filter id="soft"><feGaussianBlur stdDeviation="9"/></filter>
- <filter id="paint">
-  <feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="3" seed="8" result="noise"/>
-  <feDisplacementMap in="SourceGraphic" in2="noise" scale="8" xChannelSelector="R" yChannelSelector="G"/>
- </filter>
- <filter id="grain">
-  <feTurbulence type="fractalNoise" baseFrequency=".7" numOctaves="2" stitchTiles="stitch"/>
-  <feColorMatrix type="saturate" values="0"/>
-  <feComponentTransfer><feFuncA type="table" tableValues="0 .10"/></feComponentTransfer>
-  <feBlend in="SourceGraphic" mode="soft-light"/>
- </filter>
+ <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#b8d5d5"/><stop offset=".48" stop-color="#e9d5bd"/><stop offset="1" stop-color="#c6a2a0"/></linearGradient>
+ <linearGradient id="wine" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#a43b52"/><stop offset="1" stop-color="#64243e"/></linearGradient>
+ <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f3cf83"/><stop offset="1" stop-color="#d88d55"/></linearGradient>
+ <linearGradient id="skin" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f3c9a7"/><stop offset="1" stop-color="#c9826e"/></linearGradient>
+ <filter id="texture"><feTurbulence type="fractalNoise" baseFrequency=".025" numOctaves="3" seed="11" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="6" xChannelSelector="R" yChannelSelector="G"/></filter>
+ <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".65" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="table" tableValues="0 .10"/></feComponentTransfer><feBlend in="SourceGraphic" mode="soft-light"/></filter>
 </defs>
-<rect width="1600" height="1200" fill="url(#paper)"/>
-<!-- soft, layered painterly color fields -->
-<g opacity=".92" filter="url(#paint)">
- <path d="M-90 0H490L365 290 80 410-80 300Z" fill="url(#burgundy)"/>
- <path d="M-80 380 350 260 510 520 360 760-90 800Z" fill="#d88b53"/>
- <path d="M-70 800 360 710 560 1000 430 1260H-80Z" fill="#7c2c42"/>
- <path d="M390-60 700-40 580 270 350 300Z" fill="#e5b66f"/>
- <path d="M1680-30H1190L1260 280 1610 420Z" fill="url(#burgundy)"/>
- <path d="M1680 400 1270 270 1110 550 1260 820 1680 850Z" fill="#cb8150"/>
- <path d="M1680 830 1260 760 1120 1040 1300 1260H1680Z" fill="#70283d"/>
- <path d="M1130-60 1450-40 1320 230 1110 280Z" fill="#e7b875"/>
+<rect width="1600" height="1100" fill="url(#bg)"/>
+<!-- loose, painterly color shapes; important objects stay inside the tablet-safe frame -->
+<g filter="url(#texture)" opacity=".96">
+ <path d="M0 0h430l-80 260L0 360Z" fill="url(#wine)"/>
+ <path d="M0 360 350 260l120 260-100 250L0 820Z" fill="#df945c"/>
+ <path d="M0 820 370 760l150 340H0Z" fill="#7a2d47"/>
+ <path d="M430 0h270l-90 270-230-10Z" fill="#efc37d"/>
+ <path d="M1600 0h-380l70 270 310 100Z" fill="#7b2944"/>
+ <path d="m1600 370-310-100-120 300 130 260 300 0Z" fill="#dc9863"/>
+ <path d="M1600 830 1300 830l-140 270h440Z" fill="url(#wine)"/>
+ <path d="M930 0h250l-90 260H850Z" fill="#f1d9bd" opacity=".75"/>
 </g>
-<!-- loose brushed strokes soften the color blocks -->
-<g fill="none" stroke-linecap="round" opacity=".36" filter="url(#soft)">
- <path d="M30 110Q220 70 390 145M-20 430Q190 350 380 420M50 900Q220 820 430 900" stroke="#f3c58b" stroke-width="34"/>
- <path d="M1190 130Q1390 70 1570 180M1220 510Q1430 430 1610 520M1180 940Q1400 850 1600 930" stroke="#f0c49b" stroke-width="38"/>
+<!-- left: glowing abstract lamp / sun -->
+<g transform="translate(230 395) rotate(-10)" filter="url(#texture)">
+ <path d="M0-185 145-110 172 45 65 175-105 130-180-10-105-150Z" fill="url(#gold)" stroke="#754747" stroke-width="17" stroke-linejoin="round"/>
+ <path d="M-74-46 12-106 95-28 12 60-70 24Z" fill="#a83b50" stroke="#f5dfbd" stroke-width="9"/>
+ <circle cx="12" cy="-20" r="25" fill="#493432"/>
+ <path d="M-215-210q-60-60-15-100M-180-240q-10-75 55-100M190-160q75-35 115 15" fill="none" stroke="#fff0d4" stroke-width="15" stroke-linecap="round" opacity=".75"/>
+ <path d="M-260 5l-55-20m65 70-60 15m420-20 58 12" stroke="#f6e2c5" stroke-width="12" stroke-linecap="round" opacity=".8"/>
 </g>
-<!-- abstract cubist face, kept to the far right so the login card stays readable -->
-<g transform="translate(1115 245) rotate(5)" filter="url(#paint)">
- <path d="M175 15C55-35-75 50-75 190c0 110 60 180 140 210l-18 92 112 55 75-82c120-22 188-122 165-245C378 100 294 25 175 15Z" fill="#f1c99f" stroke="#765044" stroke-width="19" stroke-linejoin="round"/>
- <path d="M5 165 115 105 210 137 105 188Z" fill="#382d2c"/>
- <path d="M110 280 225 300 135 350" fill="none" stroke="#8b4050" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/>
- <path d="M-45 210 15 245 5 315" fill="none" stroke="#d58d70" stroke-width="20" stroke-linecap="round"/>
- <path d="M-15 65Q90 5 185 65" fill="none" stroke="#fff0d7" stroke-width="20" opacity=".55"/>
+<!-- right: complete abstract human portrait, with breathing room around the silhouette -->
+<g transform="translate(1120 205) rotate(3)" filter="url(#texture)">
+ <path d="M195 18C75-35-65 50-76 190c-10 123 62 205 157 235l-12 100 110 60 93-95c116-35 177-133 150-255C399 111 300 34 195 18Z" fill="url(#skin)" stroke="#70434a" stroke-width="19" stroke-linejoin="round"/>
+ <path d="M-18 116Q88 30 220 82" fill="none" stroke="#f6d6b4" stroke-width="27" stroke-linecap="round" opacity=".8"/>
+ <path d="M24 175 143 118 235 147 126 202Z" fill="#3c3034"/>
+ <path d="M124 293 248 311 154 368" fill="none" stroke="#8b3c50" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+ <path d="M-28 220 22 254 10 324" fill="none" stroke="#d98f7c" stroke-width="19" stroke-linecap="round"/>
+ <path d="M-40 410q120 55 245-10" fill="none" stroke="#f5d4b8" stroke-width="16" stroke-linecap="round" opacity=".6"/>
 </g>
-<!-- geometric flower/sun at left -->
-<g transform="translate(205 360) rotate(-12)" filter="url(#paint)">
- <path d="M0-150 130-85 155 55 45 160-100 115-160-10-95-125Z" fill="#e7b15f" stroke="#6d3b37" stroke-width="17" stroke-linejoin="round"/>
- <path d="M-72-45 18-95 85-20 12 65-65 32Z" fill="#a13b4b"/>
- <circle cx="10" cy="-12" r="24" fill="#4a302e"/>
+<!-- bottom: full open book, not hidden beyond the viewport -->
+<g transform="translate(520 825) rotate(-2)" filter="url(#texture)">
+ <path d="M0 35Q135-30 275 28v190Q138 150 0 240Z" fill="#f7e7cb" stroke="#71494a" stroke-width="15" stroke-linejoin="round"/>
+ <path d="M275 28Q420-35 560 35v205Q420 150 275 218Z" fill="#e5c4a5" stroke="#71494a" stroke-width="15" stroke-linejoin="round"/>
+ <path d="M35 85q105-48 205-10M35 130q105-48 205-10M35 175q105-48 205-10M315 85q105-48 205-10M315 130q105-48 205-10M315 175q105-48 205-10" fill="none" stroke="#bd8d79" stroke-width="7" stroke-linecap="round" opacity=".7"/>
+ <path d="M275 28v190" stroke="#9a6c63" stroke-width="9"/>
 </g>
-<!-- book and warm cup along the lower edge -->
-<g transform="translate(360 950)" filter="url(#paint)">
- <path d="M0 45Q155-35 315 28V190Q150 125 0 215Z" fill="#f5dfbd" stroke="#755044" stroke-width="15" stroke-linejoin="round"/>
- <path d="M315 28Q465-42 620 35V215Q460 125 315 190Z" fill="#d5aa85" stroke="#755044" stroke-width="15" stroke-linejoin="round"/>
- <path d="M55 95Q150 48 250 82M55 135Q150 90 250 122M380 83Q470 45 560 86" fill="none" stroke="#b17a65" stroke-width="8" stroke-linecap="round" opacity=".7"/>
+<!-- warm little desk lamp glow at lower left -->
+<g transform="translate(180 855)" filter="url(#texture)">
+ <path d="M0 95 45-15 165-15 205 95Z" fill="#efbd70" stroke="#74464a" stroke-width="14" stroke-linejoin="round"/>
+ <path d="M105 95v125m-55 0h110" fill="none" stroke="#74464a" stroke-width="16" stroke-linecap="round"/>
+ <path d="M42 8h120" stroke="#fff0ce" stroke-width="10" stroke-linecap="round" opacity=".75"/>
 </g>
-<g transform="translate(1040 1000)" filter="url(#paint)">
- <path d="M0 0H155L140 160Q75 190 15 160Z" fill="url(#ochre)" stroke="#65433b" stroke-width="14"/>
- <path d="M155 35Q245 8 225 95Q213 150 145 130" fill="none" stroke="#65433b" stroke-width="16"/>
- <path d="M65-35Q35-85 75-125M105-35Q145-85 115-135" fill="none" stroke="#8a5c4e" stroke-width="10" stroke-linecap="round" opacity=".7"/>
+<!-- soft brush marks and tiny glints -->
+<g fill="none" stroke-linecap="round" opacity=".55">
+ <path d="M500 175q100-45 180 0M760 90q80 30 150-5M1330 700q90 30 160-10M60 700q100-50 175-8" stroke="#fff0d8" stroke-width="22"/>
+ <path d="M960 760q90-30 160 12M430 720q70-40 130-5" stroke="#8f4654" stroke-width="13" opacity=".45"/>
 </g>
-<!-- tiny painterly flecks -->
-<g fill="#fff0d5" opacity=".55"><circle cx="500" cy="175" r="10"/><circle cx="1040" cy="170" r="7"/><circle cx="1460" cy="720" r="11"/><circle cx="730" cy="1080" r="9"/></g>
-<rect width="1600" height="1200" fill="#f2d7b8" opacity=".08" filter="url(#grain)"/>
+<g fill="#fff1d8" opacity=".85"><circle cx="475" cy="125" r="9"/><circle cx="1020" cy="140" r="7"/><circle cx="1450" cy="770" r="10"/><path d="m1400 205 10 24 24 10-24 10-10 24-10-24-24-10 24-10z"/></g>
+<rect width="1600" height="1100" fill="#f0d7bd" opacity=".08" filter="url(#grain)"/>
 </svg>
