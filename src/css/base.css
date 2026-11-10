@@ -714,3 +714,64 @@ html.bgon body:not(.login-mode)::before{opacity:.48}
  .home-columns{grid-template-columns:1fr!important}
  .home-right{grid-row:1}
 }
+
+
+/* GLOBAL READABILITY PASS — stronger typography and opaque reading surfaces */
+:root{
+ --tx:#38232b;
+ --mu:#70565a;
+ --bd:#d8bba8;
+}
+body:not(.login-mode){color:#38232b}
+body:not(.login-mode) :is(h1,h2,h3,h4,h5,h6,strong,b,.title,.name,.label,.sh b,.hd){
+ color:#542638;
+}
+body:not(.login-mode) :is(p,small,.m,.muted,.hint,.help,.desc,.subtitle,.meta,.empty,.hd,label){
+ color:#70565a;
+}
+body:not(.login-mode) :is(.card,.it,.st,.sec,.panel,.box,.modal,.sheet,.section,.cal div,.deadline-tile,.focus-stat,.home-plan,.home-calendar,.home-left .sec){
+ background-color:rgba(255,247,235,.96);
+ border-color:rgba(190,151,128,.72);
+ color:#38232b;
+ box-shadow:0 5px 18px rgba(72,39,43,.10),inset 0 1px 0 rgba(255,255,255,.82);
+}
+body:not(.login-mode) :is(.card,.it,.st,.sec,.panel,.box,.modal,.sheet,.section,.cal div,.deadline-tile,.focus-stat,.home-plan,.home-calendar) :is(p,span,div,small,label,strong,b,em,i){
+ color:inherit;
+}
+body:not(.login-mode) :is(.card,.it,.st,.sec,.panel,.box,.modal,.sheet,.section,.cal div,.deadline-tile,.focus-stat,.home-plan,.home-calendar) :is(small,.m,.muted,.hint,.help,.desc,.meta){
+ color:#70565a!important;
+}
+body:not(.login-mode) :is(input,select,textarea){
+ color:#38232b!important;
+ background:rgba(255,252,246,.98)!important;
+ border-color:#c9a58f!important;
+}
+body:not(.login-mode) input::placeholder,
+body:not(.login-mode) textarea::placeholder{color:#806b67!important;opacity:1}
+body:not(.login-mode) button{color:#542638}
+body:not(.login-mode) button.p{color:#fff}
+body:not(.login-mode) :is(.nav button.on,.tabs button.on,.active,.selected){
+ color:#64253b;
+}
+body:not(.login-mode) .home-day{color:#49313a!important}
+body:not(.login-mode) .home-day.outside{color:#806d6c!important;opacity:.72}
+body:not(.login-mode) .home-day.today{color:#fff!important}
+body:not(.login-mode) .home-day.has-event:not(.today)::after{background:#96334d}
+body:not(.login-mode) .home-cal-head>b,
+body:not(.login-mode) .home-weekdays{color:#642b3e!important}
+body:not(.login-mode) .home-left .sec::after,
+body:not(.login-mode) .home-plan::after,
+body:not(.login-mode) .home-calendar::after{opacity:.12!important}
+body:not(.login-mode) .tile{color:#492735}
+body:not(.login-mode) .tile b,
+body:not(.login-mode) .tile small,
+body:not(.login-mode) .tile i{color:#492735!important}
+body:not(.login-mode) :is(.cnt,.badge,.tag,.pill){
+ color:#542638;
+}
+body:not(.login-mode) :is(a,.link){color:#7e2944}
+body:not(.login-mode) :is(a,.link):hover{color:#a02d4e}
+body:not(.login-mode) :focus-visible{outline:2px solid #96334d;outline-offset:2px}
+@media(min-width:521px){
+ body:not(.login-mode) .home-calendar{background:rgba(255,247,235,.97)!important}
+}
