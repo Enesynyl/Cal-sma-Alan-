@@ -12,5 +12,5 @@ await writeFile('dist/index.html',template);
 await writeFile('dist/app.js',js.join('\n'));
 await writeFile('dist/app.css',css.join('\n'));
 await build({entryPoints:['src/js/native-spotify.js'],outfile:'dist/native-spotify.js',bundle:true,format:'iife',platform:'browser',target:'es2020'});
-for(const f of ['logo.svg','login-background.png','site.webmanifest','src/data/uni-programs.json'])await cp(f,path.join('dist',path.basename(f)));
+for(const f of ['logo.svg','login-background.png','painterly-paper.svg','painterly-face.svg','site.webmanifest','src/data/uni-programs.json'])await cp(f,path.join('dist',path.basename(f)));
 
