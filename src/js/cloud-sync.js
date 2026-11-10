@@ -40,7 +40,7 @@ async function fbAfter(u,silent){const loginFlow=lsg('fbLoggedOut')==='1';lss('f
 function fbResetLoginAppearance(){
  // Önceki kullanıcının kişisel görünümünü oturum kapatınca giriş ekranından temizle.
  const root=document.documentElement,body=document.body;
- root.classList.remove('bgon');
+ root.classList.remove('bgon');document.body.classList.remove('login-mode');
  root.removeAttribute('data-theme');
  for(const key of ['--ac','--ac2','--tx','--mu','--sf','--bg','--bd','--ibr','--ibg'])root.style.removeProperty(key);
  root.style.removeProperty('color-scheme');
@@ -50,7 +50,7 @@ function fbResetLoginAppearance(){
  body.style.backgroundPosition='';
  body.style.backgroundAttachment='';
 }
-function fbLoginPage(){fbResetLoginAppearance();document.body.dataset.authRequired='0';window.loginViewRequested=true;window.renderLoggedOutLogin=fbLoginPage;FBM=1;$('app').innerHTML=`<div class="wz"><h1>Hesabına giriş yap</h1><p class="m">Devam etmek için giriş yap veya yeni bir hesap oluştur.</p><div class="row" style="justify-content:flex-start"><button id="fbt1" class="p" onclick="fbTab(1)">Giriş yap</button><button id="fbt2" onclick="fbTab(2)">Hesap oluştur</button></div>${fbFields()}<div class="row" style="justify-content:flex-start"><button class="p" id="fbGo" onclick="fbEmail()">Giriş yap</button><button onclick="fbAct('in')">Google ile devam et</button></div><p class="m" id="fbm"></p><button onclick="fbReset()">Şifremi unuttum</button></div>`;fbTab(1)}function fbGate(){document.body.dataset.authRequired='0';if(document.body.dataset.fbGate)return;document.body.dataset.fbGate='1';lss('fbLoggedOut','1');window.loginViewRequested=true;window.renderLoggedOutLogin=fbLoginPage;if(window.appLocalReady)fbLoginPage();window.appCloudReadyDone?.()}
+function fbLoginPage(){fbResetLoginAppearance();document.body.classList.add('login-mode');document.body.dataset.authRequired='0';window.loginViewRequested=true;window.renderLoggedOutLogin=fbLoginPage;FBM=1;$('app').innerHTML=`<section class="login-shell"><header class="login-brand"><img src="/logo.svg" alt="Çalışma Alanım logosu"><h2>Çalışma Alanım</h2><p>Planla · Çalış · Takip Et · Başar</p></header><div class="wz"><h1>Hesabına giriş yap</h1><p class="m">Devam etmek için giriş yap veya yeni bir hesap oluştur.</p><div class="row" style="justify-content:flex-start"><button id="fbt1" class="p" onclick="fbTab(1)">Giriş yap</button><button id="fbt2" onclick="fbTab(2)">Hesap oluştur</button></div>${fbFields()}<div class="row" style="justify-content:flex-start;flex-wrap:wrap"><button class="p" id="fbGo" onclick="fbEmail()">Giriş yap</button><button onclick="fbAct('in')">Google ile devam et</button></div><p class="m" id="fbm"></p><button onclick="fbReset()">Şifremi unuttum</button></div></section>`;fbTab(1)}function fbGate(){document.body.dataset.authRequired='0';if(document.body.dataset.fbGate)return;document.body.dataset.fbGate='1';lss('fbLoggedOut','1');window.loginViewRequested=true;window.renderLoggedOutLogin=fbLoginPage;if(window.appLocalReady)fbLoginPage();window.appCloudReadyDone?.()}
 async function fbReset(){const em=$('fbE')&&$('fbE').value.trim();if(!em)return fbSay('Önce e-postanı yaz');try{const f=await fbLoad();await f.au.sendPasswordResetEmail(f.auth,em);fbSay('Şifre sıfırlama bağlantısı e-postana gönderildi ✅')}catch(x){fbSay(fbErr(x))}}
 async function fbAct(a){try{fbSay('Bağlanıyor…');const f=await fbLoad();
  if(a==='in'){const c=await f.au.signInWithPopup(f.auth,new f.au.GoogleAuthProvider());await fbAfter(c.user)}
