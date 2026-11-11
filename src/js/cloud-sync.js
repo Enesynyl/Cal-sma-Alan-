@@ -83,6 +83,7 @@ async function fbAct(a){try{fbSay('Bağlanıyor…');const f=await fbLoad();
  else if(a==='up'){fbSay('Yükleniyor…');await fbUp();lss('fbAuto','1');const c=$('fba');if(c)c.checked=true;fbSay('Buluta yedeklendi ✅ Otomatik yedek açık.')}
  else ask('Bulut verisi bu cihazdaki verinin yerine geçecek. Emin misin?',async()=>{try{await fbDown()}catch(x){toast(fbErr(x));fbUi()}})}catch(x){fbSay(fbErr(x))}}
 fbLoad().then(f=>{document.body.dataset.authRequired='0';if(f.auth.currentUser)return fbAfter(f.auth.currentUser,true).catch(x=>{console.warn('Bulut eşitlemesi:',x)}).finally(()=>window.appCloudReadyDone?.());fbGate()}).catch(x=>{console.warn('Bulut bağlantısı:',x);fbGate(/Failed to fetch|dynamically imported|network|fetch/i.test(String(x?.message||x)))});\nwindow.addEventListener('online',async()=>{if(lsg('fbLoggedOut')==='1')return;try{const f=await fbLoad();if(f.auth.currentUser)await fbAfter(f.auth.currentUser,true);document.body.classList.remove('offline-mode')}catch(x){console.warn('Çevrimiçi olduğunda eşitleme yeniden denenemedi:',x)}});
+window.addEventListener('offline',()=>{if(lsg('fbLoggedOut')!=='1'&&lsg('fbHas')==='1'){document.body.classList.add('offline-mode');toast('İnternet bağlantısı kesildi. Çalışmaya devam edebilirsin; değişikliklerin cihazında saklanıyor.')}});
 let VK='';{const _r=render;render=async function(){const k=cur.m+'|'+cur.t,ch=k!==VK;VK=k;const x=await _r.apply(this,arguments);if(ch){const m=document.querySelector('.main');if(m){m.classList.remove('vin');void m.offsetWidth;m.classList.add('vin')}}return x}}
 init();
 
