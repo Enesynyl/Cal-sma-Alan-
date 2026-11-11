@@ -53,7 +53,7 @@ async function bugun(){
  <div class="tiles">${tl('⏰',late.length,'Geciken',"cur.m='gorev'",'#cf8291')}${tl('📌',td.length,'Bugünün işleri',"cur.m='gorev'",'#e5b66d')}${tl('🎓',dr.length,'Bugünkü ders',"cur.m='ders';cur.t='program'",'#86aebf')}${nxs?tl('🧪',ngun,ngun===0?'gün · SINAV BUGÜN':'gün kaldı · '+e(nxs.ad),"cur.m='sinav'",'#9c8db5'):tl('🧪',0,'Yaklaşan sınav yok',"cur.m='sinav'",'#9c8db5')}</div>
  <div class="home-columns"><div class="home-left">${uniCard}<section class="home-plan"><div class="home-plan-head"><span class="home-plan-icon">☷</span><b>Bugünkü Planım</b><button onclick="frm('gorev')" class="home-add">＋ Görev Ekle</button></div>${planRows}</section>${panel(restSecs)||'<div class="empty">Bekleyen başka bir şey yok 🎉</div>'}</div><aside class="home-right">${homeCalendar}</aside></div></div>`}
 const mn=k=>W.names?.[k]||M[k][1];
-const F=t=>[...T[t].f,...(W.extra?.[t]||[])];
+const F=t=>t==='finans'?[...T[t].f.slice(0,4),['kategori','Kategori','sel:'+finCats().join(',')],...T[t].f.slice(5),...(W.extra?.[t]||[])]:[...T[t].f,...(W.extra?.[t]||[])];
 const rn=(k,v)=>upd({names:{...W.names,[k]:v.trim()}});
 function mv(k,d){const a=[...W.mods],i=a.indexOf(k),j=i+d;if(j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]];upd({mods:a})}
 const addF=()=>{const t=$('xt').value,l=$('xl').value.trim(),y=$('xy').value,o=$('xo').value.trim();if(!l)return;upd({extra:{...W.extra,[t]:[...(W.extra?.[t]||[]),['x_'+uid(),l,y==='sel'?'sel:'+(o||'Evet,Hayır'):y]]}})};
