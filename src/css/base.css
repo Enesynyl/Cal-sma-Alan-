@@ -99,7 +99,7 @@ body.focus-active{overflow:hidden}
 
 
 /* Dedicated signed-out welcome screen */
-body.login-mode{background:#ead0b2 url('/login-background.png') center center/100% 100% fixed no-repeat!important;min-height:100vh}
+body.login-mode{background:#101113!important;min-height:100vh;min-height:100dvh}
 body.login-mode #app{min-height:100vh;display:grid;place-items:center;padding:28px 16px}
 .login-shell{width:min(100%,520px);padding:26px 30px 28px;border:1px solid #ffffff80;border-radius:28px;background:rgba(250,239,224,.94);box-shadow:0 22px 70px #34141d35;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);color:#302321}
 .login-brand{text-align:center;margin:0 auto 24px}.login-brand img{width:72px;height:72px;border-radius:20px;box-shadow:0 8px 22px #54192d35}.login-brand h2{font-size:clamp(25px,5vw,34px);line-height:1.1;margin:10px 0 4px;font-weight:850;letter-spacing:-.04em;color:#311d1c}.login-brand p{margin:0;color:#75564b;font-size:13px;letter-spacing:.06em}
