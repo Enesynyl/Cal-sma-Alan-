@@ -689,3 +689,28 @@ body.login-mode .login-shell :focus-visible {
     transform:none!important;
   }
 }
+
+
+/* Verification feedback + compact tablet navigation */
+body.login-mode .fb-verify-note {
+  width:100%;
+  padding:11px 13px;
+  border:1px solid rgba(198,169,130,.3);
+  border-radius:13px;
+  color:#e4cfb5;
+  background:rgba(128,102,78,.16);
+  font-size:12px;
+  line-height:1.45;
+}
+@media(min-width:701px) and (max-width:1024px) {
+  :root:not([data-theme="light"]) body:not(.login-mode) .side .lb {display:none}
+  :root:not([data-theme="light"]) body:not(.login-mode) .side .nav button {
+    justify-content:center;
+    padding:8px;
+  }
+  :root:not([data-theme="light"]) body:not(.login-mode) .side .nav .ib {
+    width:38px;
+    height:38px;
+    font-size:19px;
+  }
+}
