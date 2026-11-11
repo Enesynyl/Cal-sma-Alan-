@@ -28,7 +28,27 @@ const TL={program:'Haftalık program',hesap:'📈 Not hesabı',ders:'Ders listes
 const ttl=(t,r)=>T[t].t?T[t].t(r):r[T[t].f[0][0]]||'';
 const sub=(t,r)=>[...T[t].f.slice(1).filter(x=>x[2]!=='area'&&r[x[0]]).slice(0,3),...(W.extra?.[t]||[]).filter(x=>r[x[0]])].map(x=>r[x[0]]).join(' · ');
 /* ---- Başlangıç ---- */
-async function init(){db=await openDB();navigator.storage?.persist?.();const th=await P(tx('meta').get('theme'));if(th?.v)document.documentElement.dataset.theme=th.v;const pn=await P(tx('meta').get('pin'));if(pn){lock(pn.v);window.appLocalReadyDone?.();return}await boot();window.appLocalReadyDone?.()}
+async function init(){
+ try{
+  db=await openDB();
+  try{await navigator.storage?.persist?.()}catch(storageError){}
+  const th=await P(tx('meta').get('theme'));
+  if(th?.v)document.documentElement.dataset.theme=th.v;
+  const pn=await P(tx('meta').get('pin'));
+  if(pn){lock(pn.v);window.appLocalReadyDone?.();return}
+  await boot();
+  window.appLocalReadyDone?.();
+ }catch(x){
+  console.error('Uygulama başlatılamadı:',x);
+  const loader=$('startup-loader');
+  if(loader){
+   loader.setAttribute('role','alert');
+   loader.setAttribute('aria-label','Uygulama başlatılamadı');
+   loader.classList.add('startup-error');
+   loader.innerHTML='<div class="startup-error-card"><span class="startup-error-mark">!</span><h1>Çalışma alanı açılamadı</h1><p>Bu cihazın yerel depolamasına erişemedim. Tarayıcı depolama iznini kontrol edip yeniden deneyebilirsin. Kayıtların silinmedi.</p><button type="button" onclick="location.reload()">Yeniden dene</button></div>';
+  }
+ }
+}
 async function boot(){const L=await all('ws');for(const x of L)if(!x.u1){x.u1=1;if(!x.mods.includes('uni'))x.mods.splice(Math.min(1,x.mods.length),0,'uni');await put('ws',x)}if(!(await P(tx('meta').get('mig2')))){for(const r of await all('rec'))if(r.type==='hatirlatma')await put('rec',{...r,type:'gorev'});await put('meta',{k:'mig2',v:1})}if(!(await P(tx('meta').get('mig3')))){for(const r of await all('rec'))if(r.type==='dnot')await put('rec',{...r,type:'not',ad:r.konu||'Ders notu',ts:r.ts||parseInt(r.id.slice(0,-5),36)||Date.now()});await put('meta',{k:'mig3',v:1})}for(const x of L)if(x.mode!=='ogr'||!x.v2){x.mode='ogr';if(!x.v2){x.v2=1;x.mods=[...new Set([...x.mods,'kart','odak'])]}await put('ws',x)}if(!L.length){$('app').innerHTML='';return}const m=await P(tx('meta').get('last'));W=L.find(x=>x.id===m?.v)||L[0];render()}
 function wz(){$('app').innerHTML=`<div class="wz"><h1>Çalışma alanınıza ad verin.</h1><p class="m">Verileriniz yalnızca bu cihazdaki yerel veritabanında (IndexedDB) saklanır. Hesap ve internet gerekmez.</p><label>Çalışma alanı adı<input id="wn" placeholder="Üniversite"></label><div class="row"><button class="p" onclick="mk()">Oluştur</button></div></div>`}
 async function mk(){const nm=($('wn')?.value||'').trim()||'Üniversite';W={id:uid(),name:nm,mode:'ogr',mods:[...AV.ogr],v2:1};await put('ws',W);await put('meta',{k:'last',v:W.id});WZ={};cur.m=null;render()}
