@@ -3,8 +3,8 @@
   "short_name": "Çalışma Alanım",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ead0b2",
-  "theme_color": "#8f203b",
+  "background_color": "#101113",
+  "theme_color": "#101113",
   "icons": [
     {
       "src": "/logo.svg",
