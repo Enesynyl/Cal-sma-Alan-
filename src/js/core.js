@@ -19,7 +19,7 @@ odev:{n:'Ödev',f:[['ad','Ödev'],['ders','Ders','ref:ders'],['son','Son tarih',
 sinav:{n:'Sınav',f:[['ad','Sınav'],['ders','Ders','ref:ders'],['tarih','Tarih','date'],['saat','Saat','time'],['yer','Yer']]},
 takvim:{n:'Etkinlik',f:[['ad','Etkinlik'],['tarih','Tarih','date'],['saat','Saat','time'],['not','Not','area']]},
 not:{n:'Not',f:[['ad','Başlık'],['not','İçerik','area']]},
-finans:{n:'Kayıt',f:[['ad','Açıklama'],['tur','Tür','sel:Gelir,Gider'],['tutar','Tutar','number'],['tarih','Tarih','date']]},
+finans:{n:'Finans işlemi',f:[['ad','Açıklama'],['tur','Tür','sel:Gelir,Gider'],['tutar','Tutar','number'],['tarih','Tarih','date'],['kategori','Kategori','sel:Market,Ulaşım,Eğitim,Fatura,Sağlık,Eğlence,Alışveriş,Maaş,Burs,Ek gelir,Diğer'],['not','Not','area']]},
 };
 const M={gorev:['✅','Görevler'],takvim:['📅','Takvim',['ay','takvim']],finans:['💰','Finans'],odak:['⏱️','Odak Sayacı'],kart:['🃏','Bilgi Kartları',['kart','calis']],ders:['🎓','Dersler',['ders','program','hesap']],uni:['🏛️','Üniversite'],odev:['📚','Ödevler'],sinav:['🧪','Sınavlar'],not:['📓','Notlar']};
 const AV={ogr:['ders','uni','odak','odev','sinav','gorev','takvim','not','finans']};
