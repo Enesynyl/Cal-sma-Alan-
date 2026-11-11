@@ -795,3 +795,12 @@ body.offline-mode::before {
     font-size:9px;
   }
 }
+
+
+/* Give the desktop workspace the room its information architecture needs. */
+:root:not([data-theme="light"]) body:not(.login-mode) #app.wrap {
+  width:100%;
+  max-width:1600px;
+  margin:0 auto;
+  padding:0;
+}
