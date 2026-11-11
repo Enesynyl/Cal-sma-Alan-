@@ -22,7 +22,7 @@
     --ac:#b49a7a; --ac2:#332b24; --bd:#403830; color-scheme:dark;
   }
 }
-:root:not([data-theme="light"]) body:not(.login-mode) {
+:root:not([data-theme="light"]) {\n  --ac:#b49a7a;\n  --ac2:rgba(180,154,122,.16);\n  --bd:rgba(180,154,122,.19);\n  --mu:#a69b90;\n}\n:root:not([data-theme="light"]) body:not(.login-mode) {
   color:var(--tx);
   background:
     radial-gradient(ellipse at 12% 0%,rgba(128,102,78,.16),transparent 34%),
