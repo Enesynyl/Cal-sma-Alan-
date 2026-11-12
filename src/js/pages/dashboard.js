@@ -12,11 +12,11 @@ async function render(){
  const tabs=M[cur.m]?.[2]||[cur.m];if(!tabs.includes(cur.t))cur.t=tabs[0];
  if(cur.m==='odak'&&PT.stage==='fullscreen'){clearInterval(DCI);document.body.classList.add('focus-active');$('app').innerHTML=focusScreen();ensureSpotifyUI();return}
  document.body.classList.remove('focus-active');
- let body=cur.m==='bugun'?await bugun():cur.m==='uni'?await uniPage():cur.m==='ayar'?await ayar(L):cur.t==='ay'?await ay():cur.t==='program'?await program():cur.t==='odak'?await odak():cur.t==='calis'?await calis():cur.t==='not'?await defter():cur.t==='hesap'?await hesap():await list(cur.t);const isTodayPage=body.includes('home-dashboard');if(isTodayPage){try{body=todayEnhance(body)}catch(err){console.error('Today editor render error:',err)}}const todayEditAction=isTodayPage&&!cur.todayEdit?'<button type="button" onclick="todayEditToggle(true)" style="position:fixed!important;right:18px!important;bottom:18px!important;z-index:2147483000!important;display:block!important;padding:14px 20px!important;border:2px solid #fff!important;border-radius:999px!important;background:#842b48!important;color:#fff!important;font-size:15px!important;font-weight:800!important;box-shadow:0 5px 22px rgba(0,0,0,.32)!important">☷ Bugün sayfasını düzenle</button>':'';
+ let body=cur.m==='bugun'?await bugun():cur.m==='uni'?await uniPage():cur.m==='ayar'?await ayar(L):cur.t==='ay'?await ay():cur.t==='program'?await program():cur.t==='odak'?await odak():cur.t==='calis'?await calis():cur.t==='not'?await defter():cur.t==='hesap'?await hesap():await list(cur.t);
  $('app').innerHTML=`<div class="shell"><aside class="side"><div class="wsb" title="${e(W.name)}">${W.icon?`<i class="ib">${e(W.icon)}</i>`:'<img class="brandmark" src="/logo.svg" alt="Çalışma Alanım">'}<span class="lb">${e(W.name)}</span></div>
  <div class="nav"><button title="Bugün" class="${cur.m==='bugun'?'on':''}" onclick="cur.m='bugun';render()"><i class="ib">🏠</i><span class="lb">Bugün</span></button>${ms.map(k=>`<button title="${e(mn(k))}" class="${cur.m===k?'on':''}" onclick="cur.m='${k}';cur.t=null;cur.q='';cur.d='';render()"><i class="ib">${mi(k)}</i><span class="lb">${mn(k)}</span></button>`).join('')}</div>
  </aside>
- <main class="main">${tabs.length>1&&cur.m!=='ayar'?`<div class="tabs">${tabs.map(t=>`<button class="${cur.t===t?'on':''}" onclick="cur.t='${t}';cur.q='';cur.d='';render()">${TL[t]}</button>`).join('')}</div>`:''}${body}</main>${todayEditAction}</div>`;ensureSpotifyUI();
+ <main class="main">${tabs.length>1&&cur.m!=='ayar'?`<div class="tabs">${tabs.map(t=>`<button class="${cur.t===t?'on':''}" onclick="cur.t='${t}';cur.q='';cur.d='';render()">${TL[t]}</button>`).join('')}</div>`:''}${body}</main></div>`;ensureSpotifyUI();
 }
 
 /* Today-only visual editor */
