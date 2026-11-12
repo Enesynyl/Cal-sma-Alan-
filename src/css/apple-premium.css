@@ -359,3 +359,82 @@ body:not(.login-mode) :is(.card,.it,.st,.sec,.hc,.focus-stat,.deadline-tile,.hom
 @media(prefers-reduced-motion:reduce) {
   body:not(.login-mode) :is(.focus-stat,.deadline-tile,.fin-summary-card,.sp-result-row,button) { transition:none!important; }
 }
+
+
+/* GLOBAL CONTRAST GUARD
+   Workspace background brightness must also control card surfaces.
+   Previously a light workspace background could leave dark Midnight Glass
+   cards in place while the inline --tx variable switched text to dark ink. */
+:root[data-workspace-tone="light"] body:not(.login-mode) :is(
+  .card,.it,.st,.sec,.panel,.box,.modal,.sheet,.section,.tile,.hero,
+  .home-plan,.home-calendar,.today-custom-card,.focus-stat,.deadline-tile,
+  .hc,.fin-overview,.fin-summary-card,.fin-panel,.sp-island,.sp-panel,
+  .sp-player-card,.sp-result-row,.pgc
+) {
+  color:#202a36!important;
+  background:linear-gradient(145deg,rgba(255,255,255,.98),rgba(242,246,251,.97))!important;
+  border-color:rgba(38,58,82,.16)!important;
+  box-shadow:0 8px 24px rgba(30,48,70,.08),inset 0 1px rgba(255,255,255,.9)!important;
+  -webkit-backdrop-filter:blur(18px) saturate(120%);
+  backdrop-filter:blur(18px) saturate(120%);
+}
+:root[data-workspace-tone="light"] body:not(.login-mode) :is(
+  .card,.it,.st,.sec,.panel,.box,.modal,.sheet,.section,.tile,.hero,
+  .home-plan,.home-calendar,.today-custom-card,.focus-stat,.deadline-tile,
+  .hc,.fin-overview,.fin-summary-card,.fin-panel,.sp-island,.sp-panel,
+  .sp-player-card,.sp-result-row,.pgc
+) :is(h1,h2,h3,h4,h5,h6,p,span,div,small,label,strong,b,em,i,.m,.muted,.meta,.desc,.hint) {
+  color:#263445!important;
+  text-shadow:none!important;
+  opacity:1;
+}
+:root[data-workspace-tone="light"] body:not(.login-mode) :is(.tile,.tile b,.tile small,.tile i) {
+  color:#263445!important;
+}
+:root[data-workspace-tone="light"] body:not(.login-mode) :is(.it,.it *) {
+  color:#263445!important;
+}
+:root[data-workspace-tone="light"] body:not(.login-mode) :is(input,select,textarea) {
+  color:#202a36!important;
+  background:rgba(255,255,255,.98)!important;
+  border-color:rgba(38,58,82,.22)!important;
+}
+:root[data-workspace-tone="light"] body:not(.login-mode) :is(input,textarea)::placeholder {
+  color:#687789!important;opacity:1!important;
+}
+
+:root[data-workspace-tone="dark"] body:not(.login-mode) :is(
+  .card,.it,.st,.sec,.panel,.box,.modal,.sheet,.section,.tile,.hero,
+  .home-plan,.home-calendar,.today-custom-card,.focus-stat,.deadline-tile,
+  .hc,.fin-overview,.fin-summary-card,.fin-panel,.sp-island,.sp-panel,
+  .sp-player-card,.sp-result-row,.pgc
+) {
+  color:#f2f5f9!important;
+  background:linear-gradient(145deg,rgba(29,39,54,.96),rgba(13,19,28,.98))!important;
+  border-color:rgba(190,210,235,.20)!important;
+}
+:root[data-workspace-tone="dark"] body:not(.login-mode) :is(
+  .card,.it,.st,.sec,.panel,.box,.modal,.sheet,.section,.tile,.hero,
+  .home-plan,.home-calendar,.today-custom-card,.focus-stat,.deadline-tile,
+  .hc,.fin-overview,.fin-summary-card,.fin-panel,.sp-island,.sp-panel,
+  .sp-player-card,.sp-result-row,.pgc
+) :is(h1,h2,h3,h4,h5,h6,p,span,div,small,label,strong,b,em,i,.m,.muted,.meta,.desc,.hint) {
+  color:#eaf0f7!important;
+  text-shadow:none!important;
+  opacity:1;
+}
+:root[data-workspace-tone="dark"] body:not(.login-mode) :is(.m,.muted,.meta,.desc,.hint,small) {
+  color:#b5c1d0!important;
+}
+:root[data-workspace-tone="dark"] body:not(.login-mode) :is(input,select,textarea) {
+  color:#f2f5f9!important;background:rgba(8,13,20,.88)!important;
+  border-color:rgba(190,210,235,.22)!important;
+}
+:root[data-workspace-tone="dark"] body:not(.login-mode) :is(input,textarea)::placeholder {
+  color:#a5b1c1!important;opacity:1!important;
+}
+
+/* Never let inherited opacity or legacy muted styles wash out reading text. */
+body:not(.login-mode) :is(.tile,.it,.card,.sec,.st,.focus-stat,.deadline-tile) :is(p,span,small,label,strong,b) {
+  text-shadow:none;
+}
