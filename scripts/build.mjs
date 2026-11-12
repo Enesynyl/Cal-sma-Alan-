@@ -1,6 +1,6 @@
 import { cp, mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
-import { build } from 'esbuild';
+import { build, transform } from 'esbuild';
 const root=process.cwd();
 const read=async p=>readFile(path.join(root,p),'utf8');
 const jsOrder=["src/js/core.js","src/js/pages/dashboard.js","src/js/spotify.js","src/js/pages/settings-schedule.js","src/js/reminders.js","src/js/pages/notes.js","src/js/pages/study-questions.js","src/js/pages/focus.js","src/js/pages/study-cards.js","src/js/pages/grades.js","src/js/pages/classes.js","src/js/cloud-sync.js","src/js/pages/university.js","src/js/pages/notebook-fullscreen.js","src/js/pages/obis.js"];
@@ -9,7 +9,9 @@ const [template,...js]=await Promise.all(['src/index.template.html',...jsOrder].
 const css=await Promise.all(cssOrder.map(read));
 await mkdir('dist',{recursive:true});
 await writeFile('dist/index.html',template);
-await writeFile('dist/app.js',js.join('\n'));
+const appSource=js.join('\n');
+await transform(appSource,{loader:'js',target:'es2020'}); // fail the build on invalid application JavaScript
+await writeFile('dist/app.js',appSource);
 await writeFile('dist/app.css',css.join('\n'));
 await build({entryPoints:['src/js/native-spotify.js'],outfile:'dist/native-spotify.js',bundle:true,format:'iife',platform:'browser',target:'es2020'});
 for(const f of ['logo.svg','painterly-paper.svg','painterly-face.svg','site.webmanifest','src/data/uni-programs.json'])await cp(f,path.join('dist',path.basename(f)));
