@@ -7,7 +7,13 @@ function lss(k,v){try{localStorage.setItem(k,v)}catch(x){}}
 let FBR=null;function fbLoad(){return FBR||(FBR=Promise.race([fbLoad0(),new Promise((_,reject)=>setTimeout(()=>reject(new Error('Firebase bağlantısı zaman aşımına uğradı')),9000))]).catch(x=>{FBR=null;throw x}))}async function fbLoad0(){const B='https://www.gstatic.com/firebasejs/10.12.2/',[a,au,fs]=await Promise.all([import(B+'firebase-app.js'),import(B+'firebase-auth.js'),import(B+'firebase-firestore.js')]),app=a.getApps().length?a.getApp():a.initializeApp(FBCFG);
  let auth;try{auth=au.initializeAuth(app,{persistence:[au.indexedDBLocalPersistence,au.browserLocalPersistence,au.browserSessionPersistence],popupRedirectResolver:au.browserPopupRedirectResolver})}catch(x){auth=au.getAuth(app)}
  await (auth.authStateReady?auth.authStateReady():new Promise(r=>{const un=au.onAuthStateChanged(auth,()=>{un();r()})}));
- FB={au,fs,auth,db:fs.getFirestore(app),user:auth.currentUser};au.onAuthStateChanged(auth,u=>{FB.user=u;fbUpd()});return FB}
+ FB={au,fs,auth,db:fs.getFirestore(app),user:auth.currentUser};
+ au.onAuthStateChanged(auth,u=>{FB.user=u;fbUpd()});
+ if(lsg('fbGoogleRedirect')==='1'){
+  lss('fbGoogleRedirect','0');
+  setTimeout(async()=>{try{const result=await au.getRedirectResult(auth);if(result?.user)await fbAfter(result.user,true)}catch(x){fbSay('Google ile giriş tamamlanamadı: '+fbErr(x))}},0);
+ }
+ return FB}
 function fbEditing(){const a=document.activeElement;return !!a&&(a.matches('input,textarea,select,[contenteditable=true]')||a.isContentEditable)}function fbListen(f,u){if(FBLS)FBLS();FBLS=f.fs.onSnapshot(fbRef(f,u,'meta'),snap=>{if(!snap.exists()||FBQ||FBP)return;const d=snap.data();if(d.ts>(+lsg('fbTs')||0)){if(lsg('fbDirty')==='1'||fbEditing()){lss('fbPending','1');return}fbDown().catch(x=>toast(fbErr(x)))}},x=>{console.warn('Firebase eşitleme dinleyicisi:',x);toast('Firebase eşitleme hatası: '+fbErr(x))})}
 async function fbDump(ts){return JSON.stringify({v:2,ts,stores:{ws:await all('ws'),rec:await all('rec'),meta:await all('meta')}})}
 const fbRef=(f,u,n)=>f.fs.doc(f.db,'users',u.uid,'sync',n);
@@ -77,11 +83,20 @@ function fbLoginPage(){fbResetLoginAppearance();document.body.classList.add('log
  window.appCloudReadyDone?.();
 }
 async function fbReset(){const em=$('fbE')&&$('fbE').value.trim();if(!em)return fbSay('Önce e-postanı yaz');try{const f=await fbLoad();await f.au.sendPasswordResetEmail(f.auth,em);fbSay('Şifre sıfırlama bağlantısı e-postana gönderildi ✅')}catch(x){fbSay(fbErr(x))}}
-async function fbAct(a){try{fbSay('Bağlanıyor…');const f=await fbLoad();
- if(a==='in'){const c=await f.au.signInWithPopup(f.auth,new f.au.GoogleAuthProvider());await fbAfter(c.user)}
- else if(a==='out'){fbSay('Çıkış yapılıyor…');if(lsg('fbDirty')==='1'&&f.auth.currentUser){try{await fbUp(true)}catch(x){if(x.message!=='conflict'){toast('Son değişiklikler buluta gönderilemedi, çıkış yapılmadı');return fbSay('Son değişiklikler buluta gönderilemedi, çıkış yapılmadı: '+fbErr(x))}}}await f.au.signOut(f.auth);await fbWipe();lss('fbOwner','');lss('fbAuto','0');lss('fbPromptLogin','0');lss('fbLoginPromptSeen','1');lss('fbLoggedOut','1');dlg();fbLoginPage()}
+async function fbAct(a){try{
+ if(a==='in'){
+  fbSay('Google hesabına yönlendiriliyorsun…');
+  const f=await fbLoad(),provider=new f.au.GoogleAuthProvider();
+  provider.setCustomParameters({prompt:'select_account'});
+  const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  if(isIOS){lss('fbGoogleRedirect','1');await f.au.signInWithRedirect(f.auth,provider);return}
+  const c=await f.au.signInWithPopup(f.auth,provider);await fbAfter(c.user);return;
+ }
+ const f=await fbLoad();
+ if(a==='out'){fbSay('Çıkış yapılıyor…');if(lsg('fbDirty')==='1'&&f.auth.currentUser){try{await fbUp(true)}catch(x){if(x.message!=='conflict'){toast('Son değişiklikler buluta gönderilemedi, çıkış yapılmadı');return fbSay('Son değişiklikler buluta gönderilemedi, çıkış yapılmadı: '+fbErr(x))}}}await f.au.signOut(f.auth);await fbWipe();lss('fbOwner','');lss('fbAuto','0');lss('fbPromptLogin','0');lss('fbLoginPromptSeen','1');lss('fbLoggedOut','1');dlg();fbLoginPage()}
  else if(a==='up'){fbSay('Yükleniyor…');await fbUp();lss('fbAuto','1');const c=$('fba');if(c)c.checked=true;fbSay('Buluta yedeklendi ✅ Otomatik yedek açık.')}
- else ask('Bulut verisi bu cihazdaki verinin yerine geçecek. Emin misin?',async()=>{try{await fbDown()}catch(x){toast(fbErr(x));fbUi()}})}catch(x){fbSay(fbErr(x))}}
+ else ask('Bulut verisi bu cihazdaki verinin yerine geçecek. Emin misin?',async()=>{try{await fbDown()}catch(x){toast(fbErr(x));fbUi()}})
+ }catch(x){fbSay(fbErr(x))}}
 fbLoad().then(f=>{document.body.dataset.authRequired='0';if(f.auth.currentUser)return fbAfter(f.auth.currentUser,true).catch(x=>{console.warn('Bulut eşitlemesi:',x)}).finally(()=>window.appCloudReadyDone?.());fbGate()}).catch(x=>{console.warn('Bulut bağlantısı:',x);fbGate(/Failed to fetch|dynamically imported|network|fetch|zaman aşımı|timeout/i.test(String(x?.message||x)))});
 window.addEventListener('online',async()=>{if(lsg('fbLoggedOut')==='1')return;try{const f=await fbLoad();if(f.auth.currentUser)await fbAfter(f.auth.currentUser,true);document.body.classList.remove('offline-mode')}catch(x){console.warn('Çevrimiçi olduğunda eşitleme yeniden denenemedi:',x)}});
 window.addEventListener('offline',()=>{if(lsg('fbLoggedOut')!=='1'&&lsg('fbHas')==='1'){document.body.classList.add('offline-mode');toast('İnternet bağlantısı kesildi. Çalışmaya devam edebilirsin; değişikliklerin cihazında saklanıyor.')}});
