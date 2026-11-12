@@ -1,6 +1,5 @@
 /* PREMIUM MOCHA — Çalışma Alanım visual refresh
    Preserves the existing app markup, IndexedDB/Firebase logic and user data. */
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
 
 :root:not([data-theme="light"]) {
   --bg:#101113;
@@ -22,18 +21,18 @@
     --ac:#b49a7a; --ac2:#332b24; --bd:#403830; color-scheme:dark;
   }
 }
-:root:not([data-theme="light"]) {\n  --ac:#b49a7a;\n  --ac2:rgba(180,154,122,.16);\n  --bd:rgba(180,154,122,.19);\n  --mu:#a69b90;\n}\n:root:not([data-theme="light"]) body:not(.login-mode) {
+:root:not([data-theme="light"]) body:not(.login-mode) {
   color:var(--tx);
   background:
     radial-gradient(ellipse at 12% 0%,rgba(128,102,78,.16),transparent 34%),
     radial-gradient(ellipse at 90% 78%,rgba(180,154,122,.08),transparent 32%),
     linear-gradient(145deg,#101113,#151311 58%,#111113)!important;
   background-attachment:fixed!important;
-  font-family:'DM Sans',system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 }
 :root:not([data-theme="light"]) body:not(.login-mode) :is(h1,h2,h3,h4,h5,h6,strong,b,.title,.name,.label,.sh b,.hd) {
   color:#f0e9df!important;
-  font-family:Manrope,'DM Sans',sans-serif;
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;
 }
 :root:not([data-theme="light"]) body:not(.login-mode) :is(p,small,.m,.muted,.hint,.help,.desc,.subtitle,.meta,.empty,.hd,label) {
   color:#b5a99c;
@@ -347,7 +346,7 @@
 #startup-loader::after {
   content:"ÇALIŞMA ALANIM";
   color:#c9b59c;
-  font:700 11px/1 'DM Sans',system-ui,sans-serif;
+  font:700 11px/1 system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
   letter-spacing:.24em;
 }
 #startup-loader .startup-spinner {
@@ -423,7 +422,7 @@ body.login-mode .login-brand img {
 body.login-mode .login-brand h2 {
   margin:12px 0 5px;
   color:#f2e9dd;
-  font:750 26px/1.15 Manrope,'DM Sans',sans-serif;
+  font:750 26px/1.15 -apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;
   letter-spacing:-.045em;
 }
 body.login-mode .login-brand p {
@@ -442,7 +441,7 @@ body.login-mode .login-shell .wz {
 body.login-mode .login-shell h1 {
   margin:0;
   color:#f0e8de;
-  font:750 25px/1.2 Manrope,'DM Sans',sans-serif;
+  font:750 25px/1.2 -apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;
   letter-spacing:-.045em;
 }
 body.login-mode .login-shell .m,
@@ -747,7 +746,7 @@ body.login-mode .fb-verify-note {
   font-size:22px;
   font-weight:800;
 }
-.startup-error-card h1 {margin:0;color:#f0e7dc;font:750 22px/1.2 Manrope,'DM Sans',sans-serif}
+.startup-error-card h1 {margin:0;color:#f0e7dc;font:750 22px/1.2 -apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
 .startup-error-card p {margin:0;color:#b9ad9f;font-size:13px;line-height:1.6}
 .startup-error-card button {
   min-height:44px;
@@ -776,7 +775,7 @@ body.offline-mode::before {
   box-shadow:0 10px 28px rgba(0,0,0,.34);
   backdrop-filter:blur(14px);
   -webkit-backdrop-filter:blur(14px);
-  font:650 10px/1.3 'DM Sans',system-ui,sans-serif;
+  font:650 10px/1.3 system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
   letter-spacing:.015em;
   text-align:center;
   pointer-events:none;
