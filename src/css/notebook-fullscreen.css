@@ -59,40 +59,40 @@ body:not(.login-mode) #app .it > div > b,
 body:not(.login-mode) #app .it b,
 body:not(.login-mode) #app .it strong,
 body:not(.login-mode) #app .it :is(.title,.name,.task-title,.subject,.text){
-  color:#35212a!important;
+  color:#edf4fc!important;
   opacity:1!important;
   filter:none!important;
-  -webkit-text-fill-color:#35212a!important;
+  -webkit-text-fill-color:#edf4fc!important;
 }
 body:not(.login-mode) #app .it small,
 body:not(.login-mode) #app .it .m,
 body:not(.login-mode) #app .it time,
 body:not(.login-mode) #app .it .meta{
-  color:#604b50!important;
+  color:#a5b4c8!important;
   opacity:1!important;
   filter:none!important;
-  -webkit-text-fill-color:#604b50!important;
+  -webkit-text-fill-color:#a5b4c8!important;
 }
 body:not(.login-mode) #app .it{
   background:rgba(255,249,240,.99)!important;
-  border:1px solid #c9a58f!important;
+  border:1px solid #9fb1c8!important;
   box-shadow:0 4px 15px rgba(61,35,39,.12)!important;
 }
 body:not(.login-mode) #app .card,
 body:not(.login-mode) #app .st{
-  color:#35212a!important;
+  color:#edf4fc!important;
 }
 body:not(.login-mode) #app .card :is(h1,h2,h3,h4,b,strong,p,span,small,label),
 body:not(.login-mode) #app .st :is(h1,h2,h3,h4,b,strong,p,span,small,label){
-  color:#35212a!important;
+  color:#edf4fc!important;
   opacity:1!important;
-  -webkit-text-fill-color:#35212a!important;
+  -webkit-text-fill-color:#edf4fc!important;
 }
 body:not(.login-mode) #app :is(.nav button.on,.home-add,button.p,.home-day.today){
   color:#fff!important;
   -webkit-text-fill-color:#fff!important;
 }
 body:not(.login-mode) #app :is(input,textarea,select){
-  color:#35212a!important;
-  -webkit-text-fill-color:#35212a!important;
+  color:#edf4fc!important;
+  -webkit-text-fill-color:#edf4fc!important;
 }
