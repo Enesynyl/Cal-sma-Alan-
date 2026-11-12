@@ -4,7 +4,7 @@ import { build } from 'esbuild';
 const root=process.cwd();
 const read=async p=>readFile(path.join(root,p),'utf8');
 const jsOrder=["src/js/core.js","src/js/pages/dashboard.js","src/js/spotify.js","src/js/pages/settings-schedule.js","src/js/reminders.js","src/js/pages/notes.js","src/js/pages/study-questions.js","src/js/pages/focus.js","src/js/pages/study-cards.js","src/js/pages/grades.js","src/js/pages/classes.js","src/js/cloud-sync.js","src/js/pages/university.js","src/js/pages/notebook-fullscreen.js","src/js/pages/obis.js"];
-const cssOrder=["src/css/base.css","src/css/notebook.css","src/css/dashboard.css","src/css/navigation.css","src/css/notebook-fullscreen.css","src/css/premium-mocha.css","src/css/midnight-glass.css"];
+const cssOrder=["src/css/base.css","src/css/notebook.css","src/css/dashboard.css","src/css/navigation.css","src/css/notebook-fullscreen.css","src/css/premium-mocha.css","src/css/midnight-glass.css","src/css/apple-premium.css"];
 const [template,...js]=await Promise.all(['src/index.template.html',...jsOrder].map(read));
 const css=await Promise.all(cssOrder.map(read));
 await mkdir('dist',{recursive:true});
