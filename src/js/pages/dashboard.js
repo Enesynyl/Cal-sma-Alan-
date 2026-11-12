@@ -1,6 +1,6 @@
 /* ---- Ana ekran ---- */
 async function render(){
- const L=await all('ws'),ms=W.mods.filter(k=>AV.ogr.includes(k));
+ const L=await all('ws'),ms=W.mods.filter(k=>AV.ogr.includes(k)&&k!=='ayar'&&k!=='duzen');
  const rs=document.documentElement.style;rs.setProperty('--ac',W.color||'');rs.setProperty('--ac2',W.color?`color-mix(in srgb,${W.color} 16%,var(--sf))`:'');
  const bv=W.bg?.v;document.documentElement.classList.toggle('bgon',!!bv);document.body.style.backgroundImage=bv?(W.bg.t==='img'?`url("${bv}")`:bv):'';
  rs.setProperty('--ibr',{c:'50%',r:'10px',s:'3px'}[W.ish||'c']);rs.setProperty('--ibg',W.ibg||'');
