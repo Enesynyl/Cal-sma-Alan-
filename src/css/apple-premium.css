@@ -181,3 +181,78 @@ dialog::backdrop { background:rgba(2,5,10,.66); backdrop-filter:blur(8px); }
     bottom:calc(88px + env(safe-area-inset-bottom))!important;
   }
 }
+
+/* Final shared polish: startup, dialogs, auth shell and offline status. */
+#startup-loader {
+  color:#f4f6fa;
+  background:
+    radial-gradient(ellipse at 50% 42%,rgba(118,151,192,.19),transparent 40%),
+    linear-gradient(145deg,#080a0e,#121925 58%,#080a0e);
+}
+#startup-loader::after { color:#c4d3e6; letter-spacing:.28em; }
+#startup-loader .startup-spinner {
+  border-color:rgba(196,211,232,.16);
+  border-top-color:#e0e9f5;
+  border-right-color:#8fa9c8;
+  box-shadow:0 0 30px rgba(165,190,220,.18);
+}
+body.login-mode .login-shell {
+  width:min(100%,470px)!important;
+  padding:clamp(20px,4vw,32px)!important;
+  border:1px solid rgba(196,211,232,.17)!important;
+  border-radius:28px!important;
+  color:#f4f6fa!important;
+  background:linear-gradient(145deg,rgba(20,25,33,.90),rgba(10,14,21,.94))!important;
+  box-shadow:0 28px 90px rgba(0,0,0,.46),inset 0 1px rgba(255,255,255,.06)!important;
+  backdrop-filter:blur(28px) saturate(135%)!important;
+  -webkit-backdrop-filter:blur(28px) saturate(135%)!important;
+}
+body.login-mode .login-brand {
+  border:0!important; background:transparent!important; box-shadow:none!important;
+  backdrop-filter:none!important; -webkit-backdrop-filter:none!important;
+}
+body.login-mode .login-shell .wz>h1,
+body.login-mode .login-shell .wz>p,
+body.login-mode .login-shell label,
+body.login-mode .login-shell .row>button,
+body.login-mode .login-shell #fbm,
+body.login-mode .login-shell .wz>button {
+  padding:10px 13px;
+}
+body.login-mode .login-shell label { display:block; margin:7px 0; }
+body.login-mode .login-shell input { min-height:46px; }
+body.login-mode .login-shell button { min-height:44px; }
+body.offline-mode::before {
+  border-color:var(--bd)!important;
+  color:var(--tx)!important;
+  background:rgba(20,25,33,.88)!important;
+  box-shadow:0 8px 28px rgba(0,0,0,.28)!important;
+  backdrop-filter:blur(18px)!important;
+  -webkit-backdrop-filter:blur(18px)!important;
+}
+.toast {
+  z-index:10020!important;
+  color:#f4f6fa!important;
+  background:rgba(20,25,33,.94)!important;
+  border:1px solid var(--bd)!important;
+  box-shadow:0 12px 34px rgba(0,0,0,.34)!important;
+  backdrop-filter:blur(18px)!important;
+}
+body:not(.login-mode) .tabs {
+  gap:8px;
+  padding:6px 0 12px;
+}
+body:not(.login-mode) .tabs button {
+  min-height:40px;
+  border-radius:13px!important;
+}
+body:not(.login-mode) .empty {
+  padding:34px 18px;
+  border:1px dashed var(--bd);
+  border-radius:18px;
+  background:var(--surface-2);
+  color:var(--mu)!important;
+}
+@media(max-width:600px) {
+  body.login-mode .login-shell { padding:20px 16px!important; }
+}
