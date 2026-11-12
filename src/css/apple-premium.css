@@ -733,3 +733,157 @@ html body:not(.login-mode) .main :is(input,select,textarea){
 }
 html body:not(.login-mode) .main input::placeholder,html body:not(.login-mode) .main textarea::placeholder{color:#9fb4cc!important;opacity:1!important}
 html body:not(.login-mode) .main .hd{color:#b9cce2!important}
+
+
+/* ── Settings, records, sign-in and navigation: coherent midnight glass v4 ── */
+html body:not(.login-mode) .main.page-ayar{color:#edf4ff!important}
+html body:not(.login-mode) .main.page-ayar>.card,
+html body:not(.login-mode) .main.page-ayar .card{
+ background:linear-gradient(145deg,rgba(19,32,49,.98),rgba(11,21,35,.99))!important;
+ border:1px solid rgba(168,201,236,.20)!important;border-radius:23px!important;
+ box-shadow:0 15px 40px rgba(0,0,0,.24),inset 0 1px 0 rgba(255,255,255,.05)!important;
+ color:#edf4ff!important;padding:clamp(18px,3vw,26px)!important;margin:0 0 16px!important;
+}
+html body:not(.login-mode) .main.page-ayar :is(h1,h2,h3,h4,strong,b,span){color:#f0f6ff!important;opacity:1!important}
+html body:not(.login-mode) .main.page-ayar :is(p,.m,small,label,.hint){color:#b7c9df!important;opacity:1!important}
+html body:not(.login-mode) .main.page-ayar label{display:block;font-size:13px!important;font-weight:650!important;margin:12px 0 6px!important}
+html body:not(.login-mode) .main.page-ayar input:not([type=checkbox]):not([type=color]),
+html body:not(.login-mode) .main.page-ayar select,
+html body:not(.login-mode) .main.page-ayar textarea{
+ color:#f3f7ff!important;background:#091523!important;border:1px solid rgba(160,195,232,.26)!important;
+ border-radius:13px!important;min-height:46px;padding:11px 13px!important;
+}
+html body:not(.login-mode) .main.page-ayar input[type=color]{width:52px!important;height:44px!important;border-radius:12px!important;background:#0b1726!important;border:1px solid rgba(160,195,232,.25)!important}
+html body:not(.login-mode) .main.page-ayar .chk{
+ display:flex!important;align-items:center!important;gap:9px!important;flex-wrap:nowrap!important;
+ padding:10px 11px!important;margin:7px 0!important;border:1px solid rgba(160,195,232,.14)!important;
+ border-radius:14px!important;background:rgba(255,255,255,.035)!important;color:#eaf2fc!important;
+}
+html body:not(.login-mode) .main.page-ayar .chk :is(span,b){color:#eaf2fc!important}
+html body:not(.login-mode) .main.page-ayar button{color:#eaf3ff!important;background:rgba(125,166,210,.10)!important;border:1px solid rgba(160,195,232,.20)!important}
+html body:not(.login-mode) .main.page-ayar button.p{background:linear-gradient(135deg,#75b7eb,#3b79ae)!important;color:#071525!important}
+html body:not(.login-mode) .main.page-ayar hr{border-color:rgba(160,195,232,.18)!important}
+
+/* Exams, tasks and homework: compact agenda rows, not oversized pale tiles. */
+html body:not(.login-mode) .main:is(.page-sinav,.page-gorev,.page-odev) .bar{display:flex!important;gap:10px!important;align-items:center!important;margin:0 0 12px!important}
+html body:not(.login-mode) .main:is(.page-sinav,.page-gorev,.page-odev) .bar input{
+ min-width:0!important;flex:1 1 auto!important;min-height:48px!important;border-radius:15px!important;
+ background:rgba(7,17,29,.86)!important;color:#f1f6ff!important;border:1px solid rgba(155,192,229,.22)!important;
+}
+html body:not(.login-mode) .main:is(.page-sinav,.page-gorev,.page-odev) .bar button{
+ min-height:48px!important;padding:0 16px!important;border-radius:15px!important;white-space:nowrap!important;
+}
+html body:not(.login-mode) .main:is(.page-sinav,.page-gorev,.page-odev)>.m{color:#a9bdd4!important;font-size:13px!important;margin:8px 2px 12px!important}
+html body:not(.login-mode) .main:is(.page-sinav,.page-gorev,.page-odev) .record-item{
+ position:relative!important;display:flex!important;align-items:center!important;gap:12px!important;
+ min-height:70px!important;padding:12px 10px 12px 15px!important;margin:0!important;
+ border:0!important;border-bottom:1px solid rgba(169,199,230,.13)!important;border-radius:0!important;
+ background:transparent!important;box-shadow:none!important;backdrop-filter:none!important;
+ color:#f0f6ff!important;cursor:pointer!important;
+}
+html body:not(.login-mode) .main:is(.page-sinav,.page-gorev,.page-odev) .record-item::before{
+ content:"";display:block;flex:0 0 4px;width:4px;height:38px;border-radius:8px;background:#78b9eb;
+}
+html body:not(.login-mode) .main.page-sinav .record-item::before{background:#a995df}
+html body:not(.login-mode) .main.page-odev .record-item::before{background:#69c7b3}
+html body:not(.login-mode) .main.page-gorev .record-item::before{background:#e5b66d}
+html body:not(.login-mode) .main:is(.page-sinav,.page-gorev,.page-odev) .record-copy{display:flex!important;flex:1 1 auto!important;min-width:0!important;flex-direction:column!important;gap:5px!important}
+html body:not(.login-mode) .main:is(.page-sinav,.page-gorev,.page-odev) .record-copy>b{
+ color:#f2f7ff!important;font-size:16px!important;font-weight:750!important;line-height:1.3!important;
+ overflow-wrap:anywhere!important;
+}
+html body:not(.login-mode) .main:is(.page-sinav,.page-gorev,.page-odev) .record-copy>.record-meta{
+ color:#aebfd3!important;font-size:13px!important;line-height:1.45!important;white-space:normal!important;
+}
+html body:not(.login-mode) .main:is(.page-sinav,.page-gorev,.page-odev) .record-delete{
+ flex:0 0 38px!important;width:38px!important;min-width:38px!important;height:38px!important;min-height:38px!important;
+ border-radius:12px!important;background:rgba(255,255,255,.055)!important;border:1px solid rgba(171,199,229,.15)!important;
+ color:#b8c9dd!important;font-size:20px!important;padding:0!important;
+}
+html body:not(.login-mode) .main:is(.page-sinav,.page-gorev,.page-odev) .record-item:active{background:rgba(120,178,230,.07)!important}
+html body:not(.login-mode) .main:is(.page-sinav,.page-gorev,.page-odev) .empty{color:#aebfd3!important;padding:22px!important}
+
+/* iPhone dock: translucent frosted glass, no opaque light capsule. */
+@media(max-width:700px){
+ html body:not(.login-mode) .side{
+  background:rgba(220,233,249,.075)!important;
+  background-color:rgba(220,233,249,.075)!important;
+  border:1px solid rgba(225,239,255,.22)!important;
+  box-shadow:0 12px 36px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.18)!important;
+  backdrop-filter:blur(34px) saturate(175%)!important;
+  -webkit-backdrop-filter:blur(34px) saturate(175%)!important;
+ }
+ html body:not(.login-mode) .side .nav{background:transparent!important}
+ html body:not(.login-mode) .side .nav button{background:transparent!important}
+ html body:not(.login-mode) .side .nav button.on{
+  background:rgba(105,169,224,.27)!important;border:1px solid rgba(190,222,250,.24)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.16)!important;
+ }
+}
+
+/* Login: one calm card, clear hierarchy, predictable form rhythm. */
+html body.login-mode{
+ min-height:100svh!important;color:#eff5ff!important;
+ background:radial-gradient(ellipse at 50% 0%,rgba(91,139,190,.22),transparent 43%),linear-gradient(155deg,#080e18,#101c2c 58%,#080e18)!important;
+}
+html body.login-mode #app{
+ min-height:100svh!important;display:flex!important;align-items:center!important;justify-content:center!important;
+ padding:calc(env(safe-area-inset-top) + 22px) 18px calc(env(safe-area-inset-bottom) + 22px)!important;
+ overflow-y:auto!important;
+}
+html body.login-mode .login-shell{
+ width:min(100%,460px)!important;min-height:0!important;margin:auto!important;padding:0!important;
+ display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:20px!important;
+ background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;
+}
+html body.login-mode .login-brand{
+ display:flex!important;align-items:center!important;justify-content:center!important;gap:13px!important;
+ width:100%!important;padding:0!important;margin:0!important;background:transparent!important;
+ border:0!important;box-shadow:none!important;text-align:left!important;
+}
+html body.login-mode .login-brand img{
+ width:52px!important;height:52px!important;border-radius:16px!important;box-shadow:0 8px 24px rgba(0,0,0,.28)!important;
+}
+html body.login-mode .login-brand h2{margin:0 0 3px!important;color:#f3f7ff!important;font-size:23px!important;letter-spacing:-.04em!important}
+html body.login-mode .login-brand p{margin:0!important;color:#9fb2c9!important;font-size:12px!important;letter-spacing:.07em!important}
+html body.login-mode .login-card{
+ width:100%!important;padding:clamp(20px,5vw,30px)!important;border-radius:26px!important;
+ border:1px solid rgba(176,207,239,.19)!important;
+ background:linear-gradient(145deg,rgba(22,35,53,.94),rgba(12,21,34,.97))!important;
+ box-shadow:0 24px 72px rgba(0,0,0,.38),inset 0 1px 0 rgba(255,255,255,.06)!important;
+ backdrop-filter:blur(28px)!important;-webkit-backdrop-filter:blur(28px)!important;
+}
+html body.login-mode .login-heading{margin:0 0 20px!important}
+html body.login-mode .login-heading>span{display:block;color:#86bce9!important;font-size:10px!important;font-weight:800!important;letter-spacing:.16em!important;margin-bottom:9px!important}
+html body.login-mode .login-heading h1{margin:0 0 7px!important;color:#f4f8ff!important;font-size:clamp(25px,6vw,30px)!important;line-height:1.15!important;letter-spacing:-.04em!important}
+html body.login-mode .login-heading p{margin:0!important;color:#a9bad0!important;font-size:14px!important;line-height:1.5!important}
+html body.login-mode .login-tabs{display:grid!important;grid-template-columns:1fr 1fr!important;gap:7px!important;padding:5px!important;margin:0 0 18px!important;border-radius:15px!important;background:rgba(2,9,18,.45)!important;border:1px solid rgba(164,196,229,.12)!important}
+html body.login-mode .login-tabs button{
+ width:100%!important;min-height:43px!important;border-radius:11px!important;padding:8px 10px!important;
+ background:transparent!important;border:1px solid transparent!important;color:#b7c8dc!important;font-size:14px!important;font-weight:650!important;
+}
+html body.login-mode .login-tabs button.p{background:linear-gradient(135deg,#78b8e9,#477eae)!important;color:#071522!important;box-shadow:0 5px 16px rgba(68,132,188,.22)!important}
+html body.login-mode .login-fields{display:flex!important;flex-direction:column!important;gap:12px!important}
+html body.login-mode .login-fields label{display:block!important;width:100%!important;margin:0!important;padding:0!important;color:#dce8f6!important;font-size:13px!important;font-weight:650!important}
+html body.login-mode .login-fields input{
+ display:block!important;width:100%!important;min-height:49px!important;margin:7px 0 0!important;padding:12px 14px!important;
+ border-radius:13px!important;border:1px solid rgba(163,197,232,.22)!important;background:rgba(4,12,22,.58)!important;
+ color:#f2f7ff!important;font-size:16px!important;box-shadow:none!important;
+}
+html body.login-mode .login-fields input::placeholder{color:#8095ae!important;opacity:1!important}
+html body.login-mode .login-fields .fb-password{display:flex!important;align-items:center!important;gap:8px!important}
+html body.login-mode .login-fields .fb-password input{flex:1!important;min-width:0!important}
+html body.login-mode .login-fields .fb-password button{flex:0 0 48px!important;width:48px!important;height:49px!important;min-height:49px!important;margin-top:7px!important;border-radius:13px!important;background:rgba(255,255,255,.07)!important;color:#eaf3ff!important}
+html body.login-mode .login-actions{display:grid!important;grid-template-columns:1fr!important;gap:9px!important;margin:20px 0 0!important}
+html body.login-mode .login-actions button{width:100%!important;min-height:49px!important;border-radius:14px!important;font-size:15px!important;font-weight:750!important}
+html body.login-mode .login-actions button.p{background:linear-gradient(135deg,#82c0ef,#4b83b5)!important;color:#071522!important;border:1px solid rgba(204,231,255,.28)!important}
+html body.login-mode .login-actions .login-google{background:rgba(255,255,255,.045)!important;color:#e9f2fd!important;border:1px solid rgba(170,201,233,.2)!important}
+html body.login-mode .login-google span{display:inline-grid;place-items:center;width:22px;height:22px;margin-right:8px;border-radius:50%;background:#fff;color:#4285f4;font-weight:850}
+html body.login-mode .login-message{min-height:0;margin:10px 0 0!important;color:#f2c4a8!important;font-size:13px!important;line-height:1.45!important;overflow-wrap:anywhere}
+html body.login-mode .login-forgot{display:block!important;width:auto!important;min-height:0!important;margin:12px auto 0!important;padding:7px 10px!important;background:transparent!important;border:0!important;color:#9ec9ee!important;font-size:13px!important;text-decoration:underline;text-underline-offset:3px}
+html body.login-mode .login-fields .fb-reg[style*="display: none"]{display:none!important}
+@media(max-width:420px){
+ html body.login-mode #app{padding-left:14px!important;padding-right:14px!important}
+ html body.login-mode .login-card{padding:21px 18px!important;border-radius:22px!important}
+ html body.login-mode .login-brand h2{font-size:21px!important}
+}
