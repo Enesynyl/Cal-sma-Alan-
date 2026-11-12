@@ -120,3 +120,57 @@ dialog::backdrop { background:rgba(2,5,10,.66); backdrop-filter:blur(8px); }
 @media(prefers-reduced-motion:reduce) {
   *,*::before,*::after { scroll-behavior:auto!important; animation-duration:.01ms!important; animation-iteration-count:1!important; transition-duration:.01ms!important; }
 }
+
+/* Responsive application shell and touch-first navigation */
+.shell { display:flex; align-items:flex-start; gap:clamp(12px,1.6vw,22px); min-height:100dvh; }
+.main { min-width:0; flex:1 1 auto; }
+@media (min-width:900px) {
+  .shell { max-width:1480px; margin-inline:auto; }
+  .side { position:sticky; top:14px; flex:0 0 236px; width:236px; min-height:calc(100dvh - 28px); }
+  .main { padding-bottom:36px; }
+}
+@media (min-width:701px) and (max-width:899px) {
+  .side { flex:0 0 76px; width:76px; }
+  .side .wsb { justify-content:center; }
+  .side .wsb .lb,.side .nav .lb { display:none; }
+  .side .nav button { justify-content:center; padding:7px!important; }
+  .side .nav .ib { margin:0; }
+}
+@media (max-width:700px) {
+  .shell { display:block; min-height:100dvh; padding-bottom:calc(82px + env(safe-area-inset-bottom)); }
+  .side {
+    position:fixed!important; z-index:900; left:10px; right:10px; bottom:calc(8px + env(safe-area-inset-bottom)); top:auto!important;
+    width:auto!important; min-height:64px!important; max-height:74px!important; height:64px!important;
+    margin:0!important; padding:6px 8px!important; flex:0 0 auto!important;
+    display:flex!important; flex-direction:row!important; align-items:center!important; gap:6px!important;
+    border-radius:22px!important; background:rgba(13,17,24,.88)!important;
+    border:1px solid rgba(196,211,232,.19)!important; box-shadow:0 14px 42px rgba(0,0,0,.42)!important;
+    backdrop-filter:blur(28px) saturate(150%)!important; -webkit-backdrop-filter:blur(28px) saturate(150%)!important;
+  }
+  :root[data-theme="light"] .side { background:rgba(250,252,255,.90)!important; box-shadow:0 12px 34px rgba(27,47,73,.18)!important; }
+  .side .wsb { display:none!important; }
+  .side .nav,.side .nav.nav2 {
+    display:flex!important; flex:1 1 auto!important; min-width:0; width:auto!important;
+    height:100%; align-items:center; justify-content:flex-start; gap:3px!important;
+    overflow-x:auto; overflow-y:hidden; padding:0!important; margin:0!important;
+    border:0!important; scrollbar-width:none; -webkit-overflow-scrolling:touch;
+  }
+  .side .nav::-webkit-scrollbar,.side .nav.nav2::-webkit-scrollbar { display:none; }
+  .side .nav button,.bgon .side .nav button,.side .nav2 button {
+    position:relative; flex:0 0 48px!important; width:48px!important; min-width:48px!important; height:48px!important; min-height:48px!important;
+    display:flex!important; align-items:center!important; justify-content:center!important; padding:5px!important;
+    border:0!important; border-radius:15px!important; background:transparent!important; box-shadow:none!important;
+  }
+  .side .nav .lb { display:none!important; }
+  .side .nav .ib { width:28px!important; height:28px!important; margin:0!important; display:grid; place-items:center; font-size:19px!important; }
+  .side .nav button.on,.bgon .side .nav button.on { background:var(--ac2)!important; color:var(--tx)!important; }
+  .side .nav button.on::before { left:50%!important; top:-2px!important; bottom:auto!important; width:20px!important; height:3px!important; transform:translateX(-50%); border-radius:0 0 4px 4px!important; }
+  .side .nav button.on .ib { box-shadow:none!important; }
+  .side .nav2 { flex:0 0 auto!important; border-left:1px solid var(--bd)!important; padding-left:4px!important; }
+  .side .nav2 button { flex:0 0 42px!important; width:42px!important; min-width:42px!important; }
+  .side .nav2 .lb { display:none!important; }
+  .main { width:100%; padding:0; }
+  .tabs { position:sticky; top:0; z-index:30; padding:8px 0; margin:0 0 10px; overflow-x:auto; background:color-mix(in srgb,var(--bg) 86%,transparent); backdrop-filter:blur(18px); }
+  .tabs button { flex:0 0 auto; white-space:nowrap; }
+  body.focus-active .side { display:none!important; }
+}
