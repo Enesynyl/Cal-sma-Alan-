@@ -973,3 +973,32 @@ html body:not(.login-mode) .main.page-ayar textarea{
 html body:not(.login-mode) .main.page-ayar .card{
  background:linear-gradient(145deg,rgba(19,32,49,.98),rgba(11,21,35,.99))!important;
 }
+
+
+/* Auth tabs: registration-only controls must never leak into the sign-in view. */
+html body.login-mode .login-fields .fb-reg[hidden],
+html body.login-mode .login-fields label.fb-reg[hidden],
+html body.login-mode .login-fields div.fb-reg[hidden]{
+ display:none!important;visibility:hidden!important;
+}
+html body.login-mode .login-fields .fb-reg:not([hidden]){display:block!important;visibility:visible!important}
+html body.login-mode .login-fields div.fb-reg:not([hidden]){display:block!important}
+html body.login-mode .login-fields .fb-reg[aria-hidden="true"]{display:none!important}
+
+/* Today toolbar and account/profile pill: remove legacy rose/burgundy accents. */
+html body:not(.login-mode) .home-toolbar :is(button,.pill,.chip,.profile,.account,.user,.avatar){
+ color:#edf5ff!important;
+ border-color:rgba(170,202,235,.22)!important;
+ background:linear-gradient(145deg,rgba(26,42,62,.94),rgba(13,25,40,.96))!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 8px 20px rgba(0,0,0,.18)!important;
+}
+html body:not(.login-mode) .home-toolbar :is(button,.pill,.chip,.profile,.account,.user) :is(span,b,strong,i){
+ color:#edf5ff!important;
+}
+html body:not(.login-mode) .home-toolbar :is(.avatar,.user-avatar,.profile-avatar,.account-avatar){
+ color:#eaf3ff!important;background:linear-gradient(145deg,#6d8eaf,#3e5e7d)!important;
+ border:1px solid rgba(207,228,248,.28)!important;box-shadow:0 0 0 3px rgba(123,169,211,.10)!important;
+}
+html body:not(.login-mode) .home-toolbar :is(button,.pill,.chip,.profile,.account,.user):active{
+ transform:scale(.985)!important;
+}
