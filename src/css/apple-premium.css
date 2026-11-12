@@ -24,7 +24,7 @@
   --surface-2:rgba(30,50,75,.035);
   --surface-3:rgba(30,50,75,.065);
   --shadow-premium:0 14px 38px rgba(28,47,72,.09),inset 0 1px rgba(255,255,255,.85);
-  color-scheme:light;
+  color-scheme:light!important;
 }
 html { min-height:100%; background:var(--bg); color-scheme:inherit; scroll-behavior:smooth; }
 body {
