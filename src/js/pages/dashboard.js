@@ -2,9 +2,9 @@
 async function render(){
  const L=await all('ws'),ms=W.mods.filter(k=>AV.ogr.includes(k)&&k!=='ayar'&&k!=='duzen');
  const rs=document.documentElement.style;rs.setProperty('--ac',W.color||'');rs.setProperty('--ac2',W.color?`color-mix(in srgb,${W.color} 16%,var(--sf))`:'');
- const bv=W.bg?.v;document.documentElement.classList.toggle('bgon',!!bv);document.body.style.backgroundImage=bv?(W.bg.t==='img'?`url("${bv}")`:bv):'';
+ const bv=null;document.documentElement.classList.remove('bgon');document.body.style.backgroundImage='none';
  rs.setProperty('--ibr',{c:'50%',r:'10px',s:'3px'}[W.ish||'c']);rs.setProperty('--ibg',W.ibg||'');
- if(bv&&W.bg.dark===undefined){if(W.bg.t==='g')W.bg.dark=bv.includes('#1f1b3a');else lumOf(bv).then(d=>upd({bg:{...W.bg,dark:d}}))}
+ /* Shared premium background: ignore per-workspace wallpaper settings. */
  const dd=bv?W.bg.dark:undefined,tc=dd===undefined?['','','','','']:dd?['#f4f4f1','#d3d3cc','#1c1d1c','#10110f','#ffffff22']:['#1d1d1b','#55544e','#ffffff','#f6f5f1','#00000018'];
  document.documentElement.dataset.workspaceTone=dd===true?'dark':dd===false?'light':'auto';
  ['--tx','--mu','--sf','--bg','--bd'].forEach((k,i)=>rs.setProperty(k,tc[i]));rs.setProperty('color-scheme',dd?'dark':dd===false?'light':'');
