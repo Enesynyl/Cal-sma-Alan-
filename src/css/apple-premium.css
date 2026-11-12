@@ -700,3 +700,36 @@ body:not(.login-mode) a{color:#9dccf4}
  .focus-quote{padding:26px 20px!important;border-radius:22px!important}
  .focus-quote blockquote{font-size:clamp(21px,6vw,28px)!important;line-height:1.42!important}
 }
+
+
+/* CRITICAL READABILITY OVERRIDE — keep every surface and its text in the same contrast system.
+   Deliberately high specificity + !important neutralizes legacy page/theme rules. */
+html body:not(.login-mode) .main :is(.hero,.tile,.card,.sec,.st,.it,.home-plan,.home-calendar,.deadline-tile,.focus-stat,.today-custom-card,.panel,.box,.section,.wz){
+ background:linear-gradient(145deg,rgba(22,36,55,.985),rgba(12,23,38,.99))!important;
+ background-color:#142338!important;
+ color:#f4f8ff!important;
+ border:1px solid rgba(170,204,239,.22)!important;
+ box-shadow:0 14px 38px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.06)!important;
+}
+html body:not(.login-mode) .main :is(.hero,.tile,.card,.sec,.st,.it,.home-plan,.home-calendar,.deadline-tile,.focus-stat,.today-custom-card,.panel,.box,.section,.wz) :is(h1,h2,h3,h4,h5,h6,p,span,div,small,label,strong,b,em,i,a,li,time,summary){
+ color:#edf5ff!important;
+ opacity:1!important;
+ text-shadow:none!important;
+}
+html body:not(.login-mode) .main :is(.hero,.tile,.card,.sec,.st,.it,.home-plan,.home-calendar,.deadline-tile,.focus-stat,.today-custom-card,.panel,.box,.section,.wz) :is(.m,.muted,.hint,.help,.desc,.subtitle,.meta,.empty,small,label){
+ color:#b7c9df!important;
+ opacity:1!important;
+}
+html body:not(.login-mode) .main .tile b{color:#f5f9ff!important;font-weight:800!important}
+html body:not(.login-mode) .main .tile :is(small,i){color:#c3d5e9!important}
+html body:not(.login-mode) .main .hero :is(h1,p,.sum){color:#f4f8ff!important}
+html body:not(.login-mode) .main .home-calendar :is(.home-cal-head,.home-weekdays,.home-day){color:#dceaff!important}
+html body:not(.login-mode) .main .home-calendar .home-day.outside{color:#8fa5bf!important;opacity:.75!important}
+html body:not(.login-mode) .main .home-calendar .home-day.today{background:linear-gradient(135deg,#78b6ed,#3d79ad)!important;color:#071525!important}
+html body:not(.login-mode) .main :is(.it,.sec) :is(button,.p){color:#f4f8ff!important}
+html body:not(.login-mode) .main :is(input,select,textarea){
+ color:#f4f8ff!important;background:#0a1524!important;
+ border-color:rgba(170,204,239,.28)!important;
+}
+html body:not(.login-mode) .main input::placeholder,html body:not(.login-mode) .main textarea::placeholder{color:#9fb4cc!important;opacity:1!important}
+html body:not(.login-mode) .main .hd{color:#b9cce2!important}
