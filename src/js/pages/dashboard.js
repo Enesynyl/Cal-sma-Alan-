@@ -6,6 +6,7 @@ async function render(){
  rs.setProperty('--ibr',{c:'50%',r:'10px',s:'3px'}[W.ish||'c']);rs.setProperty('--ibg',W.ibg||'');
  if(bv&&W.bg.dark===undefined){if(W.bg.t==='g')W.bg.dark=bv.includes('#1f1b3a');else lumOf(bv).then(d=>upd({bg:{...W.bg,dark:d}}))}
  const dd=bv?W.bg.dark:undefined,tc=dd===undefined?['','','','','']:dd?['#f4f4f1','#d3d3cc','#1c1d1c','#10110f','#ffffff22']:['#1d1d1b','#55544e','#ffffff','#f6f5f1','#00000018'];
+ document.documentElement.dataset.workspaceTone=dd===true?'dark':dd===false?'light':'auto';
  ['--tx','--mu','--sf','--bg','--bd'].forEach((k,i)=>rs.setProperty(k,tc[i]));rs.setProperty('color-scheme',dd?'dark':dd===false?'light':'');
  if(!cur.m||(cur.m!=='ayar'&&cur.m!=='duzen'&&cur.m!=='bugun'&&!ms.includes(cur.m)))cur.m='bugun';
  const tabs=M[cur.m]?.[2]||[cur.m];if(!tabs.includes(cur.t))cur.t=tabs[0];
