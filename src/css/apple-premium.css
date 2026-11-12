@@ -438,3 +438,21 @@ body:not(.login-mode) :is(.card,.it,.st,.sec,.hc,.focus-stat,.deadline-tile,.hom
 body:not(.login-mode) :is(.tile,.it,.card,.sec,.st,.focus-stat,.deadline-tile) :is(p,span,small,label,strong,b) {
   text-shadow:none;
 }
+
+/* Animated water timer vessel */
+.focus-timer-card{display:grid;justify-items:center;gap:10px;padding:clamp(20px,4vw,34px)!important}
+.focus-vessel{--water-level:100%;position:relative;isolation:isolate;overflow:hidden;width:clamp(190px,34vw,270px);aspect-ratio:1;margin:18px auto 22px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 32% 22%,rgba(255,255,255,.25),transparent 30%),linear-gradient(145deg,rgba(255,255,255,.16),rgba(255,255,255,.025));border:1px solid rgba(255,255,255,.46);box-shadow:inset 0 0 24px rgba(255,255,255,.14),inset 0 -12px 30px rgba(2,12,24,.15),0 22px 58px rgba(5,18,32,.22),0 0 0 7px rgba(255,255,255,.045);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.focus-liquid{position:absolute;z-index:0;left:-8%;right:-8%;bottom:0;height:var(--water-level);background:linear-gradient(180deg,rgba(107,196,224,.82),rgba(39,124,177,.88) 52%,rgba(22,76,132,.96));transition:height .55s cubic-bezier(.2,.75,.25,1);box-shadow:inset 0 8px 18px rgba(255,255,255,.2)}
+.focus-liquid::before,.focus-liquid::after{content:"";position:absolute;left:-30%;top:-13px;width:160%;height:28px;border-radius:42%;background:rgba(148,222,239,.82);animation:focus-water-wave 5.2s linear infinite}
+.focus-liquid::after{top:-9px;left:-45%;width:170%;height:25px;opacity:.48;animation-duration:7.4s;animation-direction:reverse}
+@keyframes focus-water-wave{from{transform:translateX(-12%) rotate(0deg)}to{transform:translateX(12%) rotate(360deg)}}
+.focus-vessel-gloss{position:absolute;z-index:1;inset:3%;border-radius:50%;pointer-events:none;background:linear-gradient(122deg,rgba(255,255,255,.27),transparent 30% 68%,rgba(255,255,255,.09));box-shadow:inset 8px 8px 18px rgba(255,255,255,.10),inset -8px -8px 20px rgba(4,20,38,.13)}
+.focus-vessel-content{position:relative;z-index:2;display:grid;gap:7px;justify-items:center;padding:12px;text-shadow:0 2px 12px rgba(0,20,40,.25)}
+.focus-vessel-label{font-size:10px;letter-spacing:.22em;font-weight:800;color:rgba(255,255,255,.84)!important}
+.focus-vessel-time{color:#fff!important;font-size:clamp(37px,7vw,52px);font-weight:780;letter-spacing:-.065em;font-variant-numeric:tabular-nums}
+.focus-screen .focus-vessel{width:clamp(230px,42vw,360px);margin:16px auto 24px}
+.focus-screen .focus-vessel-time{font-size:clamp(48px,8vw,68px)}
+.focus-screen .focus-center{display:flex;flex-direction:column;align-items:center}
+.focus-screen .focus-clock{display:none!important}
+@media(max-width:600px){.focus-vessel{width:min(68vw,240px)}.focus-screen .focus-vessel{width:min(74vw,290px)}}
+@media(prefers-reduced-motion:reduce){.focus-liquid::before,.focus-liquid::after{animation:none!important}}
