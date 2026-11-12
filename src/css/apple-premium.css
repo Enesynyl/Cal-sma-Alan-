@@ -1002,3 +1002,38 @@ html body:not(.login-mode) .home-toolbar :is(.avatar,.user-avatar,.profile-avata
 html body:not(.login-mode) .home-toolbar :is(button,.pill,.chip,.profile,.account,.user):active{
  transform:scale(.985)!important;
 }
+
+
+/* Final contrast correction: settings page must use the Midnight Glass text palette,
+   never the saved workspace accent (which may be rose/burgundy). */
+html body:not(.login-mode) .main.page-ayar .card,
+html body:not(.login-mode) .main.page-ayar .card h1,
+html body:not(.login-mode) .main.page-ayar .card h2,
+html body:not(.login-mode) .main.page-ayar .card h3,
+html body:not(.login-mode) .main.page-ayar .card h4,
+html body:not(.login-mode) .main.page-ayar .card label,
+html body:not(.login-mode) .main.page-ayar .card p,
+html body:not(.login-mode) .main.page-ayar .card .m,
+html body:not(.login-mode) .main.page-ayar .card .chk,
+html body:not(.login-mode) .main.page-ayar .card .chk span,
+html body:not(.login-mode) .main.page-ayar .card .chk b {
+ color:#eaf2fc!important;
+}
+html body:not(.login-mode) .main.page-ayar .card input,
+html body:not(.login-mode) .main.page-ayar .card select,
+html body:not(.login-mode) .main.page-ayar .card textarea {
+ color:#edf5ff!important;
+ background:rgba(7,16,29,.82)!important;
+ border-color:rgba(165,195,228,.22)!important;
+}
+html body:not(.login-mode) .main.page-ayar .card input::placeholder {
+ color:#91a6bf!important;opacity:1!important;
+}
+html body:not(.login-mode) .main.page-ayar .card button:not(.p) {
+ color:#eaf2fc!important;
+ background:rgba(32,49,70,.78)!important;
+ border-color:rgba(165,195,228,.22)!important;
+}
+html body:not(.login-mode) .main.page-ayar .card button.p {
+ color:#07182a!important;
+}
