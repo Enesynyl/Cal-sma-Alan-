@@ -1037,3 +1037,58 @@ html body:not(.login-mode) .main.page-ayar .card button:not(.p) {
 html body:not(.login-mode) .main.page-ayar .card button.p {
  color:#07182a!important;
 }
+
+
+/* AUTHENTICATED SETTINGS ROUTE — deliberately independent of body mode classes.
+   The old body:not(.login-mode) guard excluded this page after sign-in. */
+html body .main.page-ayar,
+html body .main.page-ayar *:not(input):not(select):not(textarea):not(option) {
+  color:#edf4ff!important;
+  opacity:1!important;
+}
+html body .main.page-ayar .card,
+html body .main.page-ayar>.card {
+  color:#edf4ff!important;
+  background:linear-gradient(145deg,rgba(20,34,53,.98),rgba(9,19,33,.99))!important;
+  border:1px solid rgba(158,190,224,.23)!important;
+  box-shadow:0 18px 44px rgba(0,0,0,.2)!important;
+}
+html body .main.page-ayar h1,
+html body .main.page-ayar h2,
+html body .main.page-ayar h3,
+html body .main.page-ayar h4,
+html body .main.page-ayar strong,
+html body .main.page-ayar b {
+  color:#f4f8ff!important;
+}
+html body .main.page-ayar p,
+html body .main.page-ayar .m,
+html body .main.page-ayar small,
+html body .main.page-ayar label,
+html body .main.page-ayar .chk,
+html body .main.page-ayar .chk span {
+  color:#bdcde0!important;
+}
+html body .main.page-ayar input:not([type=checkbox]):not([type=color]),
+html body .main.page-ayar select,
+html body .main.page-ayar textarea {
+  color:#f4f8ff!important;
+  -webkit-text-fill-color:#f4f8ff!important;
+  background:#091523!important;
+  border:1px solid rgba(160,195,232,.28)!important;
+}
+html body .main.page-ayar input::placeholder,
+html body .main.page-ayar textarea::placeholder {
+  color:#8fa5bf!important;
+  -webkit-text-fill-color:#8fa5bf!important;
+  opacity:1!important;
+}
+html body .main.page-ayar button {
+  color:#edf5ff!important;
+  background:rgba(35,53,75,.9)!important;
+  border:1px solid rgba(160,195,232,.25)!important;
+}
+html body .main.page-ayar button.p {
+  color:#071525!important;
+  background:linear-gradient(135deg,#82c0ef,#4b83b5)!important;
+}
