@@ -4,7 +4,7 @@ let db,W=null,cur={m:null,t:null,wk:mon(new Date())},WZ={},CF=null;
 function mon(d){d=new Date(d);d.setDate(d.getDate()-(d.getDay()+6)%7);d.setHours(0,0,0,0);return d}
 const iso=d=>{d=new Date(d);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
 /* ---- IndexedDB ---- */
-const openDB=()=>new Promise((a,b)=>{const r=indexedDB.open('calisma-alani',1);r.onupgradeneeded=()=>{const d=r.result;d.createObjectStore('ws',{keyPath:'id'});d.createObjectStore('rec',{keyPath:'id'}).createIndex('ws','ws');d.createObjectStore('meta',{keyPath:'k'})};r.onsuccess=()=>a(r.result);r.onerror=()=>b(r.error)});
+const openDB=()=>new Promise((a,b)=>{let settled=false;const finish=(fn,v)=>{if(settled)return;settled=true;clearTimeout(timer);fn(v)};window.__startupStage='IndexedDB bağlantısı açılıyor';let r;try{if(!('indexedDB'in window))throw new Error('Bu tarayıcı IndexedDB desteği sunmuyor');r=indexedDB.open('calisma-alani',1)}catch(x){finish(b,x);return}const timer=setTimeout(()=>finish(b,new Error('IndexedDB isteği 8 saniyede yanıt vermedi. Başka bir sekme veritabanını kilitlemiş olabilir.')),8000);r.onupgradeneeded=()=>{try{const d=r.result;if(!d.objectStoreNames.contains('ws'))d.createObjectStore('ws',{keyPath:'id'});if(!d.objectStoreNames.contains('rec'))d.createObjectStore('rec',{keyPath:'id'}).createIndex('ws','ws');if(!d.objectStoreNames.contains('meta'))d.createObjectStore('meta',{keyPath:'k'})}catch(x){finish(b,x)}};r.onblocked=()=>finish(b,new Error('IndexedDB yükseltmesi engellendi. Aynı siteyi açık tutan diğer sekmeleri kapatıp yeniden yükleyin.'));r.onsuccess=()=>{r.result.onversionchange=()=>r.result.close();finish(a,r.result)};r.onerror=()=>finish(b,r.error||new Error('IndexedDB açılamadı'))});
 const P=r=>new Promise((a,b)=>{r.onsuccess=()=>a(r.result);r.onerror=()=>b(r.error)});
 const tx=(s,m='readonly')=>db.transaction(s,m).objectStore(s);
 const all=s=>P(tx(s).getAll()),put=(s,v)=>{fbDirty(s,s==='meta'?v.k:v.id,'put');return P(tx(s,'readwrite').put(v))},del=(s,k)=>{fbDirty(s,k,'del');return P(tx(s,'readwrite').delete(k))};
@@ -30,15 +30,22 @@ const sub=(t,r)=>[...T[t].f.slice(1).filter(x=>x[2]!=='area'&&r[x[0]]).slice(0,3
 /* ---- Başlangıç ---- */
 async function init(){
  try{
+  window.__startupStage='Yerel veritabanı açılıyor';
   db=await openDB();
+  window.__startupStage='Depolama izni kontrol ediliyor';
   try{await navigator.storage?.persist?.()}catch(storageError){}
+  window.__startupStage='Görünüm ayarları okunuyor';
   const th=await P(tx('meta').get('theme'));
   if(th?.v)document.documentElement.dataset.theme=th.v;
+  window.__startupStage='Güvenlik ayarları okunuyor';
   const pn=await P(tx('meta').get('pin'));
   if(pn){lock(pn.v);window.appLocalReadyDone?.();return}
+  window.__startupStage='Çalışma alanı hazırlanıyor';
   await boot();
+  window.__startupStage='Hazır';
   window.appLocalReadyDone?.();
  }catch(x){
+  window.__startupStage='Hata: '+String(x?.message||x);
   console.error('Uygulama başlatılamadı:',x);
   const loader=$('startup-loader');
   if(loader){
