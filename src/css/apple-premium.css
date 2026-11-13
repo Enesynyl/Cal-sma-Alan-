@@ -1179,3 +1179,64 @@ body{background-image:radial-gradient(ellipse at 16% 0%,rgba(66,112,163,.23),tra
 #app :is(input,textarea)::placeholder{color:#8195ad!important;-webkit-text-fill-color:#8195ad!important;opacity:1!important}
 #app button:not(.p){color:#eaf2fc!important}
 #app button.p,#app .home-add,#app .home-day.today{background:linear-gradient(135deg,#82c0ef,#4b83b5)!important;border-color:#82c0ef!important;color:#071525!important;-webkit-text-fill-color:#071525!important}
+
+/* Midnight Glass — unified dark surfaces and readable text across every module.
+   This intentionally replaces legacy cream/paper card overrides without changing layout. */
+:root,:root[data-theme="light"],:root[data-theme="dark"]{
+  color-scheme:dark!important;
+  --bg:#080d16!important;
+  --sf:#111b2a!important;
+  --tx:#edf4fc!important;
+  --mu:#a5b4c8!important;
+  --ac:#83b8e8!important;
+  --ac2:rgba(112,164,214,.16)!important;
+  --bd:rgba(177,202,231,.20)!important;
+  --line:rgba(177,202,231,.20)!important;
+}
+#app :is(.it,.card,.st,.sec,.tile,.deadline-tile,.cd,.home-plan,.home-calendar,
+.today-custom-card,.focus-stat,.panel,.box,.modal,.sheet,.section,.wz,
+.fld,.dnb,.pgc,dialog,.home-left .sec .it){
+  color:#edf4fc!important;
+  -webkit-text-fill-color:#edf4fc!important;
+  background:linear-gradient(145deg,rgba(25,39,57,.98),rgba(12,21,34,.99))!important;
+  border:1px solid rgba(177,202,231,.22)!important;
+  box-shadow:0 12px 30px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.045)!important;
+}
+#app :is(.it,.card,.st,.sec,.tile,.deadline-tile,.cd,.home-plan,.home-calendar,
+.today-custom-card,.focus-stat,.panel,.box,.modal,.sheet,.section,.wz,
+.fld,.dnb,dialog) :is(h1,h2,h3,h4,h5,h6,b,strong,.title,.name,.task-title,.subject){
+  color:#f4f7fc!important;
+  -webkit-text-fill-color:#f4f7fc!important;
+  opacity:1!important;
+}
+#app :is(.it,.card,.st,.sec,.tile,.deadline-tile,.cd,.home-plan,.home-calendar,
+.today-custom-card,.focus-stat,.panel,.box,.modal,.sheet,.section,.wz,
+.fld,.dnb,dialog) :is(p,small,span,label,.m,.hd,.meta,.sub,.desc,.hint,.help){
+  color:#b9c8da!important;
+  -webkit-text-fill-color:#b9c8da!important;
+  opacity:1!important;
+}
+#app :is(input,select,textarea){
+  color:#edf4fc!important;
+  -webkit-text-fill-color:#edf4fc!important;
+  background:#091523!important;
+  border-color:rgba(177,202,231,.28)!important;
+}
+#app :is(input,textarea)::placeholder{
+  color:#8195ad!important;
+  -webkit-text-fill-color:#8195ad!important;
+  opacity:1!important;
+}
+#app .home-plan-row,#app .home-left .sec .it{
+  background:rgba(28,44,64,.98)!important;
+  border-color:rgba(177,202,231,.18)!important;
+}
+#app :is(.home-plan-head>b,.home-cal-head>b,.home-weekdays){color:#edf4fc!important}
+#app .home-plan-icon{background:rgba(131,184,232,.16)!important;color:#b9d7f5!important}
+#app .nav button.on,#app .tabs button.on,#app .home-add,#app .home-day.today,
+#app button.p{
+  background:linear-gradient(135deg,#82c0ef,#4b83b5)!important;
+  border-color:#82c0ef!important;
+  color:#071525!important;
+  -webkit-text-fill-color:#071525!important;
+}
