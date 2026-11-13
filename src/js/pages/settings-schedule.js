@@ -25,8 +25,22 @@ async function ay(){
  const m=cur.mo||(cur.mo=new Date(new Date().getFullYear(),new Date().getMonth(),1)),s=mon(m),cs=[...Array(42)].map((_,i)=>{const d=new Date(s);d.setDate(s.getDate()+i);return d});
  return `<div class="bar"><button onclick="mo(-1)">‹</button><b>${m.toLocaleDateString('tr-TR',{month:'long',year:'numeric'})}</b><button onclick="mo(1)">›</button></div><p class="m">Görev, ödev, sınav ve etkinlikler birlikte gösterilir.</p><div class="cal">${['Pzt','Sal','Çar','Per','Cum','Cmt','Paz'].map(x=>`<i>${x}</i>`).join('')}${cs.map(d=>{const k=iso(d),v=ev[k]||[];return `<div class="${d.getMonth()!==m.getMonth()?'o':''}${k===iso(new Date())?' td':''}"><b>${d.getDate()}</b>${v.slice(0,3).map(x=>`<span>${e(x)}</span>`).join('')}${v.length>3?`<span>+${v.length-3}</span>`:''}</div>`}).join('')}</div>`}
 const mo=n=>{cur.mo=new Date(cur.mo.getFullYear(),cur.mo.getMonth()+n,1);render()};
-async function nxt(r){if(!r.tekrar||!r.son)return;const t=iso(new Date()),d=new Date((r.son<t?t:r.son)+'T00:00');if(r.tekrar==='Her gün')d.setDate(d.getDate()+1);else if(r.tekrar==='Her hafta')d.setDate(d.getDate()+7);else d.setMonth(d.getMonth()+1);await put('rec',{...r,id:uid(),son:iso(d),durum:'Bekliyor'})}
-async function done(id){const r=await P(tx('rec').get(id));r.durum='Tamamlandı';await put('rec',r);await nxt(r);render()}
+async function nxt(r){
+ if(!r.tekrar||!r.son)return;
+ const d=new Date(r.son+'T12:00:00');
+ if(r.tekrar==='Her gün')d.setDate(d.getDate()+1);
+ else if(r.tekrar==='Hafta içi'){do{d.setDate(d.getDate()+1)}while(d.getDay()===0||d.getDay()===6)}
+ else if(r.tekrar==='Hafta sonu'){do{d.setDate(d.getDate()+1)}while(d.getDay()!==0&&d.getDay()!==6)}
+ else if(r.tekrar==='Her hafta')d.setDate(d.getDate()+7);
+ else if(r.tekrar==='Her ay')d.setMonth(d.getMonth()+1);
+ else return;
+ await put('rec',{...r,id:uid(),son:iso(d),durum:'Bekliyor',ts:Date.now()});
+}
+async function done(id){
+ const r=await P(tx('rec').get(id));if(!r)return;
+ r.durum='Tamamlandı';r.completedAt=taskToday();r.completedTime=new Date().toISOString();
+ await put('rec',r);await nxt(r);render();
+}
 
 
 /* ---- Midnight Tasks: task center, history, quick actions and progress ---- */
