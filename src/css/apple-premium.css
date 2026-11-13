@@ -1132,3 +1132,38 @@ body:not(.login-mode) .main :is(.it,.card,.st,.sec,.tile,.deadline-tile,.cd) :is
 }
 body:not(.login-mode) .main .sec .it{background:linear-gradient(145deg,rgba(28,44,64,.98),rgba(14,25,40,.99))!important}
 body:not(.login-mode) .main :is(.it,.card,.st,.sec,.tile,.deadline-tile,.cd) :is(a,[role="button"]){color:#c7def7!important}
+
+/* FINAL SOURCE-OF-TRUTH PALETTE — legacy cream, beige, rose and mocha surfaces are retired. */
+:root,:root[data-theme="light"],:root[data-theme="dark"]{
+ color-scheme:dark!important;
+ --bg:#080d16!important;--sf:#111b2a!important;--tx:#edf4fc!important;
+ --mu:#a5b4c8!important;--ac:#83b8e8!important;--ac2:rgba(112,164,214,.16)!important;
+ --bd:rgba(177,202,231,.20)!important;--line:rgba(177,202,231,.20)!important;
+ --glass:rgba(17,27,42,.94)!important;--glass-strong:rgba(12,21,34,.98)!important;
+}
+html,body,body:not(.login-mode){background-color:#080d16!important;color:#edf4fc!important}
+body:not(.login-mode) :is(.card,.sec,.st,.it,.tile,.deadline-tile,.home-plan,.home-calendar,.today-custom-card,.focus-stat,.panel,.box,.modal,.sheet,.section,.wz,.cd,.cal div,dialog){
+ color:#edf4fc!important;
+ -webkit-text-fill-color:#edf4fc;
+ background:linear-gradient(145deg,rgba(25,39,57,.98),rgba(12,21,34,.99))!important;
+ border:1px solid rgba(177,202,231,.22)!important;
+ box-shadow:0 12px 30px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.045)!important;
+}
+body:not(.login-mode) :is(.card,.sec,.st,.it,.tile,.deadline-tile,.home-plan,.home-calendar,.today-custom-card,.focus-stat,.panel,.box,.modal,.sheet,.section,.wz,.cd,.cal div,dialog) :is(h1,h2,h3,h4,h5,h6,b,strong,.title,.name,.task-title,.subject){
+ color:#f4f7fc!important;-webkit-text-fill-color:#f4f7fc!important;opacity:1!important;
+}
+body:not(.login-mode) :is(.card,.sec,.st,.it,.tile,.deadline-tile,.home-plan,.home-calendar,.today-custom-card,.focus-stat,.panel,.box,.modal,.sheet,.section,.wz,.cd,.cal div,dialog) :is(p,small,span,label,.m,.hd,.meta,.sub,.desc,.hint,.help){
+ color:#b9c8da!important;-webkit-text-fill-color:#b9c8da!important;opacity:1!important;
+}
+body:not(.login-mode) :is(.card,.sec,.st,.it,.tile,.deadline-tile,.home-plan,.home-calendar,.today-custom-card,.focus-stat,.panel,.box,.modal,.sheet,.section,.wz,.cd) :is(input,select,textarea){
+ color:#edf4fc!important;-webkit-text-fill-color:#edf4fc!important;background:#091523!important;border-color:rgba(177,202,231,.28)!important;
+}
+body:not(.login-mode) :is(button,.home-add,.home-day.today,.nav button.on,.tabs button.on){
+ color:#edf4fc!important;
+}
+body:not(.login-mode) :is(.nav button.on,.tabs button.on,.home-add,.home-day.today,button.p){
+ background:linear-gradient(135deg,#82c0ef,#4b83b5)!important;border-color:#82c0ef!important;color:#071525!important;-webkit-text-fill-color:#071525!important;
+}
+body:not(.login-mode) .home-plan-row,body:not(.login-mode) .home-left .sec .it{background:rgba(28,44,64,.98)!important;border-color:rgba(177,202,231,.18)!important}
+body:not(.login-mode) .home-plan-head>b,body:not(.login-mode) .home-cal-head>b{color:#edf4fc!important}
+body:not(.login-mode) input::placeholder,body:not(.login-mode) textarea::placeholder{color:#8195ad!important;-webkit-text-fill-color:#8195ad!important}
