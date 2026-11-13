@@ -66,7 +66,7 @@ async function taskCenter(){
   return `<article class="task-card ${late?'is-overdue':''} ${r.durum==='Tamamlandı'?'is-complete':''}">
    <button class="task-check ${r.durum==='Tamamlandı'?'checked':''}" aria-label="${r.durum==='Tamamlandı'?'Tamamlanmadı olarak işaretle':'Görevi tamamla'}" onclick="${r.durum==='Tamamlandı'?'taskReopen':'taskComplete'}('${r.id}')">${r.durum==='Tamamlandı'?'✓':''}</button>
    <div class="task-card-main"><b>${e(ttl('gorev',r))}</b><small>${e(meta)}</small>${r.not?`<p>${e(r.not)}</p>`:''}
-    <div class="task-card-actions">${r.durum==='Tamamlandı'?'<span class="task-completed-label">✓ Tamamlandı</span>':`<button onclick="taskSnooze('${r.id}',1)">Yarına ertele</button><button onclick="taskEdit('${r.id}')">Düzenle</button>`}${r.durum==='Tamamlandı'?'<button onclick="taskEdit(\''+r.id+'\')">Detay</button>':''}</div>
+    <div class="task-card-actions">${r.durum==='Tamamlandı'?'<span class="task-completed-label">✓ Tamamlandı</span>':`<button onclick="taskSnooze('${r.id}',1)">Yarına ertele</button><button onclick="taskEdit('${r.id}')">Düzenle</button>`}${r.durum==='Tamamlandı'?`<button onclick="taskEdit('${r.id}')">Detay</button>`:''}</div>
    </div>
    <span class="task-priority p-${taskPriority(r)==='Yüksek'?'high':taskPriority(r)==='Düşük'?'low':'medium'}">${taskPriority(r)}</span>
   </article>`;
@@ -91,7 +91,7 @@ function taskEditForm(r){
  <div class="task-form-grid"><label>Öncelik<select id="taskPriority">${['Düşük','Orta','Yüksek'].map(v=>`<option ${(x.oncelik||'Orta')===v?'selected':''}>${v}</option>`).join('')}</select></label><label>Tekrar<select id="taskRepeat">${rep.map(v=>`<option ${(x.tekrar||'Yok')===v?'selected':''}>${v}</option>`).join('')}</select></label></div>
  <label>Not / açıklama<textarea id="taskNote" rows="3" maxlength="1000" placeholder="Bu görevle ilgili ayrıntılar…">${e(x.not||'')}</textarea></label>
  <div class="row"><button onclick="dlg()">Vazgeç</button><button class="p" onclick="taskSave('${x.id||''}')">Kaydet</button></div>
- ${r?'<div class="task-delete-row"><button onclick="taskDelete(\''+r.id+'\')">Görevi sil</button></div>':''}</div>`);
+ ${r?`<div class="task-delete-row"><button onclick="taskDelete('${r.id}')">Görevi sil</button></div>`:''}</div>`);
 }
 async function taskSave(id){
  const ad=$('taskName')?.value.trim();if(!ad){toast('Görev adını yazmalısın');$('taskName')?.focus();return}
