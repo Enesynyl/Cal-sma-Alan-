@@ -14,4 +14,4 @@ await transform(appSource,{loader:'js',target:'es2020'}); // fail the build on i
 await writeFile('dist/app.js',appSource);
 await writeFile('dist/app.css',css.join('\n'));
 await build({entryPoints:['src/js/native-spotify.js'],outfile:'dist/native-spotify.js',bundle:true,format:'iife',platform:'browser',target:'es2020'});
-for(const f of ['logo.svg','painterly-paper.svg','painterly-face.svg','site.webmanifest','src/data/uni-programs.json'])await cp(f,path.join('dist',path.basename(f)));
+for(const f of ['logo.svg','site.webmanifest','src/data/uni-programs.json'])await cp(f,path.join('dist',path.basename(f)));
