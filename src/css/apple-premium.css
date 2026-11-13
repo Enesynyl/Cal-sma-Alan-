@@ -1167,3 +1167,15 @@ body:not(.login-mode) :is(.nav button.on,.tabs button.on,.home-add,.home-day.tod
 body:not(.login-mode) .home-plan-row,body:not(.login-mode) .home-left .sec .it{background:rgba(28,44,64,.98)!important;border-color:rgba(177,202,231,.18)!important}
 body:not(.login-mode) .home-plan-head>b,body:not(.login-mode) .home-cal-head>b{color:#edf4fc!important}
 body:not(.login-mode) input::placeholder,body:not(.login-mode) textarea::placeholder{color:#8195ad!important;-webkit-text-fill-color:#8195ad!important}
+
+/* Unified card palette — applies regardless of stale login/theme classes. */
+:root,:root[data-theme="light"],:root[data-theme="dark"]{color-scheme:dark!important;--bg:#080d16!important;--sf:#111b2a!important;--tx:#edf4fc!important;--mu:#a5b4c8!important;--ac:#83b8e8!important;--ac2:rgba(112,164,214,.16)!important;--bd:rgba(177,202,231,.20)!important;--line:rgba(177,202,231,.20)!important;--glass:rgba(17,27,42,.94)!important;--glass-strong:rgba(12,21,34,.98)!important}
+html,body{background-color:#080d16!important;color:#edf4fc!important;color-scheme:dark!important}
+body{background-image:radial-gradient(ellipse at 16% 0%,rgba(66,112,163,.23),transparent 42%),radial-gradient(ellipse at 92% 28%,rgba(65,87,132,.17),transparent 38%),linear-gradient(155deg,#080d16 0%,#101b2b 52%,#0a111d 100%)!important}
+#app .it,#app .card,#app .st,#app .sec,#app .tile,#app .deadline-tile,#app .cd,#app .home-plan,#app .home-calendar,#app .today-custom-card,#app .focus-stat,#app .wz,#app .panel,#app .box,#app .modal,#app .sheet,#app .section,#app dialog{color:#edf4fc!important;-webkit-text-fill-color:#edf4fc!important;background:linear-gradient(145deg,rgba(25,39,57,.98),rgba(12,21,34,.99))!important;border:1px solid rgba(177,202,231,.22)!important;box-shadow:0 12px 30px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.045)!important}
+#app .it :is(b,strong,.title,.name,.task-title,.subject),#app .card :is(h1,h2,h3,h4,b,strong),#app .st :is(b,strong),#app .sec :is(h1,h2,h3,h4,b,strong),#app .tile :is(b,strong){color:#f4f7fc!important;-webkit-text-fill-color:#f4f7fc!important;opacity:1!important}
+#app .it :is(small,p,span,.m,.meta,.desc),#app .card :is(p,small,.m,.meta,.desc,label),#app .st :is(small,span),#app .sec :is(p,small,.m,label){color:#b9c8da!important;-webkit-text-fill-color:#b9c8da!important;opacity:1!important}
+#app :is(input,select,textarea){color:#edf4fc!important;-webkit-text-fill-color:#edf4fc!important;background:#091523!important;border-color:rgba(177,202,231,.28)!important}
+#app :is(input,textarea)::placeholder{color:#8195ad!important;-webkit-text-fill-color:#8195ad!important;opacity:1!important}
+#app button:not(.p){color:#eaf2fc!important}
+#app button.p,#app .home-add,#app .home-day.today{background:linear-gradient(135deg,#82c0ef,#4b83b5)!important;border-color:#82c0ef!important;color:#071525!important;-webkit-text-fill-color:#071525!important}
