@@ -1465,3 +1465,94 @@ dialog:has(.task-form) .task-form .task-delete-row{
   color:#071522!important;background:transparent!important;
  }
 }
+
+
+/* Shared mobile form fix for Courses, Exams and every other editor modal.
+   Higher-specificity selectors override legacy pale form controls. */
+html body:not(.login-mode) #app :is(dialog,.modal,.sheet,.wz) {
+ box-sizing:border-box!important;
+ max-width:calc(100vw - 24px)!important;
+ overflow-x:hidden!important;
+}
+html body:not(.login-mode) #app dialog {
+ width:min(94vw,620px)!important;
+ max-height:calc(100dvh - 32px - env(safe-area-inset-top,0px))!important;
+ padding:clamp(14px,3.5vw,24px)!important;
+ overflow-y:auto!important;
+ overscroll-behavior:contain!important;
+}
+html body:not(.login-mode) #app :is(dialog,.modal,.sheet,.wz) *,
+html body:not(.login-mode) #app :is(dialog,.modal,.sheet,.wz) *::before,
+html body:not(.login-mode) #app :is(dialog,.modal,.sheet,.wz) *::after {
+ box-sizing:border-box!important;
+ min-width:0;
+}
+html body:not(.login-mode) #app :is(dialog,.modal,.sheet,.wz) :is(input:not([type=checkbox]):not([type=radio]),select,textarea) {
+ display:block!important;
+ width:100%!important;
+ min-width:0!important;
+ max-width:100%!important;
+ height:auto!important;
+ min-height:48px!important;
+ margin:6px 0 0!important;
+ padding:12px 13px!important;
+ border:1px solid rgba(151,184,220,.32)!important;
+ border-radius:14px!important;
+ background:#0b1726!important;
+ background-color:#0b1726!important;
+ color:#f3f7ff!important;
+ -webkit-text-fill-color:#f3f7ff!important;
+ caret-color:#f3f7ff!important;
+ font:500 16px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif!important;
+ color-scheme:dark!important;
+ box-shadow:inset 0 1px 2px rgba(0,0,0,.2)!important;
+}
+html body:not(.login-mode) #app :is(dialog,.modal,.sheet,.wz) textarea {
+ min-height:100px!important;
+ resize:vertical!important;
+}
+html body:not(.login-mode) #app :is(dialog,.modal,.sheet,.wz) :is(input,textarea)::placeholder {
+ color:#91a6c0!important;
+ -webkit-text-fill-color:#91a6c0!important;
+ opacity:1!important;
+}
+html body:not(.login-mode) #app :is(dialog,.modal,.sheet,.wz) label {
+ display:block!important;
+ max-width:100%!important;
+ color:#c7d6e8!important;
+ -webkit-text-fill-color:#c7d6e8!important;
+ line-height:1.45!important;
+ overflow-wrap:anywhere!important;
+}
+html body:not(.login-mode) #app :is(dialog,.modal,.sheet,.wz) :is(h1,h2,h3,h4,p,small,strong,b,span) {
+ color:#edf4fc;
+}
+html body:not(.login-mode) #app :is(dialog,.modal,.sheet,.wz) :is(.row,.form-row,.grid,.form-grid) {
+ min-width:0!important;
+ max-width:100%!important;
+}
+html body:not(.login-mode) #app :is(dialog,.modal,.sheet,.wz) input[type="date"],
+html body:not(.login-mode) #app :is(dialog,.modal,.sheet,.wz) input[type="time"],
+html body:not(.login-mode) #app :is(dialog,.modal,.sheet,.wz) input[type="datetime-local"] {
+ -webkit-appearance:none!important;
+ appearance:none!important;
+ min-width:0!important;
+ max-width:100%!important;
+ width:100%!important;
+}
+html body:not(.login-mode) #app :is(dialog,.modal,.sheet,.wz) select {
+ -webkit-appearance:menulist!important;
+ appearance:auto!important;
+}
+@media(max-width:480px){
+ html body:not(.login-mode) #app dialog {
+  width:calc(100vw - 24px)!important;
+  max-width:calc(100vw - 24px)!important;
+  padding:14px!important;
+  border-radius:21px!important;
+ }
+ html body:not(.login-mode) #app :is(dialog,.modal,.sheet,.wz) :is(input:not([type=checkbox]):not([type=radio]),select,textarea) {
+  padding:11px 10px!important;
+  font-size:16px!important;
+ }
+}
