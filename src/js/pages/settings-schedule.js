@@ -83,11 +83,6 @@ async function taskCenter(){
   <div class="task-list">${cards||`<div class="task-empty"><span>${tab==='done'?'✦':'☀️'}</span><b>${tab==='done'?'Henüz tamamlanan görev yok.':tab==='overdue'?'Geciken görevin yok.':'Burada şimdilik görev yok.'}</b><small>${tab==='today'?'Yeni bir görev ekleyerek başlayabilirsin.':'Görevlerin geldikçe burada görünecek.'}</small>${tab==='today'?'<button class="p" onclick="taskEdit()">＋ İlk görevini ekle</button>':''}</div>`}</div>
  </section>`;
 }
-function taskEdit(id){
- const old=id?null:null;
- if(id){P(tx('rec').get(id)).then(r=>taskEditForm(r));return}
- taskEditForm(null);
-}
 function taskEditForm(r){
  const x=r||{},rep=['Yok','Her gün','Hafta içi','Hafta sonu','Her hafta','Her ay'];
  dlg(`<div class="task-form"><div class="task-form-head"><div><span class="task-eyebrow">GÖREV DETAYI</span><h2>${r?'Görevi düzenle':'Yeni görev oluştur'}</h2></div><button onclick="dlg()">✕</button></div>
