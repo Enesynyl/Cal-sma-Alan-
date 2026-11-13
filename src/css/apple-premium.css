@@ -1105,3 +1105,30 @@ body .main.page-ayar,body .main.page-ayar *:not(input):not(select):not(textarea)
 body .main.page-ayar .card{background:linear-gradient(145deg,rgba(20,34,53,.98),rgba(9,19,33,.99))!important;border:1px solid rgba(158,190,224,.23)!important}
 body .main.page-ayar :is(.m,small,p,label){color:#b9cbe0!important}
 body .main.page-ayar :is(input,select,textarea){color:#edf4fc!important;background:#091523!important;border-color:rgba(160,195,232,.28)!important}
+
+/* Mobile readability repair — prevent legacy pale cards with near-white text. */
+body:not(.login-mode) .main :is(.it,.card,.st,.sec,.tile,.deadline-tile,.cd,.home-plan,.home-calendar,.today-custom-card,.focus-stat,.wz){
+  color:#edf4fc!important;
+  background:linear-gradient(145deg,rgba(25,39,57,.98),rgba(12,21,34,.99))!important;
+  border:1px solid rgba(177,202,231,.22)!important;
+  box-shadow:0 12px 30px rgba(0,0,0,.20),inset 0 1px rgba(255,255,255,.045)!important;
+}
+body:not(.login-mode) .main :is(.it,.card,.st,.sec,.tile,.deadline-tile,.cd,.home-plan,.home-calendar,.today-custom-card,.focus-stat,.wz) :is(h1,h2,h3,h4,b,strong,.title,.name){
+  color:#f4f7fc!important;
+  opacity:1!important;
+}
+body:not(.login-mode) .main :is(.it,.card,.st,.sec,.tile,.deadline-tile,.cd,.home-plan,.home-calendar,.today-custom-card,.focus-stat,.wz) :is(p,small,span,label,.m,.hd,.meta,.sub,.desc){
+  color:#b9c8da!important;
+  opacity:1!important;
+}
+body:not(.login-mode) .main .it :is(button,.x),
+body:not(.login-mode) .main .card :is(button,.x){
+  color:#eaf2fc!important;
+  background:rgba(92,125,164,.20)!important;
+  border:1px solid rgba(177,202,231,.24)!important;
+}
+body:not(.login-mode) .main :is(.it,.card,.st,.sec,.tile,.deadline-tile,.cd) :is(input,select,textarea){
+  color:#edf4fc!important;background:#091523!important;border-color:rgba(177,202,231,.28)!important;
+}
+body:not(.login-mode) .main .sec .it{background:linear-gradient(145deg,rgba(28,44,64,.98),rgba(14,25,40,.99))!important}
+body:not(.login-mode) .main :is(.it,.card,.st,.sec,.tile,.deadline-tile,.cd) :is(a,[role="button"]){color:#c7def7!important}
