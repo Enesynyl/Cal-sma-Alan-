@@ -27,3 +27,71 @@ async function ay(){
 const mo=n=>{cur.mo=new Date(cur.mo.getFullYear(),cur.mo.getMonth()+n,1);render()};
 async function nxt(r){if(!r.tekrar||!r.son)return;const t=iso(new Date()),d=new Date((r.son<t?t:r.son)+'T00:00');if(r.tekrar==='Her gün')d.setDate(d.getDate()+1);else if(r.tekrar==='Her hafta')d.setDate(d.getDate()+7);else d.setMonth(d.getMonth()+1);await put('rec',{...r,id:uid(),son:iso(d),durum:'Bekliyor'})}
 async function done(id){const r=await P(tx('rec').get(id));r.durum='Tamamlandı';await put('rec',r);await nxt(r);render()}
+
+
+/* ---- Midnight Tasks: task center, history, quick actions and progress ---- */
+const taskToday=()=>iso(new Date());
+const taskDateLabel=v=>{if(!v)return 'Tarih belirlenmedi';const d=new Date(v+'T12:00:00');return d.toLocaleDateString('tr-TR',{day:'numeric',month:'short',year:'numeric'})};
+const taskOpen=r=>r.durum!=='Tamamlandı'&&r.durum!=='İptal edildi';
+const taskPriority=r=>r.oncelik||'Orta';
+async function taskCenter(){
+ const allTasks=(await recs(W.id,'gorev')).sort((a,b)=>((a.son||'9999')+(a.saat||'')).localeCompare((b.son||'9999')+(b.saat||'')));
+ const today=taskToday(),active=allTasks.filter(taskOpen),completed=allTasks.filter(r=>r.durum==='Tamamlandı');
+ const overdue=active.filter(r=>r.son&&r.son<today),dueToday=active.filter(r=>!r.son||r.son===today),upcoming=active.filter(r=>r.son>today),repeating=active.filter(r=>r.tekrar);
+ const weekStart=new Date();weekStart.setDate(weekStart.getDate()-6);weekStart.setHours(0,0,0,0);
+ const weekDone=completed.filter(r=>r.completedAt&&new Date(r.completedAt+'T12:00:00')>=weekStart).length;
+ const pct=active.length+completed.length?Math.round(completed.length/(active.length+completed.length)*100):0;
+ const tabs=[['today','Bugün',dueToday.length],['upcoming','Yaklaşan',upcoming.length],['overdue','Geciken',overdue.length],['repeat','Tekrarlanan',repeating.length],['done','Tamamlanan',completed.length]];
+ if(!cur.taskTab)cur.taskTab='today';
+ const tab=cur.taskTab;
+ let rows=tab==='today'?dueToday:tab==='upcoming'?upcoming:tab==='overdue'?overdue:tab==='repeat'?repeating:completed;
+ if(tab==='done')rows=rows.sort((a,b)=>(b.completedAt||'').localeCompare(a.completedAt||''));
+ const cards=rows.map(r=>{
+  const late=taskOpen(r)&&r.son&&r.son<today;
+  const meta=[r.son?taskDateLabel(r.son):'Tarih yok',r.saat||'',taskPriority(r)+' öncelik',r.tekrar?'↻ '+r.tekrar:''].filter(Boolean).join(' · ');
+  return `<article class="task-card ${late?'is-overdue':''} ${r.durum==='Tamamlandı'?'is-complete':''}">
+   <button class="task-check ${r.durum==='Tamamlandı'?'checked':''}" aria-label="${r.durum==='Tamamlandı'?'Tamamlanmadı olarak işaretle':'Görevi tamamla'}" onclick="${r.durum==='Tamamlandı'?'taskReopen':'taskComplete'}('${r.id}')">${r.durum==='Tamamlandı'?'✓':''}</button>
+   <div class="task-card-main"><b>${e(ttl('gorev',r))}</b><small>${e(meta)}</small>${r.not?`<p>${e(r.not)}</p>`:''}
+    <div class="task-card-actions">${r.durum==='Tamamlandı'?'<span class="task-completed-label">✓ Tamamlandı</span>':`<button onclick="taskSnooze('${r.id}',1)">Yarına ertele</button><button onclick="taskEdit('${r.id}')">Düzenle</button>`}${r.durum==='Tamamlandı'?'<button onclick="taskEdit(\''+r.id+'\')">Detay</button>':''}</div>
+   </div>
+   <span class="task-priority p-${taskPriority(r)==='Yüksek'?'high':taskPriority(r)==='Düşük'?'low':'medium'}">${taskPriority(r)}</span>
+  </article>`;
+ }).join('');
+ const title=({today:'Bugünkü görevlerin',upcoming:'Yaklaşan görevlerin',overdue:'Geciken görevlerin',repeat:'Tekrarlanan görevlerin',done:'Tamamlanan görev arşivi'})[tab];
+ return `<section class="task-center">
+  <header class="task-heading"><div><span class="task-eyebrow">MIDNIGHT TASKS</span><h1>Görev Merkezi</h1><p class="m">Planla, tamamla ve ilerlemeni takip et.</p></div><button class="p task-add" onclick="taskEdit()">＋ Görev ekle</button></header>
+  <div class="task-overview"><div class="task-progress-card"><div class="task-progress-top"><span>Genel ilerleme</span><b>%${pct}</b></div><div class="task-progress-track"><i style="width:${pct}%"></i></div><small>${completed.length} tamamlandı · ${active.length} aktif görev</small></div>
+   <div class="task-stat"><small>Bugün biten</small><b>${completed.filter(r=>r.completedAt===today).length}</b></div>
+   <div class="task-stat"><small>Son 7 gün</small><b>${weekDone}</b></div>
+  </div>
+  <div class="task-tabs">${tabs.map(([id,label,n])=>`<button class="${tab===id?'active':''}" onclick="cur.taskTab='${id}';render()"><span>${label}</span><b>${n}</b></button>`).join('')}</div>
+  <div class="task-list-head"><h2>${title}</h2><span>${rows.length} kayıt</span></div>
+  <div class="task-list">${cards||`<div class="task-empty"><span>${tab==='done'?'✦':'☀️'}</span><b>${tab==='done'?'Henüz tamamlanan görev yok.':tab==='overdue'?'Geciken görevin yok.':'Burada şimdilik görev yok.'}</b><small>${tab==='today'?'Yeni bir görev ekleyerek başlayabilirsin.':'Görevlerin geldikçe burada görünecek.'}</small>${tab==='today'?'<button class="p" onclick="taskEdit()">＋ İlk görevini ekle</button>':''}</div>`}</div>
+ </section>`;
+}
+function taskEdit(id){
+ const old=id?null:null;
+ if(id){P(tx('rec').get(id)).then(r=>taskEditForm(r));return}
+ taskEditForm(null);
+}
+function taskEditForm(r){
+ const x=r||{},rep=['Yok','Her gün','Hafta içi','Hafta sonu','Her hafta','Her ay'];
+ dlg(`<div class="task-form"><div class="task-form-head"><div><span class="task-eyebrow">GÖREV DETAYI</span><h2>${r?'Görevi düzenle':'Yeni görev oluştur'}</h2></div><button onclick="dlg()">✕</button></div>
+ <label>Görev adı<input id="taskName" maxlength="120" value="${e(x.ad||'')}" placeholder="Örn. İngilizce çalış"></label>
+ <div class="task-form-grid"><label>Tarih<input id="taskDate" type="date" value="${e(x.son||taskToday())}"></label><label>Saat<input id="taskTime" type="time" value="${e(x.saat||'')}"></label></div>
+ <div class="task-form-grid"><label>Öncelik<select id="taskPriority">${['Düşük','Orta','Yüksek'].map(v=>`<option ${(x.oncelik||'Orta')===v?'selected':''}>${v}</option>`).join('')}</select></label><label>Tekrar<select id="taskRepeat">${rep.map(v=>`<option ${(x.tekrar||'Yok')===v?'selected':''}>${v}</option>`).join('')}</select></label></div>
+ <label>Not / açıklama<textarea id="taskNote" rows="3" maxlength="1000" placeholder="Bu görevle ilgili ayrıntılar…">${e(x.not||'')}</textarea></label>
+ <div class="row"><button onclick="dlg()">Vazgeç</button><button class="p" onclick="taskSave('${x.id||''}')">Kaydet</button></div>
+ ${r?'<div class="task-delete-row"><button onclick="taskDelete(\''+r.id+'\')">Görevi sil</button></div>':''}</div>`);
+}
+async function taskSave(id){
+ const ad=$('taskName')?.value.trim();if(!ad){toast('Görev adını yazmalısın');$('taskName')?.focus();return}
+ const old=id?await P(tx('rec').get(id)):null,repeat=$('taskRepeat').value;
+ const r={...(old||{}),id:id||uid(),ws:W.id,type:'gorev',ad,son:$('taskDate').value,saat:$('taskTime').value,oncelik:$('taskPriority').value,tekrar:repeat==='Yok'?'':repeat,not:$('taskNote').value.trim(),durum:old?.durum||'Bekliyor',ts:old?.ts||Date.now()};
+ await put('rec',r);dlg();cur.taskTab='today';render();toast(id?'Görev güncellendi':'Görev eklendi');
+}
+async function taskEdit(id){const r=id?await P(tx('rec').get(id)):null;taskEditForm(r)}
+async function taskComplete(id){const r=await P(tx('rec').get(id));if(!r)return;r.durum='Tamamlandı';r.completedAt=taskToday();r.completedTime=new Date().toISOString();await put('rec',r);await nxt(r);render();toast('Görev tamamlandı ✨')}
+async function taskReopen(id){const r=await P(tx('rec').get(id));if(!r)return;r.durum='Bekliyor';delete r.completedAt;delete r.completedTime;await put('rec',r);render();toast('Görev yeniden aktif')}
+async function taskSnooze(id,days){const r=await P(tx('rec').get(id));if(!r)return;const d=new Date((r.son||taskToday())+'T12:00:00');d.setDate(d.getDate()+days);r.son=iso(d);r.durum='Bekliyor';await put('rec',r);render();toast('Görev yarına ertelendi')}
+async function taskDelete(id){if(!confirm('Bu görev kalıcı olarak silinsin mi?'))return;await del('rec',id);dlg();render();toast('Görev silindi')}
