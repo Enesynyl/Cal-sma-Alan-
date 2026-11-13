@@ -66,7 +66,7 @@ async function taskCenter(){
   return `<article class="task-card ${late?'is-overdue':''} ${r.durum==='Tamamlandı'?'is-complete':''}">
    <button class="task-check ${r.durum==='Tamamlandı'?'checked':''}" aria-label="${r.durum==='Tamamlandı'?'Tamamlanmadı olarak işaretle':'Görevi tamamla'}" onclick="${r.durum==='Tamamlandı'?'taskReopen':'taskComplete'}('${r.id}')">${r.durum==='Tamamlandı'?'✓':''}</button>
    <div class="task-card-main"><b>${e(ttl('gorev',r))}</b><small>${e(meta)}</small>${r.not?`<p>${e(r.not)}</p>`:''}
-    <div class="task-card-actions">${r.durum==='Tamamlandı'?'<span class="task-completed-label">✓ Tamamlandı</span>':`<button onclick="taskSnooze('${r.id}',1)">Yarına ertele</button><button onclick="taskEdit('${r.id}')">Düzenle</button>`}${r.durum==='Tamamlandı'?`<button onclick="taskEdit('${r.id}')">Detay</button>`:''}</div>
+    <div class="task-card-actions">${r.durum==='Tamamlandı'?'<span class="task-completed-label">✓ Tamamlandı</span>':`<button onclick="taskSnooze('${r.id}','30m')">30 dk</button><button onclick="taskSnooze('${r.id}','1h')">1 saat</button><button onclick="taskSnooze('${r.id}','tomorrow')">Yarına</button><button onclick="taskEdit('${r.id}')">Düzenle</button>`}${r.durum==='Tamamlandı'?`<button onclick="taskEdit('${r.id}')">Detay</button>`:''}</div>
    </div>
    <span class="task-priority p-${taskPriority(r)==='Yüksek'?'high':taskPriority(r)==='Düşük'?'low':'medium'}">${taskPriority(r)}</span>
   </article>`;
@@ -102,5 +102,14 @@ async function taskSave(id){
 async function taskEdit(id){const r=id?await P(tx('rec').get(id)):null;taskEditForm(r)}
 async function taskComplete(id){const r=await P(tx('rec').get(id));if(!r)return;r.durum='Tamamlandı';r.completedAt=taskToday();r.completedTime=new Date().toISOString();await put('rec',r);await nxt(r);render();toast('Görev tamamlandı ✨')}
 async function taskReopen(id){const r=await P(tx('rec').get(id));if(!r)return;r.durum='Bekliyor';delete r.completedAt;delete r.completedTime;await put('rec',r);render();toast('Görev yeniden aktif')}
-async function taskSnooze(id,days){const r=await P(tx('rec').get(id));if(!r)return;const d=new Date((r.son||taskToday())+'T12:00:00');d.setDate(d.getDate()+days);r.son=iso(d);r.durum='Bekliyor';await put('rec',r);render();toast('Görev yarına ertelendi')}
+async function taskSnooze(id,mode){
+ const r=await P(tx('rec').get(id));if(!r)return;
+ const d=mode==='tomorrow'?new Date((r.son||taskToday())+'T12:00:00'):new Date();
+ if(mode==='30m')d.setMinutes(d.getMinutes()+30);
+ else if(mode==='1h')d.setHours(d.getHours()+1);
+ else d.setDate(d.getDate()+1);
+ r.son=iso(d);
+ if(mode==='30m'||mode==='1h')r.saat=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+ r.durum='Bekliyor';await put('rec',r);render();toast(mode==='tomorrow'?'Görev yarına ertelendi':'Görev ertelendi');
+}
 async function taskDelete(id){if(!confirm('Bu görev kalıcı olarak silinsin mi?'))return;await del('rec',id);dlg();render();toast('Görev silindi')}
