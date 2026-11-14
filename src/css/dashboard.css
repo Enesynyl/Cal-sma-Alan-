@@ -178,3 +178,33 @@ body:not(.login-mode) .shell:has(.page-bugun)>.main{padding:0 2px 28px;min-width
 }
 @media(max-width:390px){.intel-brand>span:last-child{display:none}.intel-search{flex:1}.intel-grid{gap:7px}.intel-panel{padding:10px}.intel-day-events{gap:3px}}
 @media(prefers-reduced-motion:reduce){.intel-panel{animation:none}}
+
+
+/* iPhone search bar overflow correction */
+.intel-topbar,.intel-topbar *{box-sizing:border-box}
+.intel-search{min-width:0;width:100%;max-width:460px;overflow:hidden;flex:1 1 0}
+.intel-search input{
+ display:block;width:0!important;min-width:0!important;max-width:100%;
+ flex:1 1 0!important;height:100%;margin:0!important;padding:0!important;
+ border:0!important;border-radius:0!important;outline:0!important;
+ box-shadow:none!important;background:transparent!important;
+ overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+@media(max-width:700px){
+ .intel-topbar{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:7px;padding:7px 8px;overflow:hidden}
+ .intel-brand{width:auto;min-width:0;white-space:nowrap}
+ .intel-brand-mark{flex:none}
+ .intel-search{width:100%;min-width:0;max-width:none;height:38px;gap:6px;padding:0 8px;flex:none}
+ .intel-search input{font-size:11px!important;line-height:normal!important}
+ .intel-search input::placeholder{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ .intel-top-actions{min-width:0;gap:5px;margin:0}
+}
+@media(max-width:390px){
+ .intel-topbar{grid-template-columns:32px minmax(0,1fr) 67px;gap:6px}
+ .intel-brand-mark{width:30px;height:30px}
+ .intel-search{height:36px;padding:0 6px}
+ .intel-search input{font-size:10px!important}
+ .intel-icon-btn{width:30px;height:32px}
+ .intel-profile{padding:2px}
+ .intel-profile>span{width:27px;height:27px}
+}
