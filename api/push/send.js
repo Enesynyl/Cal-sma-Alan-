@@ -15,7 +15,9 @@ export default async function handler(req,res){
   const title=String(req.body?.title||'Çalışma Alanım').slice(0,90),body=String(req.body?.body||'Yeni bir bildirimin var.').slice(0,220);
   const sub=req.body?.subscription;
   if(!sub?.endpoint||!sub?.keys?.p256dh||!sub?.keys?.auth||!String(sub.endpoint).startsWith('https://'))return res.status(400).json({error:'Geçerli bir cihaz Push aboneliği gönderilmedi. Bildirimleri yeniden etkinleştir.'});
-  webpush.setVapidDetails(process.env.VAPID_SUBJECT||'mailto:calismaalanim451@gmail.com',VAPID_PUBLIC_KEY,process.env.VAPID_PRIVATE_KEY);
+  const vapidPrivateKey=String(process.env.PUSH_VAPID_PRIVATE_KEY||process.env.VAPID_PRIVATE_KEY||'').trim();
+  if(!vapidPrivateKey)throw new Error('PUSH_VAPID_PRIVATE_KEY is missing in this deployment environment');
+  webpush.setVapidDetails(process.env.VAPID_SUBJECT||'mailto:calismaalanim451@gmail.com',VAPID_PUBLIC_KEY,vapidPrivateKey);
   const payload=JSON.stringify({title,body,url:'/'});
   await webpush.sendNotification(sub,payload);
   return res.status(200).json({sent:1,total:1});
