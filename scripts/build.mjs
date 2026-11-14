@@ -3,8 +3,8 @@ import path from 'node:path';
 import { build, transform } from 'esbuild';
 const root=process.cwd();
 const read=async p=>readFile(path.join(root,p),'utf8');
-const jsOrder=["src/js/core.js","src/js/pages/dashboard.js","src/js/spotify.js","src/js/pages/settings-schedule.js","src/js/reminders.js","src/js/pages/notes.js","src/js/pages/study-questions.js","src/js/pages/focus.js","src/js/pages/study-cards.js","src/js/pages/grades.js","src/js/pages/classes.js","src/js/cloud-sync.js","src/js/pages/university.js","src/js/pages/notebook-fullscreen.js","src/js/pages/obis.js"];
-const cssOrder=["src/css/base.css","src/css/notebook.css","src/css/dashboard.css","src/css/navigation.css","src/css/notebook-fullscreen.css","src/css/midnight-glass.css","src/css/apple-premium.css"];
+const jsOrder=["src/js/core.js","src/js/pages/dashboard.js","src/js/spotify.js","src/js/pages/settings-schedule.js","src/js/reminders.js","src/js/pages/notes.js","src/js/pages/study-questions.js","src/js/pages/focus.js","src/js/pages/study-cards.js","src/js/pages/grades.js","src/js/pages/classes.js","src/js/cloud-sync.js","src/js/pages/university.js","src/js/pages/notebook-fullscreen.js","src/js/pages/obis.js","src/js/notifications.js"];
+const cssOrder=["src/css/base.css","src/css/notebook.css","src/css/dashboard.css","src/css/navigation.css","src/css/notebook-fullscreen.css","src/css/midnight-glass.css","src/css/apple-premium.css","src/css/notifications.css"];
 const [template,...js]=await Promise.all(['src/index.template.html',...jsOrder].map(read));
 const css=await Promise.all(cssOrder.map(read));
 await mkdir('dist',{recursive:true});
@@ -14,4 +14,4 @@ await transform(appSource,{loader:'js',target:'es2020'}); // fail the build on i
 await writeFile('dist/app.js',appSource);
 await writeFile('dist/app.css',css.join('\n'));
 await build({entryPoints:['src/js/native-spotify.js'],outfile:'dist/native-spotify.js',bundle:true,format:'iife',platform:'browser',target:'es2020'});
-for(const f of ['logo.svg','site.webmanifest','src/data/uni-programs.json'])await cp(f,path.join('dist',path.basename(f)));
+for(const f of ['logo.svg','site.webmanifest','src/data/uni-programs.json'])await cp(f,path.join('dist',path.basename(f)));\nawait cp('src/sw.js','dist/sw.js');
