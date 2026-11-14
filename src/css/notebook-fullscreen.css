@@ -96,3 +96,21 @@ body:not(.login-mode) #app :is(input,textarea,select){
   color:#edf4fc!important;
   -webkit-text-fill-color:#edf4fc!important;
 }
+
+
+/* Fullscreen notebook navigation: closed by default, opens only at the left edge. */
+body.dffs .side{will-change:transform;visibility:hidden}
+body.dffs.sopen .side{visibility:visible}
+body.dffs #sedge{width:12px;cursor:ew-resize}
+body.dffs #sedge::after{left:3px;width:4px;opacity:.32}
+@media(hover:hover) and (pointer:fine){
+  body.dffs #sedge:hover::after{opacity:.9}
+  body.dffs.sopen #sscrim{display:none}
+}
+@media(min-width:900px){
+  body:not(.dffs) .side{flex-basis:228px;width:228px}
+  body:not(.dffs) .side .nav button{justify-content:flex-start;gap:12px;padding:8px 14px 8px 8px}
+  body:not(.dffs) .side .nav .lb,
+  body:not(.dffs) .side .wsb .lb{display:inline!important}
+  body:not(.dffs) .side .wsb{justify-content:flex-start;gap:10px}
+}
