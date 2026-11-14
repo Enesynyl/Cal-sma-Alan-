@@ -70,7 +70,7 @@
  }
  function scheduleReminders(){
   clearInterval(scanTimer);const scan=async()=>{
-   if(!uid||!FB?.auth?.currentUser)return;
+   if(!uid||!FB?.auth?.currentUser||!W?.id)return;
    const now=Date.now();if(now-lastScan<45000)return;lastScan=now;
    try{
     const rows=await recs(W.id);const today=new Date();today.setHours(0,0,0,0);
