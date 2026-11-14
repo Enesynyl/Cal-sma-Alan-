@@ -413,3 +413,57 @@ body:not(.login-mode) .shell:has(.page-bugun)>.main{padding:0 2px 28px;min-width
   transition:none!important;will-change:auto
  }
 }
+
+
+/* Cinematic reveal v2: slower fade, deeper scale-up and softer landing */
+.intel-dashboard .intel-welcome.intel-reveal,
+.intel-dashboard .intel-panel.intel-reveal{
+ opacity:0!important;
+ visibility:hidden!important;
+ transform:translate3d(0,56px,0) scale(.88)!important;
+ transition:
+  opacity 2.35s cubic-bezier(.22,.61,.36,1),
+  transform 2.9s cubic-bezier(.22,.61,.36,1),
+  visibility 0s linear 2.9s!important;
+}
+.intel-dashboard .intel-welcome.intel-reveal.intel-in-view,
+.intel-dashboard .intel-panel.intel-reveal.intel-in-view{
+ opacity:1!important;
+ visibility:visible!important;
+ transform:translate3d(0,0,0) scale(1)!important;
+ transition:
+  opacity 2.35s cubic-bezier(.22,.61,.36,1),
+  transform 2.9s cubic-bezier(.22,.61,.36,1),
+  visibility 0s!important;
+}
+#app .main .page-reveal{
+ opacity:0!important;
+ visibility:hidden!important;
+ transform:translate3d(0,56px,0) scale(.88)!important;
+ transition:
+  opacity 2.35s cubic-bezier(.22,.61,.36,1),
+  transform 2.9s cubic-bezier(.22,.61,.36,1),
+  visibility 0s linear 2.9s!important;
+ transition-delay:var(--page-reveal-delay,0ms),var(--page-reveal-delay,0ms),0s!important;
+}
+#app .main .page-reveal.page-reveal-in{
+ opacity:1!important;
+ visibility:visible!important;
+ transform:translate3d(0,0,0) scale(1)!important;
+ transition:
+  opacity 2.35s cubic-bezier(.22,.61,.36,1),
+  transform 2.9s cubic-bezier(.22,.61,.36,1),
+  visibility 0s!important;
+ transition-delay:var(--page-reveal-delay,0ms),var(--page-reveal-delay,0ms),0s!important;
+}
+@media(prefers-reduced-motion:reduce){
+ .intel-dashboard .intel-welcome.intel-reveal,
+ .intel-dashboard .intel-panel.intel-reveal,
+ .intel-dashboard .intel-welcome.intel-reveal.intel-in-view,
+ .intel-dashboard .intel-panel.intel-reveal.intel-in-view,
+ #app .main .page-reveal,
+ #app .main .page-reveal.page-reveal-in{
+  opacity:1!important;visibility:visible!important;transform:none!important;
+  transition:none!important;will-change:auto
+ }
+}
