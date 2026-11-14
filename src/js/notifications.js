@@ -54,12 +54,22 @@
  }
  function decodeKey(s){const p='='.repeat((4-s.length%4)%4);const raw=atob((s+p).replace(/-/g,'+').replace(/_/g,'/'));return Uint8Array.from(raw,c=>c.charCodeAt(0))}
  async function sendPush(title,body){
-  const {f,u}=await getUser();const token=await u.getIdToken();
-  reg=reg||await navigator.serviceWorker.ready;const activeSub=await reg.pushManager.getSubscription();if(!activeSub)throw new Error('Bu cihazda aktif Push aboneliği yok. Bildirimleri yeniden etkinleştir.');
-  const r=await fetch('/api/push/send?diag='+Date.now(),{method:'POST',cache:'no-store',headers:{'content-type':'application/json',authorization:'Bearer '+token},body:JSON.stringify({title,body,subscription:activeSub.toJSON()})});
-  const raw=await r.text();let data={};try{data=JSON.parse(raw)}catch{}
-  if(!r.ok)throw new Error(data.error||('Bildirim API hatası (HTTP '+r.status+'): '+raw.slice(0,180)));
-  return data;
+  let stage='oturum';const trace='push-'+Date.now().toString(36);
+  try{
+   const {f,u}=await getUser();stage='kimlik doğrulama';const token=await u.getIdToken();
+   stage='cihaz aboneliği';reg=reg||await navigator.serviceWorker.ready;
+   const activeSub=await reg.pushManager.getSubscription();
+   if(!activeSub)throw new Error('Bu cihazda aktif Push aboneliği yok. Bildirimleri yeniden etkinleştir.');
+   stage='sunucu isteği';
+   const r=await fetch('/api/push/send?diag='+encodeURIComponent(trace),{method:'POST',cache:'no-store',headers:{'content-type':'application/json','cache-control':'no-cache','x-push-trace':trace,authorization:'Bearer '+token},body:JSON.stringify({title,body,subscription:activeSub.toJSON()})});
+   stage='sunucu yanıtı';const raw=await r.text();let data={};try{data=JSON.parse(raw)}catch{}
+   if(!r.ok)throw new Error('HTTP '+r.status+' — '+(data.error||raw.slice(0,220)||'Sunucu boş yanıt döndürdü.'));
+   if(!data.sent)throw new Error('Sunucu isteği aldı ancak bildirim gönderildi onayı vermedi.');
+   return data;
+  }catch(e){
+   console.error('[Push test]',{trace,stage,error:e?.message||String(e)});
+   throw new Error('Bildirim testi başarısız ('+stage+'): '+(e?.message||String(e))+' ['+trace+']');
+  }
  }
  function listen(){
   if(!FB?.auth?.currentUser||uid===FB.auth.currentUser.uid)return;
