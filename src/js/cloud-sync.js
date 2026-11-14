@@ -39,8 +39,8 @@ async function fbUniversityChanged(value){const u=$('fbU');if(!u)return;const va
 function fbEye(id,b){const i=$(id);i.type=i.type==='password'?'text':'password';b.setAttribute('aria-label',i.type==='password'?'Şifreyi göster':'Şifreyi gizle')}
 function fbTab(n){FBM=n;document.querySelectorAll('.login-fields .fb-reg').forEach(x=>{x.hidden=n!==2;x.setAttribute('aria-hidden',String(n!==2))});if(n===2)fbSetEducation('öğrenci');$('fbGo').textContent=n===2?'Hesap oluştur':'Giriş yap';$('fbt1').className=n===1?'p':'';$('fbt2').className=n===2?'p':''}
 const fbSay=t=>{const s=$('fbm');if(s)s.textContent=t};
-async function fbFirst(u,nm,silent=false,profile={}){const f=FB,ow=lsg('fbOwner'),dirtyDevice=(ow&&ow!==u.uid)||(!ow&&lsg('fbHas')==='1');if(dirtyDevice)await fbWipe();const ws=await all('ws');if(!ws.length){const school=profile.universite&&typeof UNI!=='undefined'?UNI.find(x=>x.n+' Üniversitesi'===profile.universite):null;W={id:uid(),name:(nm||u.displayName||'Çalışma alanım').trim().split(/\s+/)[0],fullName:nm||u.displayName||'',mode:'ogr',mods:[...AV.ogr],v2:1,...(profile.universite?{uni:school||null}:{})};await put('ws',W);await put('meta',{k:'last',v:W.id})}else{W=ws[0];if(profile.ad){W.name=profile.ad.trim().split(/\s+/)[0];W.fullName=profile.ad.trim()}const school=profile.universite&&typeof UNI!=='undefined'?UNI.find(x=>x.n+' Üniversitesi'===profile.universite):null;if(profile.universite)W.uni=school||null;await put('ws',W)}lss('fbOwner',u.uid);await f.fs.setDoc(fbRef(f,u,'profile'),{ad:nm||u.displayName||'',email:u.email||'',saglayici:(u.providerData[0]||{}).providerId||'',olusturma:Date.now(),...profile});await fbUp();lss('fbAuto','1');lss('fbDevice_'+u.uid,'1');lss('fbHas','1');lss('fbSkip','1');lss('fbLoggedOut','0');window.loginViewRequested=false;fbListen(f,u);toast('☁️ Hesabın oluşturuldu, verilerin Firebase’e kaydedildi ✅');if(dirtyDevice){location.reload();return}await boot();if(!silent)fbUi()}
-async function fbAfter(u,silent){const loginFlow=lsg('fbLoggedOut')==='1';lss('fbLoggedOut','0');window.loginViewRequested=false;const f=FB,pr=fbRef(f,u,'profile'),s=await f.fs.getDoc(pr);lss('fbHas','1');lss('fbSkip','1');if(!s.exists())return fbFirst(u,u.displayName||'',silent);await f.fs.setDoc(pr,{son:Date.now()},{merge:true});const ow=lsg('fbOwner'),swapped=!!ow&&ow!==u.uid;if(swapped)await fbWipe();lss('fbOwner',u.uid);const m=await f.fs.getDoc(fbRef(f,u,'meta')),deviceKey='fbDevice_'+u.uid,firstOnDevice=lsg(deviceKey)!=='1';lss('fbAuto','1');
+async function fbFirst(u,nm,silent=false,profile={}){fbSetLoggedOutChrome(false);const f=FB,ow=lsg('fbOwner'),dirtyDevice=(ow&&ow!==u.uid)||(!ow&&lsg('fbHas')==='1');if(dirtyDevice)await fbWipe();const ws=await all('ws');if(!ws.length){const school=profile.universite&&typeof UNI!=='undefined'?UNI.find(x=>x.n+' Üniversitesi'===profile.universite):null;W={id:uid(),name:(nm||u.displayName||'Çalışma alanım').trim().split(/\s+/)[0],fullName:nm||u.displayName||'',mode:'ogr',mods:[...AV.ogr],v2:1,...(profile.universite?{uni:school||null}:{})};await put('ws',W);await put('meta',{k:'last',v:W.id})}else{W=ws[0];if(profile.ad){W.name=profile.ad.trim().split(/\s+/)[0];W.fullName=profile.ad.trim()}const school=profile.universite&&typeof UNI!=='undefined'?UNI.find(x=>x.n+' Üniversitesi'===profile.universite):null;if(profile.universite)W.uni=school||null;await put('ws',W)}lss('fbOwner',u.uid);await f.fs.setDoc(fbRef(f,u,'profile'),{ad:nm||u.displayName||'',email:u.email||'',saglayici:(u.providerData[0]||{}).providerId||'',olusturma:Date.now(),...profile});await fbUp();lss('fbAuto','1');lss('fbDevice_'+u.uid,'1');lss('fbHas','1');lss('fbSkip','1');lss('fbLoggedOut','0');window.loginViewRequested=false;fbListen(f,u);toast('☁️ Hesabın oluşturuldu, verilerin Firebase’e kaydedildi ✅');if(dirtyDevice){location.reload();return}await boot();if(!silent)fbUi()}
+async function fbAfter(u,silent){fbSetLoggedOutChrome(false);const loginFlow=lsg('fbLoggedOut')==='1';lss('fbLoggedOut','0');window.loginViewRequested=false;const f=FB,pr=fbRef(f,u,'profile'),s=await f.fs.getDoc(pr);lss('fbHas','1');lss('fbSkip','1');if(!s.exists())return fbFirst(u,u.displayName||'',silent);await f.fs.setDoc(pr,{son:Date.now()},{merge:true});const ow=lsg('fbOwner'),swapped=!!ow&&ow!==u.uid;if(swapped)await fbWipe();lss('fbOwner',u.uid);const m=await f.fs.getDoc(fbRef(f,u,'meta')),deviceKey='fbDevice_'+u.uid,firstOnDevice=lsg(deviceKey)!=='1';lss('fbAuto','1');
  if(m.exists()){const localTs=+lsg('fbTs')||0;if(firstOnDevice||m.data().ts>localTs){const pending=JSON.parse(lsg('fbChanges')||'[]');if(pending.length){await fbUp(true);lss(deviceKey,'1');fbListen(f,u);document.body.classList.remove('offline-mode');if(!silent&&!loginFlow)fbUi();else if(loginFlow)await boot();return}await fbDown();return}lss(deviceKey,'1');if(lsg('fbDirty')==='1')await fbUp(true).catch(()=>{});fbListen(f,u);document.body.classList.remove('offline-mode');if(!silent&&!loginFlow)fbUi();else if(loginFlow)await boot();return}
  lss(deviceKey,'1');await fbUp();if(swapped){location.reload();return}fbListen(f,u);if(!silent&&!loginFlow)fbUi();else if(loginFlow)await boot()}async function fbEmail(){const em=$('fbE')?.value.trim()||'',pw=$('fbP')?.value||'',nm=$('fbN')?.value.trim()||'';if(!em||!pw)return fbSay('E-posta ve şifre yaz');let profile={};if(FBM===2){const dob=$('fbD')?.value||'',uni=$('fbU')?.value.trim()||'',dept=$('fbDept')?.value.trim()||'',year=$('fbYear')?.value||'',pw2=$('fbP2')?.value||'';if(!nm)return fbSay('Adını ve soyadını yaz');if(!dob)return fbSay('Doğum tarihini seç');if(pw.length<6)return fbSay('Şifre en az 6 karakter olmalı');if(pw!==pw2)return fbSay('Şifreler eşleşmiyor');if(FBEDU==='öğrenci'){const allowed=(typeof UNI!=='undefined'?UNI:[]).map(x=>x.n+' Üniversitesi');if(!allowed.includes(uni))return fbSay('Üniversiteni listeden seç');if(!dept)return fbSay('Bölümünü seç veya yaz');if(!year)return fbSay('Kaçıncı sınıfta olduğunu seç')}const education=FBEDU==='mezun'?'Mezun':'Üniversite okumuyorum';profile={ad:nm,dogumTarihi:dob,universite:FBEDU==='öğrenci'?uni:education,bolum:FBEDU==='öğrenci'?dept:'',sinif:FBEDU==='öğrenci'?year:'',egitimDurumu:FBEDU}}
  try{fbSay('Bağlanıyor…');const f=await fbLoad();if(FBM===2){const c=await f.au.createUserWithEmailAndPassword(f.auth,em,pw);await f.au.updateProfile(c.user,{displayName:nm});let verificationSent=false;try{await f.au.sendEmailVerification(c.user);verificationSent=true}catch(v){}await fbFirst(c.user,nm,false,profile);fbSay(verificationSent?'Hesabın oluşturuldu. E-posta doğrulama bağlantısını gelen kutuna gönderdim.':'Hesabın oluşturuldu ancak doğrulama e-postası gönderilemedi. Hesabından yeniden deneyebilirsin.')}else{const c=await f.au.signInWithEmailAndPassword(f.auth,em,pw);await fbAfter(c.user)}}catch(x){fbSay(fbErr(x))}}
@@ -57,7 +57,46 @@ function fbResetLoginAppearance(){
  body.style.backgroundPosition='';
  body.style.backgroundAttachment='';
 }
-function fbLoginPage(){fbResetLoginAppearance();document.body.classList.add('login-mode');document.body.dataset.authRequired='0';window.loginViewRequested=true;window.renderLoggedOutLogin=fbLoginPage;FBM=1;$('app').innerHTML=`<section class="login-shell"><header class="login-brand"><img src="/logo.svg" alt="Çalışma Alanım logosu"><div><h2>Çalışma Alanım</h2><p>Planla · Çalış · Takip Et · Başar</p></div></header><section class="login-card"><div class="login-heading"><span>ÇALIŞMA ALANINA HOŞ GELDİN</span><h1>Hesabına giriş yap</h1><p>Planlarını ve kayıtlarını kaldığın yerden sürdür.</p></div><div class="login-tabs"><button id="fbt1" class="p" onclick="fbTab(1)">Giriş yap</button><button id="fbt2" onclick="fbTab(2)">Hesap oluştur</button></div><div class="login-fields">${fbFields()}</div><div class="login-actions"><button class="p" id="fbGo" onclick="fbEmail()">Giriş yap</button><button class="login-google" onclick="fbAct('in')"><span aria-hidden="true">G</span> Google ile devam et</button></div><p class="login-message" id="fbm"></p><button class="login-forgot" onclick="fbReset()">Şifremi unuttum</button></section></section>`;fbTab(1)}async function fbGate(networkFailure=false){
+function fbInstallLoginLayoutFix(){
+ const id='ca-auth-screen-layout-fix';
+ if(!document.getElementById(id)){
+  const style=document.createElement('style');style.id=id;
+  style.textContent=`
+   html body.login-mode #app{
+    display:grid!important;grid-template-columns:minmax(0,1fr)!important;place-items:center!important;
+    width:100vw!important;max-width:none!important;min-height:100svh!important;height:auto!important;
+    margin:0!important;padding:clamp(24px,5vh,56px) 16px!important;overflow-x:hidden!important;overflow-y:auto!important;
+   }
+   html body.login-mode #app>.login-shell{
+    display:flex!important;flex:0 1 auto!important;flex-direction:column!important;align-items:stretch!important;
+    width:min(100%,480px)!important;max-width:480px!important;min-width:0!important;min-height:0!important;height:auto!important;
+    margin:0 auto!important;padding:0!important;align-self:center!important;justify-self:center!important;gap:18px!important;
+   }
+   html body.login-mode #app>.login-shell>.login-brand,
+   html body.login-mode #app>.login-shell>.login-card{width:100%!important;max-width:100%!important;min-width:0!important}
+   html body.login-mode #ca-notif-button,
+   html body.login-mode #ca-notif-backdrop{display:none!important;visibility:hidden!important;pointer-events:none!important}
+   @media(max-width:600px){
+    html body.login-mode #app{padding:calc(env(safe-area-inset-top) + 22px) 14px calc(env(safe-area-inset-bottom) + 22px)!important}
+    html body.login-mode #app>.login-shell{width:min(100%,460px)!important;max-width:460px!important}
+   }`;
+  document.head.appendChild(style);
+ }
+}
+function fbSetLoggedOutChrome(isLoggedOut){
+ if(isLoggedOut){
+  fbInstallLoginLayoutFix();
+  document.getElementById('ca-notif-backdrop')?.remove();
+  const b=document.getElementById('ca-notif-button');
+  if(b){b.hidden=true;b.style.setProperty('display','none','important')}
+ }else{
+  document.body.classList.remove('login-mode');
+  const b=document.getElementById('ca-notif-button');
+  if(b){b.hidden=false;b.style.removeProperty('display')}
+  document.getElementById('ca-notif-backdrop')?.remove();
+ }
+}
+function fbLoginPage(){fbResetLoginAppearance();document.body.classList.add('login-mode');fbInstallLoginLayoutFix();fbSetLoggedOutChrome(true);document.body.dataset.authRequired='0';window.loginViewRequested=true;window.renderLoggedOutLogin=fbLoginPage;FBM=1;$('app').innerHTML=`<section class="login-shell"><header class="login-brand"><img src="/logo.svg" alt="Çalışma Alanım logosu"><div><h2>Çalışma Alanım</h2><p>Planla · Çalış · Takip Et · Başar</p></div></header><section class="login-card"><div class="login-heading"><span>ÇALIŞMA ALANINA HOŞ GELDİN</span><h1>Hesabına giriş yap</h1><p>Planlarını ve kayıtlarını kaldığın yerden sürdür.</p></div><div class="login-tabs"><button id="fbt1" class="p" onclick="fbTab(1)">Giriş yap</button><button id="fbt2" onclick="fbTab(2)">Hesap oluştur</button></div><div class="login-fields">${fbFields()}</div><div class="login-actions"><button class="p" id="fbGo" onclick="fbEmail()">Giriş yap</button><button class="login-google" onclick="fbAct('in')"><span aria-hidden="true">G</span> Google ile devam et</button></div><p class="login-message" id="fbm"></p><button class="login-forgot" onclick="fbReset()">Şifremi unuttum</button></section></section>`;fbSetLoggedOutChrome(true);fbTab(1)}async function fbGate(networkFailure=false){
  document.body.dataset.authRequired='0';
  if(document.body.dataset.fbGate)return;
  document.body.dataset.fbGate='1';
