@@ -3,6 +3,9 @@ const PROJECT='calisma-alani-34ba7';
 const API_KEY='AIzaSyBQ3I3HgnLqrmfnPJCPiAfBj67CeifoxCI';
 const VAPID_PUBLIC_KEY='BGw8rJ8J3cezaV6dyXUIdD128S2gV2huDljsuzz5df0WrIyx7IaZSM9C2zodN2OYMQp5oWm_l0xMF8V7C5GfA5U';
 export default async function handler(req,res){
+ res.setHeader('Cache-Control','no-store, no-cache, must-revalidate');
+ const trace=String(req.headers['x-push-trace']||req.query?.diag||'no-trace').slice(0,80);
+ console.info('push-send:request',{trace,method:req.method,hasAuthorization:!!req.headers.authorization,hasBody:!!req.body});
  if(req.method!=='POST')return res.status(405).json({error:'Method not allowed'});
  try{
     const token=String(req.headers.authorization||'').replace(/^Bearer\s+/i,'');
@@ -17,7 +20,7 @@ export default async function handler(req,res){
   await webpush.sendNotification(sub,payload);
   return res.status(200).json({sent:1,total:1});
  }catch(error){
-  console.error('push-send:',{name:error?.name,message:error?.message,statusCode:error?.statusCode,body:error?.body});
+  console.error('push-send:',{trace,name:error?.name,message:error?.message,statusCode:error?.statusCode,body:error?.body});
   const detail=String(error?.message||'Bilinmeyen sunucu hatası').slice(0,240);
   return res.status(500).json({error:'Push gönderimi başarısız: '+detail,code:error?.statusCode||error?.code||error?.name||'SERVER_ERROR'});
  }
