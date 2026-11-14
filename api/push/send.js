@@ -14,7 +14,7 @@ export default async function handler(req,res){
   const token=String(req.headers.authorization||'').replace(/^Bearer\\s+/i,'');
   if(!token)return res.status(401).json({error:'Oturum gerekli.',revision:SERVER_REVISION});
   const verify=await fetch('https://identitytoolkit.googleapis.com/v1/accounts:lookup?key='+API_KEY,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({idToken:token})});
-  const auth=await verify.json();const user=auth.users?.[0];if(!verify.ok||!user?.localId)return res.status(401).json({error:'Oturum doğrulanamadı.',revision:SERVER_REVISION});
+  const auth=await verify.json();const user=auth.users?.[0];if(!verify.ok||!user?.localId){const authCode=String(auth?.error?.message||'AUTH_LOOKUP_FAILED').slice(0,120);console.warn('push-send:auth-rejected',{trace,revision:SERVER_REVISION,httpStatus:verify.status,authCode});return res.status(401).json({error:'Oturum doğrulanamadı: '+authCode,authCode,revision:SERVER_REVISION});}
   const title=String(req.body?.title||'Çalışma Alanım').slice(0,90),body=String(req.body?.body||'Yeni bir bildirimin var.').slice(0,220);
   const sub=req.body?.subscription;
   if(!sub?.endpoint||!sub?.keys?.p256dh||!sub?.keys?.auth||!String(sub.endpoint).startsWith('https://'))return res.status(400).json({error:'Geçerli bir cihaz Push aboneliği gönderilmedi. Bildirimleri yeniden etkinleştir.',revision:SERVER_REVISION});
