@@ -19,7 +19,7 @@
  function ensureButton(){
   if($id('ca-notif-button'))return;
   const b=document.createElement('button');b.id='ca-notif-button';b.type='button';b.setAttribute('aria-label','Bildirim merkezi');
-  b.innerHTML='<span aria-hidden="true">♧</span><i id="ca-notif-count" hidden></i>';
+  b.innerHTML='<span aria-hidden="true">🔔</span><i id="ca-notif-count" hidden></i>';
   b.addEventListener('click',openCenter);document.body.appendChild(b);renderBadge();
  }
  function openCenter(){
