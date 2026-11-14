@@ -208,3 +208,35 @@ body:not(.login-mode) .shell:has(.page-bugun)>.main{padding:0 2px 28px;min-width
  .intel-profile{padding:2px}
  .intel-profile>span{width:27px;height:27px}
 }
+
+
+/* Final polish: remove inner search seams and optically center notification glyph */
+.intel-search{position:relative;isolation:isolate}
+.intel-search input,
+.intel-search input:focus,
+.intel-search input:focus-visible,
+.intel-search input:active{
+ -webkit-appearance:none!important;appearance:none!important;
+ border:0!important;border-left:0!important;border-right:0!important;
+ outline:0!important;outline-offset:0!important;
+ box-shadow:none!important;
+ background:transparent!important;
+}
+.intel-search input::-webkit-search-decoration,
+.intel-search input::-webkit-search-cancel-button,
+.intel-search input::-webkit-search-results-button,
+.intel-search input::-webkit-search-results-decoration{display:none!important;-webkit-appearance:none!important}
+.intel-search>span{flex:0 0 16px;width:16px;text-align:center;line-height:1}
+.intel-icon-btn{
+ display:grid!important;place-items:center!important;
+ padding:0!important;line-height:1!important;text-align:center!important;
+}
+.intel-icon-btn>i{display:block;right:-4px;top:-5px}
+@media(max-width:700px){
+ .intel-search{gap:7px;padding-left:8px;padding-right:8px}
+ .intel-search>span{flex-basis:15px;width:15px}
+ .intel-icon-btn{width:36px;height:36px;flex:0 0 36px}
+}
+@media(max-width:390px){
+ .intel-icon-btn{width:34px;height:34px;flex:0 0 34px}
+}
