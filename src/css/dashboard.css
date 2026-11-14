@@ -499,3 +499,19 @@ body:not(.login-mode) .shell:has(.page-bugun)>.main{padding:0 2px 28px;min-width
 #app .main .page-reveal.page-reveal-in{
  transform:translate3d(0,0,0) scale(1)!important;
 }
+
+
+/* Secondary pages: a touch slower; Today dashboard remains unchanged. */
+#app .main .page-reveal,
+#app .main .page-reveal.page-reveal-in{
+ transition:
+  opacity 1.25s cubic-bezier(.2,.75,.25,1),
+  transform 1.55s cubic-bezier(.2,.75,.25,1),
+  visibility 0s!important;
+}
+#app .main .page-reveal{
+ transform:translate3d(0,44px,0) scale(.925)!important;
+}
+#app .main .page-reveal.page-reveal-in{
+ transform:translate3d(0,0,0) scale(1)!important;
+}
