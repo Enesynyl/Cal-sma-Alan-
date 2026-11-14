@@ -43,7 +43,7 @@
   const {f,u}=await getUser();
   const permission=await Notification.requestPermission();if(permission!=='granted')throw new Error('Bildirim izni verilmedi. Tarayıcı ayarlarından izin verebilirsin.');
   reg=reg||await navigator.serviceWorker.register('/sw.js');
-  const cfg=await fetch('/api/push/config').then(r=>r.json());if(!cfg.publicKey)throw new Error('Push anahtarı sunucuda bulunamadı.');
+  const cfgResponse=await fetch('/api/push/config',{cache:'no-store'});const cfg=await cfgResponse.json().catch(()=>({}));if(!cfgResponse.ok||!cfg.publicKey)throw new Error(cfg.error||'Push anahtarı sunucudan alınamadı. Sayfayı yenileyip tekrar dene.');
   let sub=await reg.pushManager.getSubscription();
   if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:decodeKey(cfg.publicKey)});
   const id=btoa(sub.endpoint).replace(/[^a-z0-9]/gi,'').slice(-48)||String(Date.now());
