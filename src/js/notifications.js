@@ -56,8 +56,8 @@
  function decodeKey(s){const p='='.repeat((4-s.length%4)%4);const raw=atob((s+p).replace(/-/g,'+').replace(/_/g,'/'));return Uint8Array.from(raw,c=>c.charCodeAt(0))}
  async function sendPush(title,body){
   const {f,u}=await getUser();const token=await u.getIdToken();
-  const subscriptionId=localStorage.getItem('ca_push_sub_id_'+u.uid);if(!subscriptionId)throw new Error('Bu cihazın bildirim aboneliği bulunamadı. Bildirimleri yeniden etkinleştir.');
-  const r=await fetch('/api/push/send',{method:'POST',headers:{'content-type':'application/json',authorization:'Bearer '+token},body:JSON.stringify({title,body,subscriptionId})});
+  reg=reg||await navigator.serviceWorker.ready;const activeSub=await reg.pushManager.getSubscription();if(!activeSub)throw new Error('Bu cihazda aktif Push aboneliği yok. Bildirimleri yeniden etkinleştir.');
+  const r=await fetch('/api/push/send',{method:'POST',headers:{'content-type':'application/json',authorization:'Bearer '+token},body:JSON.stringify({title,body,subscription:activeSub.toJSON()})});
   const data=await r.json().catch(()=>({}));if(!r.ok)throw new Error(data.error||'Bildirim gönderilemedi.');return data;
  }
  function listen(){
