@@ -16,7 +16,7 @@ async function render(){
  $('app').innerHTML=`<div class="shell"><aside class="side"><div class="wsb" title="${e(W.name)}">${W.icon?`<i class="ib">${e(W.icon)}</i>`:'<img class="brandmark" src="/logo.svg" alt="Çalışma Alanım">'}<span class="lb">${e(W.name)}</span></div>
  <div class="nav"><button title="Bugün" class="${cur.m==='bugun'?'on':''}" onclick="cur.m='bugun';render()"><i class="ib">🏠</i><span class="lb">Bugün</span></button>${ms.map(k=>`<button title="${e(mn(k))}" class="${cur.m===k?'on':''}" onclick="cur.m='${k}';cur.t=null;cur.q='';cur.d='';render()"><i class="ib">${mi(k)}</i><span class="lb">${mn(k)}</span></button>`).join('')}</div>
  </aside>
- <main class="main page-${cur.m}">${tabs.length>1&&cur.m!=='ayar'?`<div class="tabs">${tabs.map(t=>`<button class="${cur.t===t?'on':''}" onclick="cur.t='${t}';cur.q='';cur.d='';render()">${TL[t]}</button>`).join('')}</div>`:''}${body}</main></div>`;ensureSpotifyUI();
+ <main class="main page-${cur.m}">${tabs.length>1&&cur.m!=='ayar'?`<div class="tabs">${tabs.map(t=>`<button class="${cur.t===t?'on':''}" onclick="cur.t='${t}';cur.q='';cur.d='';render()">${TL[t]}</button>`).join('')}</div>`:''}${body}</main></div>`;ensureSpotifyUI();if(cur.m==='bugun')initIntelScrollReveal();
 }
 
 /* Today-only visual editor */
@@ -100,4 +100,25 @@ async function todayRestore(id){W={...W,todayHidden:(W.todayHidden||[]).filter(x
 async function todayCreateCustom(){
  const title=$('twTitle')?.value.trim(),body=$('twBody')?.value.trim();if(!title||!body){toast('Başlık ve içerik yazmalısın');return}
  const id='custom_'+uid();W={...W,todayCustom:[...(W.todayCustom||[]),{id,title,body}]};await put('ws',W);dlg();render();
+}
+
+
+/* Scroll-reveal choreography for the Intelligence dashboard.
+   Cards gently enter while scrolling down and softly leave when scrolling away. */
+let intelRevealObserver=null;
+function initIntelScrollReveal(){
+ if(intelRevealObserver){intelRevealObserver.disconnect();intelRevealObserver=null}
+ const root=document.querySelector('.intel-dashboard');if(!root)return;
+ const targets=root.querySelectorAll('.intel-welcome,.intel-panel');
+ if(!('IntersectionObserver' in window)){
+  targets.forEach(el=>el.classList.add('intel-in-view'));
+  return;
+ }
+ targets.forEach(el=>el.classList.add('intel-reveal'));
+ intelRevealObserver=new IntersectionObserver(entries=>{
+  entries.forEach(entry=>{
+   entry.target.classList.toggle('intel-in-view',entry.isIntersecting);
+  });
+ },{root:null,rootMargin:'-5% 0px -7% 0px',threshold:0.08});
+ targets.forEach(el=>intelRevealObserver.observe(el));
 }
