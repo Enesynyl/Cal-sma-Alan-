@@ -57,8 +57,15 @@
   let stage='oturum';const trace='push-'+Date.now().toString(36);
   try{
    const {f,u}=await getUser();stage='kimlik doğrulama';const token=await u.getIdToken();
-   stage='cihaz aboneliği';reg=reg||await navigator.serviceWorker.ready;
-   const activeSub=await reg.pushManager.getSubscription();
+   stage='cihaz aboneliği';
+   if(!('serviceWorker' in navigator))throw new Error('Bu tarayıcı Service Worker desteği sunmuyor.');
+   let registration=null;
+   try{registration=await navigator.serviceWorker.getRegistration('/')}catch{}
+   if(!registration)registration=await navigator.serviceWorker.ready;
+   if(!registration)throw new Error('Aktif Service Worker kaydı bulunamadı. Uygulamayı kapatıp ana ekrandan yeniden aç.');
+   if(!registration.pushManager||typeof registration.pushManager.getSubscription!=='function')throw new Error('Bu cihazdaki Service Worker PushManager API sunmuyor. iPhone’da uygulamayı Ana Ekrana Ekle ile açtığını ve iOS sürümünün Web Push desteklediğini kontrol et.');
+   reg=registration;
+   const activeSub=await registration.pushManager.getSubscription();
    if(!activeSub)throw new Error('Bu cihazda aktif Push aboneliği yok. Bildirimleri yeniden etkinleştir.');
    stage='sunucu isteği';
    const r=await fetch('/api/push/send?diag='+encodeURIComponent(trace),{method:'POST',cache:'no-store',headers:{'content-type':'application/json','cache-control':'no-cache','x-push-trace':trace,authorization:'Bearer '+token},body:JSON.stringify({title,body,subscription:activeSub.toJSON()})});
