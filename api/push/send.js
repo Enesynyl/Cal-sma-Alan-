@@ -17,9 +17,10 @@ export default async function handler(req,res){
   if(!sub?.endpoint||!sub?.keys?.p256dh||!sub?.keys?.auth||!String(sub.endpoint).startsWith('https://'))return res.status(400).json({error:'Geçerli bir cihaz Push aboneliği gönderilmedi. Bildirimleri yeniden etkinleştir.'});
   const vapidPrivateKey=String(process.env.PUSH_VAPID_PRIVATE_KEY||process.env.VAPID_PRIVATE_KEY||'').trim();
   if(!vapidPrivateKey)throw new Error('PUSH_VAPID_PRIVATE_KEY is missing in this deployment environment');
-  webpush.setVapidDetails(process.env.VAPID_SUBJECT||'mailto:calismaalanim451@gmail.com',VAPID_PUBLIC_KEY,vapidPrivateKey);
+  const vapidDetails={subject:String(process.env.VAPID_SUBJECT||'mailto:calismaalanim451@gmail.com').trim(),publicKey:VAPID_PUBLIC_KEY,privateKey:vapidPrivateKey};
+  if(vapidDetails.privateKey.length!==43)throw new Error('VAPID private key format is invalid (expected 43 base64url characters)');
   const payload=JSON.stringify({title,body,url:'/'});
-  await webpush.sendNotification(sub,payload);
+  await webpush.sendNotification(sub,payload,{vapidDetails});
   return res.status(200).json({sent:1,total:1});
  }catch(error){
   console.error('push-send:',{trace,name:error?.name,message:error?.message,statusCode:error?.statusCode,body:error?.body});
