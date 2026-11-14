@@ -79,3 +79,61 @@ async function dv(id){const r=await P(tx('rec').get(id));r.dev=(+r.dev||0)+1;awa
 async function program(){
  const a=await recs(W.id,'ders'),GN=['Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi','Pazar'],td=(new Date().getDay()+6)%7,ng=a.filter(r=>!meets(r).length).length;
  return `<div class="row" style="justify-content:flex-start;margin:0 0 8px"><button onclick="pdfAc()">📄 Ders programı PDF'i yükle</button><button onclick="dfAc()">📓 Ders defteri</button></div><p class="m">Derslerinizin gün ve saat bilgisinden otomatik oluşur. Ders eklerken gün ve saati seçin.</p><div class="cal">${GN.map((g,i)=>`<i style="${i===td?'color:var(--ac);font-weight:700':''}">${['Pzt','Sal','Çar','Per','Cum','Cmt','Paz'][i]}</i>`).join('')}${GN.map((g,i)=>`<div class="${i===td?'td':''}" style="min-height:120px">${a.flatMap(r=>meets(r).filter(m=>m.gun===g).map(m=>({r,m}))).sort((x,y)=>(x.m.s||'').localeCompare(y.m.s||'')).map(({r,m})=>`<span onclick="frm('ders','${r.id}')" style="cursor:pointer"><b>${e(m.s||'')}${m.e?'–'+e(m.e):''}</b> ${e(r.ad)}${m.yer?'<br>'+e(m.yer):''}</span>`).join('')}</div>`).join('')}</div>${ng?`<p class="m">Günü seçilmemiş ${ng} ders var.</p>`:''}`}
+
+
+/* ---- Intelligence Dashboard: reference-inspired, real workspace data ---- */
+const intelDayNames=['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'];
+const intelDate=v=>new Date(v+'T12:00:00').toLocaleDateString('tr-TR',{day:'numeric',month:'short'});
+const intelOpen=r=>r.durum!=='Tamamlandı'&&r.durum!=='İptal edildi';
+function intelGo(module,tab){cur.m=module;if(tab)cur.t=tab;render()}
+function intelSearch(){
+ const q=$('intelSearchInput')?.value.trim().toLocaleLowerCase('tr');if(!q)return;
+ recs(W.id).then(rows=>{
+  const found=rows.filter(r=>[r.ad,r.not,r.ders,r.konu,r.hoca,r.yer].some(v=>String(v||'').toLocaleLowerCase('tr').includes(q))).slice(0,12);
+  dlg(`<h3>Arama sonuçları</h3><p class="m">“${e(q)}” için ${found.length} sonuç bulundu.</p>${found.length?found.map(r=>`<button class="intel-search-result" onclick="intelGo('${r.type==='odakk'?'odak':r.type}','${r.type==='ders'?'ders':''}');dlg()"><b>${e(r.ad||r.konu||r.ders||'Kayıt')}</b><small>${e(T[r.type]?.n||r.type)} · ${e(r.son||r.tarih||'')}</small></button>`).join(''):'<div class="empty">Eşleşen kayıt bulunamadı.</div>'}<div class="row"><button onclick="dlg()">Kapat</button></div>`);
+ });
+}
+async function intelNotifications(){
+ const rows=await recs(W.id),today=iso(new Date()),upcoming=rows.filter(r=>(r.type==='sinav'&&r.tarih>=today)||(r.type==='gorev'&&intelOpen(r)&&r.son>=today)).sort((a,b)=>(a.tarih||a.son||'').localeCompare(b.tarih||b.son||'')).slice(0,8);
+ dlg(`<h3>Bildirim merkezi</h3><p class="m">Yaklaşan sınavların ve görevlerin.</p>${upcoming.length?upcoming.map(r=>`<div class="intel-notice"><b>${e(r.ad||'İsimsiz kayıt')}</b><small>${e(r.type==='sinav'?'Sınav':'Görev')} · ${e(intelDate(r.tarih||r.son))} ${e(r.saat||'')}</small></div>`).join(''):'<div class="empty">Şimdilik yeni bildirimin yok.</div>'}<div class="row"><button onclick="dlg()">Kapat</button></div>`);
+}
+async function intelligenceHome(){
+ const rows=await recs(W.id),today=iso(new Date()),now=new Date(),weekStart=new Date(now);weekStart.setDate(now.getDate()-((now.getDay()+6)%7));weekStart.setHours(0,0,0,0);
+ const weekEnd=new Date(weekStart);weekEnd.setDate(weekStart.getDate()+6);
+ const tasks=rows.filter(r=>r.type==='gorev'||r.type==='odev'),active=tasks.filter(intelOpen),completed=tasks.filter(r=>r.durum==='Tamamlandı');
+ const overdue=active.filter(r=>r.son&&r.son<today),exams=rows.filter(r=>r.type==='sinav'&&r.tarih>=today).sort((a,b)=>a.tarih.localeCompare(b.tarih)),lessons=rows.filter(r=>r.type==='ders');
+ const notes=rows.filter(r=>r.type==='not').sort((a,b)=>(b.ts||0)-(a.ts||0)),sessions=rows.filter(r=>r.type==='odakk');
+ const weekFocus=sessions.filter(r=>r.tarih>=iso(weekStart)&&r.tarih<=iso(weekEnd)).reduce((n,r)=>n+(+r.dk||0),0);
+ const doneToday=completed.filter(r=>r.completedAt===today).length;
+ const total=tasks.length,completion=total?Math.round(completed.length/total*100):0;
+ const score=Math.min(9999,completed.length*100+Math.round(sessions.reduce((n,r)=>n+(+r.dk||0),0)*2));
+ const pct=Math.max(4,Math.min(100,completion||0)),circ=2*Math.PI*42;
+ const initials=(W.name||'Ç').split(/\s+/).slice(0,2).map(x=>x[0]).join('').toLocaleUpperCase('tr');
+ const days=Array.from({length:7},(_,i)=>{const d=new Date(weekStart);d.setDate(weekStart.getDate()+i);return d});
+ const dayEvents=d=>{
+  const key=iso(d),name=intelDayNames[d.getDay()],items=[];
+  lessons.forEach(r=>meets(r).filter(m=>m.gun===name).forEach(m=>items.push({time:m.s||'09:00',title:r.ad||'Ders',kind:'Ders',go:"intelGo('ders','program')"})));
+  rows.filter(r=>(r.type==='gorev'||r.type==='odev')&&intelOpen(r)&&r.son===key).forEach(r=>items.push({time:r.saat||'—',title:r.ad||'Görev',kind:'Görev',go:"intelGo('gorev')"}));
+  rows.filter(r=>r.type==='sinav'&&r.tarih===key).forEach(r=>items.push({time:r.saat||'—',title:r.ad||'Sınav',kind:'Sınav',go:"intelGo('sinav')"}));
+  rows.filter(r=>r.type==='takvim'&&r.tarih===key).forEach(r=>items.push({time:r.saat||'—',title:r.ad||'Etkinlik',kind:'Etkinlik',go:"intelGo('takvim','takvim')"}));
+  return items.sort((a,b)=>a.time.localeCompare(b.time)).slice(0,3);
+ };
+ const dayCards=days.map(d=>{const list=dayEvents(d),key=iso(d),isToday=key===today;return `<div class="intel-day ${isToday?'is-today':''}"><button class="intel-day-head" onclick="cur.m='takvim';cur.t='ay';cur.mo=new Date('${key}T00:00');render()"><small>${['PZT','SAL','ÇAR','PER','CUM','CMT','PAZ'][((d.getDay()+6)%7)]}</small><b>${d.getDate()}</b></button><div class="intel-day-events">${list.length?list.map(x=>`<button class="intel-event ${x.kind.toLowerCase()}" onclick="${x.go}"><small>${e(x.time)}</small><b>${e(x.title)}</b></button>`).join(''):'<span class="intel-no-event">—</span>'}</div></div>`}).join('');
+ const nextExam=exams[0],examDays=nextExam?Math.max(0,Math.round((new Date(nextExam.tarih+'T12:00:00')-new Date(today+'T12:00:00'))/864e5)):null;
+ const focusBars=[{name:'Dersler',value:lessons.length,sub:'kayıtlı ders',go:"intelGo('ders','ders')",width:Math.min(100,lessons.length*12)},{name:'Görevler',value:active.length,sub:'aktif görev',go:"intelGo('gorev')",width:Math.min(100,active.length*14)},{name:'Odak',value:Math.round(weekFocus),sub:'bu hafta · dk',go:"intelGo('odak')",width:Math.min(100,weekFocus/300*100)}];
+ const docs=notes.slice(0,3).map(r=>`<button class="intel-doc-row" onclick="intelGo('not')"><span class="intel-doc-icon">▤</span><span><b>${e(r.ad||'Başlıksız not')}</b><small>${e((r.not||'Notunu görüntüle').slice(0,72))}</small></span><i>↗</i></button>`).join('');
+ let insight=overdue.length?`${overdue.length} görevin gecikmiş. Önce en eski görevi tamamlamanı öneriyorum.`:nextExam?`${e(nextExam.ad||'Yaklaşan sınav')} için ${examDays===0?'bugün sınavın var':examDays+' günün var'}. Kısa bir tekrar oturumu planlayabilirsin.`:active.length?`${active.length} aktif görevin var. Birini seçip kısa bir odak oturumuyla başlayabilirsin.`:'Takvimin sakin. Yeni bir hedef belirlemek veya notlarını gözden geçirmek için iyi bir zaman.';
+ const taskPreview=active.slice().sort((a,b)=>(a.son||'9999').localeCompare(b.son||'9999')).slice(0,3).map(r=>`<button class="intel-task-row" onclick="intelGo('gorev')"><span class="intel-task-dot"></span><span><b>${e(r.ad||'Görev')}</b><small>${e(r.son?intelDate(r.son):'Tarih belirlenmedi')} ${e(r.saat||'')}</small></span><em>${e(r.oncelik||'Orta')}</em></button>`).join('');
+ return `<div class="intel-dashboard">
+  <header class="intel-topbar"><div class="intel-brand"><span class="intel-brand-mark">✦</span><span>Çalışma Alanım <small>INTELLIGENCE</small></span></div><div class="intel-search"><span>⌕</span><input id="intelSearchInput" placeholder="Ders, görev veya not ara…" onkeydown="if(event.key==='Enter')intelSearch()"><button onclick="intelSearch()">Ara</button></div><div class="intel-top-actions"><button class="intel-icon-btn" onclick="intelNotifications()" aria-label="Bildirimler">♧<i>${overdue.length+exams.filter(r=>r.tarih===today).length||''}</i></button><button class="intel-profile" onclick="intelGo('ayar')"><span>${e(initials)}</span><b>${e(W.name)}</b><small>⌄</small></button></div></header>
+  <div class="intel-welcome"><div><span class="intel-kicker">KİŞİSEL KONTROL MERKEZİ</span><h1>${now.getHours()<12?'Günaydın':now.getHours()<18?'İyi günler':'İyi akşamlar'} 👋</h1><p>${now.toLocaleDateString('tr-TR',{weekday:'long',day:'numeric',month:'long'})} · Bugünün kontrolü sende.</p></div><button class="intel-primary" onclick="frm('gorev')">＋ Yeni görev</button></div>
+  <div class="intel-grid">
+   <section class="intel-panel intel-week"><div class="intel-panel-head"><div><span class="intel-kicker">PLANLAMA</span><h2>Haftalık takvim</h2></div><button onclick="intelGo('takvim','ay')">Tüm takvim ↗</button></div><div class="intel-week-grid">${dayCards}</div><div class="intel-week-foot"><span><i class="dot lesson"></i>Ders</span><span><i class="dot task"></i>Görev</span><span><i class="dot exam"></i>Sınav</span><span><i class="dot event"></i>Etkinlik</span></div></section>
+   <section class="intel-panel intel-focus"><div class="intel-panel-head"><div><span class="intel-kicker">GELİŞİM ALANLARI</span><h2>Focus areas</h2></div><span class="intel-orbit">✧</span></div><div class="intel-focus-art"><div class="intel-orb">◉</div><div><b>Odaklan. Geliş. İlerle.</b><small>Bugünkü ritmini yakala.</small></div></div><div class="intel-focus-list">${focusBars.map(x=>`<button onclick="${x.go}"><span><b>${e(x.name)}</b><small>${x.value} ${e(x.sub)}</small></span><i><em style="width:${x.width}%"></em></i><strong>↗</strong></button>`).join('')}</div></section>
+   <section class="intel-panel intel-docs"><div class="intel-panel-head"><div><span class="intel-kicker">BİLGİ BANKAN</span><h2>Belgeler & notlar</h2></div><button onclick="intelGo('not')">Tümünü gör ↗</button></div><div class="intel-docs-body">${docs||'<div class="intel-empty"><span>▤</span><b>Henüz not eklenmemiş</b><small>Önemli bilgilerini burada topla.</small><button onclick="frm(\'not\')">＋ Not oluştur</button></div>'}</div></section>
+   <section class="intel-panel intel-performance"><div class="intel-panel-head"><div><span class="intel-kicker">PERFORMANS</span><h2>İlerleme puanın</h2></div><span class="intel-score-tag">LIVE</span></div><div class="intel-score-ring"><svg viewBox="0 0 104 104" aria-label="Görev tamamlama yüzdesi"><circle cx="52" cy="52" r="42"></circle><circle class="progress" cx="52" cy="52" r="42" stroke-dasharray="${circ}" stroke-dashoffset="${circ*(1-pct/100)}"></circle></svg><div><b>${score.toLocaleString('tr-TR')}</b><small>PUAN</small></div></div><div class="intel-score-caption"><b>%${completion}</b><span>görev tamamlama</span></div><div class="intel-mini-stats"><span><b>${completed.length}</b><small>Tamamlandı</small></span><span><b>${doneToday}</b><small>Bugün</small></span><span><b>${Math.round(weekFocus)}</b><small>Odak dk</small></span></div><button class="intel-outline" onclick="intelGo('odak')">Performans detayları ↗</button></section>
+   <section class="intel-panel intel-ai"><div class="intel-panel-head"><div><span class="intel-kicker">PERSONAL INTELLIGENCE</span><h2>Günlük içgörü</h2></div><span class="intel-ai-pulse"></span></div><div class="intel-ai-visual"><div class="intel-ai-core"><span>✧</span></div><div class="intel-ai-copy"><b>Bugün için önerim</b><p>${insight}</p></div></div><div class="intel-ai-summary"><span><small>Aktif görev</small><b>${active.length}</b></span><span><small>Yaklaşan sınav</small><b>${nextExam?intelDate(nextExam.tarih):'—'}</b></span></div><button class="intel-outline" onclick="intelGo('gorev')">Planımı düzenle ↗</button></section>
+   <section class="intel-panel intel-tasks"><div class="intel-panel-head"><div><span class="intel-kicker">ŞİMDİ NE YAPMALI?</span><h2>Öncelikli görevler</h2></div><button onclick="intelGo('gorev')">Tüm görevler ↗</button></div><div class="intel-task-list">${taskPreview||'<div class="intel-empty compact"><b>Harika! Aktif görevin yok.</b><small>Yeni bir görev ekleyerek başlayabilirsin.</small></div>'}</div></section>
+  </div>
+ </div>`;
+}
