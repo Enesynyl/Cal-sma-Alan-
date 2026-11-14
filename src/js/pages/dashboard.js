@@ -16,7 +16,7 @@ async function render(){
  $('app').innerHTML=`<div class="shell"><aside class="side"><div class="wsb" title="${e(W.name)}">${W.icon?`<i class="ib">${e(W.icon)}</i>`:'<img class="brandmark" src="/logo.svg" alt="Çalışma Alanım">'}<span class="lb">${e(W.name)}</span></div>
  <div class="nav"><button title="Bugün" class="${cur.m==='bugun'?'on':''}" onclick="cur.m='bugun';render()"><i class="ib">🏠</i><span class="lb">Bugün</span></button>${ms.map(k=>`<button title="${e(mn(k))}" class="${cur.m===k?'on':''}" onclick="cur.m='${k}';cur.t=null;cur.q='';cur.d='';render()"><i class="ib">${mi(k)}</i><span class="lb">${mn(k)}</span></button>`).join('')}</div>
  </aside>
- <main class="main page-${cur.m}">${tabs.length>1&&cur.m!=='ayar'?`<div class="tabs">${tabs.map(t=>`<button class="${cur.t===t?'on':''}" onclick="cur.t='${t}';cur.q='';cur.d='';render()">${TL[t]}</button>`).join('')}</div>`:''}${body}</main></div>`;ensureSpotifyUI();if(cur.m==='bugun')initIntelScrollReveal();
+ <main class="main page-${cur.m}">${tabs.length>1&&cur.m!=='ayar'?`<div class="tabs">${tabs.map(t=>`<button class="${cur.t===t?'on':''}" onclick="cur.t='${t}';cur.q='';cur.d='';render()">${TL[t]}</button>`).join('')}</div>`:''}${body}</main></div>`;ensureSpotifyUI();initPageScrollReveal();
 }
 
 /* Today-only visual editor */
@@ -121,4 +121,23 @@ function initIntelScrollReveal(){
   });
  },{root:null,rootMargin:'-5% 0px -7% 0px',threshold:0.08});
  targets.forEach(el=>intelRevealObserver.observe(el));
+}
+
+
+/* Shared scroll reveal for every workspace page, excluding fullscreen focus mode. */
+let pageRevealObserver=null;
+function initPageScrollReveal(){
+ if(pageRevealObserver){pageRevealObserver.disconnect();pageRevealObserver=null}
+ if(cur.m==='bugun'||document.body.classList.contains('focus-active'))return;
+ const main=document.querySelector('#app .main');if(!main)return;
+ const candidates=[...main.querySelectorAll('.card,.sec,.st,.tile,.deadline-tile,.focus-stat,.today-widget,.home-plan,.home-calendar,.wz,.it,.task-card,.task-panel,.uni-card,.exam-card,.course-card,.grade-card,.note-card,.stats-card')];
+ const chosen=candidates.filter(el=>!candidates.some(other=>other!==el&&other.contains(el)));
+ const top=[...main.children].filter(el=>!el.classList.contains('tabs'));
+ top.forEach(el=>{if(!chosen.some(card=>el===card||el.contains(card)))chosen.push(el)});
+ if(!('IntersectionObserver'in window)){chosen.forEach(el=>el.classList.add('page-reveal-in'));return}
+ chosen.forEach((el,i)=>{el.classList.add('page-reveal');el.style.setProperty('--page-reveal-delay',Math.min(i*65,390)+'ms')});
+ pageRevealObserver=new IntersectionObserver(entries=>{
+  entries.forEach(entry=>entry.target.classList.toggle('page-reveal-in',entry.isIntersecting));
+ },{root:null,rootMargin:'-5% 0px -7% 0px',threshold:.06});
+ chosen.forEach(el=>pageRevealObserver.observe(el));
 }
