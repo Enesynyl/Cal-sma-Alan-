@@ -324,3 +324,45 @@ body:not(.login-mode) .shell:has(.page-bugun)>.main{padding:0 2px 28px;min-width
 .intel-dashboard .intel-panel.intel-reveal:nth-of-type(4){transition-delay:.22s,.22s,0s!important}
 .intel-dashboard .intel-panel.intel-reveal:nth-of-type(5){transition-delay:.28s,.28s,0s!important}
 .intel-dashboard .intel-panel.intel-reveal:nth-of-type(6){transition-delay:.34s,.34s,0s!important}
+
+
+/* Consistent card entrance: disable the old panel keyframe so scroll transitions control every card. */
+.intel-dashboard .intel-welcome.intel-reveal,
+.intel-dashboard .intel-panel.intel-reveal{
+ animation:none!important;
+ opacity:0!important;
+ visibility:hidden!important;
+ transform:translate3d(0,42px,0) scale(.94)!important;
+ filter:none!important;
+ will-change:opacity,transform;
+ transition:
+  opacity 1.05s cubic-bezier(.16,1,.3,1),
+  transform 1.2s cubic-bezier(.16,1,.3,1),
+  visibility 0s linear 1.2s!important;
+}
+.intel-dashboard .intel-welcome.intel-reveal.intel-in-view,
+.intel-dashboard .intel-panel.intel-reveal.intel-in-view{
+ opacity:1!important;
+ visibility:visible!important;
+ transform:translate3d(0,0,0) scale(1)!important;
+ transition:
+  opacity 1.05s cubic-bezier(.16,1,.3,1),
+  transform 1.2s cubic-bezier(.16,1,.3,1),
+  visibility 0s!important;
+}
+/* A gentle cascading rhythm as each section enters the viewport. */
+.intel-dashboard .intel-week.intel-reveal{transition-delay:0s,0s,0s!important}
+.intel-dashboard .intel-focus.intel-reveal{transition-delay:.08s,.08s,0s!important}
+.intel-dashboard .intel-docs.intel-reveal{transition-delay:.13s,.13s,0s!important}
+.intel-dashboard .intel-performance.intel-reveal{transition-delay:.18s,.18s,0s!important}
+.intel-dashboard .intel-ai.intel-reveal{transition-delay:.23s,.23s,0s!important}
+.intel-dashboard .intel-tasks.intel-reveal{transition-delay:.28s,.28s,0s!important}
+@media(prefers-reduced-motion:reduce){
+ .intel-dashboard .intel-welcome.intel-reveal,
+ .intel-dashboard .intel-panel.intel-reveal,
+ .intel-dashboard .intel-welcome.intel-reveal.intel-in-view,
+ .intel-dashboard .intel-panel.intel-reveal.intel-in-view{
+  opacity:1!important;visibility:visible!important;transform:none!important;
+  transition:none!important;animation:none!important;will-change:auto
+ }
+}
