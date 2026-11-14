@@ -48,6 +48,7 @@
   if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:decodeKey(cfg.publicKey)});
   const id=btoa(sub.endpoint).replace(/[^a-z0-9]/gi,'').slice(-48)||String(Date.now());
   await f.fs.setDoc(f.fs.doc(f.db,'users',u.uid,'pushSubscriptions',id),{subscriptionJson:JSON.stringify(sub.toJSON()),createdAt:Date.now(),userAgent:navigator.userAgent.slice(0,180)},{merge:true});
+  localStorage.setItem('ca_push_sub_id_'+u.uid,id);
   localStorage.setItem('ca_push_enabled_'+u.uid,'1');
   add('Bildirimler açıldı','Bu cihaz Çalışma Alanım bildirimlerini alabilir.','Sistem');
   return true;
@@ -55,7 +56,8 @@
  function decodeKey(s){const p='='.repeat((4-s.length%4)%4);const raw=atob((s+p).replace(/-/g,'+').replace(/_/g,'/'));return Uint8Array.from(raw,c=>c.charCodeAt(0))}
  async function sendPush(title,body){
   const {f,u}=await getUser();const token=await u.getIdToken();
-  const r=await fetch('/api/push/send',{method:'POST',headers:{'content-type':'application/json',authorization:'Bearer '+token},body:JSON.stringify({title,body})});
+  const subscriptionId=localStorage.getItem('ca_push_sub_id_'+u.uid);if(!subscriptionId)throw new Error('Bu cihazın bildirim aboneliği bulunamadı. Bildirimleri yeniden etkinleştir.');
+  const r=await fetch('/api/push/send',{method:'POST',headers:{'content-type':'application/json',authorization:'Bearer '+token},body:JSON.stringify({title,body,subscriptionId})});
   const data=await r.json().catch(()=>({}));if(!r.ok)throw new Error(data.error||'Bildirim gönderilemedi.');return data;
  }
  function listen(){
