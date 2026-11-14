@@ -95,3 +95,38 @@ dialog[open]{animation:dlgIn .28s cubic-bezier(.2,.8,.2,1)}dialog::backdrop{anim
 .hnd{animation:pop .2s}
 @media(prefers-reduced-motion:reduce){*,::before,::after{animation:none!important;transition:none!important}}
 
+
+
+/* Notebook paper: real white paper independent of the app's dark theme. */
+.pgc{
+  background-color:#fff!important;
+  color:#242a32!important;
+  border:1px solid #d7dce3;
+  box-shadow:0 12px 34px rgba(0,0,0,.18),inset 0 0 0 1px rgba(25,35,48,.035);
+}
+.pgc.cizgili{
+  background-color:#fff!important;
+  background-image:linear-gradient(90deg,transparent 38px,#e39b9b 38px,#e39b9b 40px,transparent 40px),linear-gradient(transparent 27px,#cbdff1 27px,#cbdff1 28px)!important;
+  background-size:100% 100%,100% 28px!important;
+  background-position:0 0,0 0!important;
+}
+.pgc.kareli{
+  background-color:#fff!important;
+  background-image:linear-gradient(#d7e3ef 1px,transparent 1px),linear-gradient(90deg,#d7e3ef 1px,transparent 1px)!important;
+  background-size:28px 28px!important;
+}
+.pgc.noktali{
+  background-color:#fff!important;
+  background-image:radial-gradient(#aebdce 1.25px,transparent 1.6px)!important;
+  background-size:26px 26px!important;
+  background-position:13px 13px!important;
+}
+.pgc.duz{
+  background-color:#fff!important;
+  background-image:none!important;
+}
+.pgc .dti,.pgc .dftxt{color:#242a32!important}
+.pgc .dti::placeholder,.pgc .dftxt:empty:before{color:#929ba7!important}
+.pgc.sari{background-color:#fff6b8!important;color:#29261d!important;background-image:linear-gradient(transparent 27px,#d8cc7a 27px)!important}
+.pgc.koyu{background-color:#202633!important;color:#f1f4f8!important;background-image:linear-gradient(transparent 27px,#ffffff25 27px)!important}
+.pgc.koyu .dti,.pgc.koyu .dftxt{color:#f1f4f8!important}
