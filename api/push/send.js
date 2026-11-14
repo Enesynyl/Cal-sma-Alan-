@@ -16,5 +16,9 @@ export default async function handler(req,res){
   const payload=JSON.stringify({title,body,url:'/'});
   await webpush.sendNotification(sub,payload);
   return res.status(200).json({sent:1,total:1});
- }catch(error){console.error('push-send:',error);return res.status(500).json({error:'Bildirim gönderilirken sunucu hatası oluştu.'})}
+ }catch(error){
+  console.error('push-send:',{name:error?.name,message:error?.message,statusCode:error?.statusCode,body:error?.body});
+  const detail=String(error?.message||'Bilinmeyen sunucu hatası').slice(0,240);
+  return res.status(500).json({error:'Push gönderimi başarısız: '+detail,code:error?.statusCode||error?.code||error?.name||'SERVER_ERROR'});
+ }
 }
