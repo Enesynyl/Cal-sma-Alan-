@@ -35,9 +35,12 @@
  }
  async function getUser(){const f=await fbLoad();const u=f.auth.currentUser;if(!u)throw new Error('Push bildirimleri için hesabına giriş yapmalısın.');return {f,u}}
  async function enablePush(){
-  if(!('serviceWorker'in navigator)||!('PushManager'in window))throw new Error('Bu tarayıcı Web Push bildirimlerini desteklemiyor.');
-  const {f,u}=await getUser();
+  const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isStandalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;
+  if(isIOS&&!isStandalone)throw new Error('iPhone/iPad’de Web Push bildirimleri Safari sekmesinde çalışmaz. Önce Safari’de Paylaş → Ana Ekrana Ekle yoluyla Çalışma Alanım’ı ana ekrana ekle; ardından ana ekrandaki simgeden açıp Bildirimleri etkinleştir.');
   if(!window.isSecureContext)throw new Error('Bildirimler yalnızca HTTPS bağlantısında çalışır.');
+  if(!('serviceWorker'in navigator)||!('PushManager'in window)||!('Notification'in window))throw new Error('Bu tarayıcı veya uygulama Web Push API desteği sunmuyor. Güncel Safari/Chrome kullan ve uygulamayı HTTPS üzerinden aç.');
+  const {f,u}=await getUser();
   const permission=await Notification.requestPermission();if(permission!=='granted')throw new Error('Bildirim izni verilmedi. Tarayıcı ayarlarından izin verebilirsin.');
   reg=reg||await navigator.serviceWorker.register('/sw.js');
   const cfg=await fetch('/api/push/config').then(r=>r.json());if(!cfg.publicKey)throw new Error('Push anahtarı sunucuda bulunamadı.');
