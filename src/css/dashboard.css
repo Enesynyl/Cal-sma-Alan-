@@ -270,3 +270,33 @@ body:not(.login-mode) .shell:has(.page-bugun)>.main{padding:0 2px 28px;min-width
   opacity:1;transform:none;filter:none;transition:none;will-change:auto
  }
 }
+
+
+/* Scroll reveal refinement: keep upcoming cards fully hidden until they enter view. */
+.intel-dashboard .intel-reveal{
+ opacity:0!important;
+ visibility:hidden!important;
+ transform:translate3d(0,34px,0) scale(.99)!important;
+ filter:none!important;
+ transition:
+  opacity .78s cubic-bezier(.2,.7,.2,1),
+  transform .78s cubic-bezier(.2,.7,.2,1),
+  visibility 0s linear .78s!important;
+}
+.intel-dashboard .intel-reveal.intel-in-view{
+ opacity:1!important;
+ visibility:visible!important;
+ transform:translate3d(0,0,0) scale(1)!important;
+ filter:none!important;
+ transition:
+  opacity .78s cubic-bezier(.2,.7,.2,1),
+  transform .78s cubic-bezier(.2,.7,.2,1),
+  visibility 0s!important;
+}
+@media(prefers-reduced-motion:reduce){
+ .intel-dashboard .intel-reveal,
+ .intel-dashboard .intel-reveal.intel-in-view{
+  opacity:1!important;visibility:visible!important;transform:none!important;
+  filter:none!important;transition:none!important
+ }
+}
