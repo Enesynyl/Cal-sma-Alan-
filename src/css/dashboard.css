@@ -483,3 +483,19 @@ body:not(.login-mode) .shell:has(.page-bugun)>.main{padding:0 2px 28px;min-width
 #app .main .page-reveal.page-reveal-in{
  transform:translate3d(0,0,0) scale(1)!important;
 }
+
+
+/* Other pages: medium-slow reveal, while Today keeps its cinematic timing. */
+#app .main .page-reveal,
+#app .main .page-reveal.page-reveal-in{
+ transition:
+  opacity 1.05s cubic-bezier(.2,.75,.25,1),
+  transform 1.3s cubic-bezier(.2,.75,.25,1),
+  visibility 0s!important;
+}
+#app .main .page-reveal{
+ transform:translate3d(0,38px,0) scale(.94)!important;
+}
+#app .main .page-reveal.page-reveal-in{
+ transform:translate3d(0,0,0) scale(1)!important;
+}
