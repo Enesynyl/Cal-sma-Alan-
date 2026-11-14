@@ -1556,3 +1556,50 @@ html body:not(.login-mode) #app :is(dialog,.modal,.sheet,.wz) select {
   font-size:16px!important;
  }
 }
+
+
+/* Desktop sign-in screen: keep the authentication card compact and centered.
+   The app shell must not stretch the login form across the full viewport. */
+html body.login-mode #app{
+  width:100%!important;
+  max-width:100%!important;
+  min-height:100svh!important;
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  place-items:center!important;
+  padding:clamp(24px,5vh,56px) 16px!important;
+  overflow-x:hidden!important;
+}
+html body.login-mode #app > .login-shell{
+  display:flex!important;
+  width:min(100%,480px)!important;
+  max-width:480px!important;
+  min-width:0!important;
+  margin:0 auto!important;
+  padding:0!important;
+  flex-direction:column!important;
+  align-items:stretch!important;
+  gap:18px!important;
+}
+html body.login-mode #app > .login-shell > .login-brand,
+html body.login-mode #app > .login-shell > .login-card{
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+}
+html body.login-mode #app > .login-shell > .login-card{
+  padding:clamp(20px,4vw,28px)!important;
+}
+html body.login-mode #ca-notif-button,
+html body.login-mode #ca-notif-backdrop{
+  display:none!important;
+}
+@media(max-width:600px){
+  html body.login-mode #app{
+    padding:calc(env(safe-area-inset-top) + 22px) 14px calc(env(safe-area-inset-bottom) + 22px)!important;
+  }
+  html body.login-mode #app > .login-shell{
+    width:min(100%,460px)!important;
+    max-width:460px!important;
+  }
+}
