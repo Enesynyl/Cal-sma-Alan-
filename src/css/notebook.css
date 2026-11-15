@@ -169,3 +169,26 @@ dialog[open]{animation:dlgIn .28s cubic-bezier(.2,.8,.2,1)}dialog::backdrop{anim
 #dfroot .df-tools select{background:#fff!important;color:#202a36!important;border:1px solid #cbd6e2!important}
 #dfroot .df-tools button,#dfroot .df-tools .ph2{color:#26374a!important;background:#f5f8fb!important;border:1px solid #d2dce7!important}
 #dfroot .df-tools .df-color-label{color:#526276!important}
+
+
+/* Notebook library cards and folder list: readable in both app themes. */
+html[data-theme="light"] #dfroot .fld{
+ background:linear-gradient(145deg,#fff,#f3f7fc)!important;background-color:#fff!important;
+ color:#203148!important;border:1px solid #d0dce9!important;
+ box-shadow:0 7px 18px rgba(31,54,81,.09)!important;
+}
+html[data-theme="light"] #dfroot .fld b{color:#203148!important;-webkit-text-fill-color:#203148!important}
+html[data-theme="light"] #dfroot .fld small{color:#60748b!important;-webkit-text-fill-color:#60748b!important}
+html[data-theme="light"] #dfroot .it{
+ background:#fff!important;color:#203148!important;border:1px solid #d6e0eb!important;
+}
+html[data-theme="light"] #dfroot .it :is(b,small,span){color:#203148!important;-webkit-text-fill-color:#203148!important}
+html[data-theme="light"] #dfroot .it small{color:#64778c!important;-webkit-text-fill-color:#64778c!important}
+html[data-theme="light"] #dfroot input,
+html[data-theme="light"] #dfroot select{background:#fff!important;color:#203148!important;-webkit-text-fill-color:#203148!important;border:1px solid #cbd7e4!important}
+html[data-theme="light"] #dfroot input::placeholder{color:#8291a2!important;-webkit-text-fill-color:#8291a2!important}
+html[data-theme="dark"] #dfroot .fld{
+ background:linear-gradient(145deg,#202d3e,#172231)!important;color:#edf4fc!important;border:1px solid #35485f!important;
+}
+html[data-theme="dark"] #dfroot .fld b{color:#edf4fc!important;-webkit-text-fill-color:#edf4fc!important}
+html[data-theme="dark"] #dfroot .fld small{color:#b2c0d0!important;-webkit-text-fill-color:#b2c0d0!important}
