@@ -40,11 +40,27 @@
   };
   panel.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{activeTab=b.dataset.tab;renderTab()});
   panel.querySelector('#ca-notif-content').addEventListener('click',e=>{const b=e.target.closest('[data-delete]');if(!b||activeTab==='for-you')return;deleteLocalItem(b.dataset.delete);renderTab()});
+  panel.__renderTab=renderTab;
   renderTab();
+  refreshAdminItems().then(()=>{if(panel.isConnected&&activeTab==='for-you')renderTab()}).catch(err=>{console.warn('Yönetici duyuruları yenilenemedi:',err);status('Duyurular şu anda yüklenemedi. Bağlantını kontrol edip tekrar aç.')});
   panel.querySelector('[data-action="enable"]').onclick=async()=>{try{await enablePush();status('Bildirimler etkinleştirildi. Bu cihaz bildirim alabilir.')}catch(e){status(e.message)}};
   const testButton=panel.querySelector('[data-action="test"]');if(testButton)testButton.onclick=async()=>{try{await sendPush('Çalışma Alanım hazır!','Canlı bildirim bağlantın çalışıyor.');status('Test bildirimi gönderildi.')}catch(e){status(e.message)}};
   panel.querySelector('[data-action="clear"]').textContent='Toplu sil';panel.querySelector('[data-action="clear"]').onclick=()=>{if(activeTab==='for-you')return;if(!confirm('Bildirimler sekmesindeki tüm bildirimler silinsin mi?'))return;saveItems([]);renderTab()};
   function status(t){const el=$id('ca-notif-status');if(el)el.textContent=t}
+ }
+
+ async function refreshAdminItems(){
+  const f=await fbLoad(),u=f.auth.currentUser;if(!u)return;
+  const col=f.fs.collection(f.db,'users',u.uid,'notifications');
+  const snap=await f.fs.getDocs(col);
+  const current=adminItems(),byId=new Map(current.map(x=>[x.id,x]));
+  snap.forEach(doc=>{
+   const d=doc.data()||{};if(d.source!=='admin'&&d.type!=='Duyuru')return;
+   const at=Number(d.createdAt);if(!Number.isFinite(at)||Date.now()-at>30*86400000)return;
+   const old=byId.get(doc.id);
+   byId.set(doc.id,{id:doc.id,title:d.title||'Yönetici duyurusu',body:d.body||'',imageUrl:d.imageUrl||'',linkUrl:d.linkUrl||'',type:'Duyuru',at,read:old?.read||false});
+  });
+  saveAdminItems([...byId.values()].sort((a,b)=>b.at-a.at));
  }
  async function getUser(){const f=await fbLoad();const u=f.auth.currentUser;if(!u)throw new Error('Push bildirimleri için hesabına giriş yapmalısın.');return {f,u}}
  async function enablePush(){
@@ -122,10 +138,10 @@
     const at=Number(d.createdAt);if(!Number.isFinite(at)||Date.now()-at>30*86400000)return;
     if(d.source==='admin'||d.type==='Duyuru'){
      const existing=adminItems();if(existing.some(x=>x.id===ch.doc.id))return;
-     saveAdminItems([{id:ch.doc.id,title:d.title||'Yönetici duyurusu',body:d.body||'',imageUrl:d.imageUrl||'',linkUrl:d.linkUrl||'',type:'Duyuru',at,read:false},...existing]);
+     saveAdminItems([{id:ch.doc.id,title:d.title||'Yönetici duyurusu',body:d.body||'',imageUrl:d.imageUrl||'',linkUrl:d.linkUrl||'',type:'Duyuru',at,read:existing.find(x=>x.id===ch.doc.id)?.read||false},...existing.filter(x=>x.id!==ch.doc.id)]);
     }else add(d.title||'Yeni bildirim',d.body||'',d.type||'Bilgi');
-    if($id('ca-notif-backdrop')){const tab=$id('ca-notif-backdrop').querySelector('[aria-selected="true"]')?.dataset.tab;if(tab==='for-you')$id('ca-notif-content').innerHTML='';}
-   }));
+    const panel=$id('ca-notif-backdrop');if(panel?.querySelector('[data-tab="for-you"][aria-selected="true"]'))panel.__renderTab?.();
+   }),err=>console.warn('Bildirim akışı okunamadı:',err));
   }catch(e){console.warn('Bildirim akışı açılamadı',e)}
   if(!reg&&'serviceWorker'in navigator)navigator.serviceWorker.register('/sw.js').then(x=>reg=x).catch(()=>{});
   scheduleReminders();
