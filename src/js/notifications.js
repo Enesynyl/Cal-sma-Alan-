@@ -25,11 +25,12 @@
  function openCenter(){
   const list=localItems();
   const panel=document.createElement('div');panel.className='ca-notif-backdrop';panel.id='ca-notif-backdrop';
-  panel.innerHTML='<section class="ca-notif-panel" role="dialog" aria-modal="true" aria-labelledby="ca-notif-title"><header><div><small>BİLDİRİM MERKEZİ</small><h2 id="ca-notif-title">Bildirimlerin</h2></div><button class="ca-notif-close" aria-label="Kapat">×</button></header><div class="ca-notif-actions"><button data-action="enable">🔔 Bildirimleri etkinleştir</button><button data-action="test">Test bildirimi gönder</button><button data-action="clear">Tümünü okundu işaretle</button></div><div class="ca-notif-list">'+(list.length?list.map(x=>'<article class="'+(x.read?'read':'')+'"><span>✦</span><div><b>'+esc(x.title)+'</b><p>'+esc(x.body)+'</p><small>'+new Date(x.at).toLocaleString('tr-TR')+'</small></div></article>').join(''):'<div class="ca-notif-empty">Henüz bildirimin yok.<small>Hatırlatmalar ve hesap etkinlikleri burada görünecek.</small></div>')+'</div><footer id="ca-notif-status">Bildirim tercihlerini buradan yönetebilirsin.</footer></section>';
+  const isAdmin=String(FB?.auth?.currentUser?.email||'').toLowerCase()==='ebsyonyol48@gmail.com';
+  panel.innerHTML='<section class="ca-notif-panel" role="dialog" aria-modal="true" aria-labelledby="ca-notif-title"><header><div><small>BİLDİRİM MERKEZİ</small><h2 id="ca-notif-title">Bildirimlerin</h2></div><button class="ca-notif-close" aria-label="Kapat">×</button></header><div class="ca-notif-actions"><button data-action="enable">🔔 Bildirimleri etkinleştir</button>'+(isAdmin?'<button data-action="test">Test bildirimi gönder</button>':'')+'<button data-action="clear">Tümünü okundu işaretle</button></div><div class="ca-notif-list">'+(list.length?list.map(x=>'<article class="'+(x.read?'read':'')+'"><span>✦</span><div><b>'+esc(x.title)+'</b><p>'+esc(x.body)+'</p><small>'+new Date(x.at).toLocaleString('tr-TR')+'</small></div></article>').join(''):'<div class="ca-notif-empty">Henüz bildirimin yok.<small>Hatırlatmalar ve hesap etkinlikleri burada görünecek.</small></div>')+'</div><footer id="ca-notif-status">Bildirim tercihlerini buradan yönetebilirsin.</footer></section>';
   document.body.appendChild(panel);
   const close=()=>panel.remove();panel.querySelector('.ca-notif-close').onclick=close;panel.addEventListener('click',e=>{if(e.target===panel)close()});
   panel.querySelector('[data-action="enable"]').onclick=async()=>{try{await enablePush();status('Bildirimler etkinleştirildi. Bu cihaz bildirim alabilir.')}catch(e){status(e.message)}};
-  panel.querySelector('[data-action="test"]').onclick=async()=>{try{await sendPush('Çalışma Alanım hazır!','Canlı bildirim bağlantın çalışıyor.');status('Test bildirimi gönderildi.')}catch(e){status(e.message)}};
+  const testButton=panel.querySelector('[data-action="test"]');if(testButton)testButton.onclick=async()=>{try{await sendPush('Çalışma Alanım hazır!','Canlı bildirim bağlantın çalışıyor.');status('Test bildirimi gönderildi.')}catch(e){status(e.message)}};
   panel.querySelector('[data-action="clear"]').onclick=()=>{saveItems(localItems().map(x=>({...x,read:true})));close();openCenter()};
   function status(t){const el=$id('ca-notif-status');if(el)el.textContent=t}
  }
@@ -87,6 +88,17 @@
    throw new Error('Bildirim testi başarısız ('+stage+'): '+(e?.message||String(e))+' ['+trace+']');
   }
  }
+ let promptUid=null;
+ function showEnablePrompt(user){
+  if(!user||user.uid!==uid||!('Notification'in window)||Notification.permission!=='default'||localStorage.getItem('ca_push_enabled_'+user.uid)==='1')return;
+  if(sessionStorage.getItem('ca_push_prompt_'+user.uid)||$id('ca-push-optin'))return;
+  sessionStorage.setItem('ca_push_prompt_'+user.uid,'1');
+  const box=document.createElement('aside');box.id='ca-push-optin';box.className='ca-push-optin';
+  box.innerHTML='<button type="button" class="ca-push-optin-close" aria-label="Kapat">×</button><div class="ca-push-optin-icon">🔔</div><div class="ca-push-optin-copy"><b>Bildirimleri aç</b><p>Görevlerini, sınavlarını ve önemli duyuruları zamanında haber verelim.</p></div><button type="button" class="ca-push-optin-enable">Etkinleştir</button>';
+  document.body.appendChild(box);
+  box.querySelector('.ca-push-optin-close').onclick=()=>box.remove();
+  box.querySelector('.ca-push-optin-enable').onclick=async e=>{const b=e.currentTarget;b.disabled=true;b.textContent='Açılıyor…';try{await enablePush();box.remove()}catch(err){const p=box.querySelector('p');p.textContent=err.message;b.disabled=false;b.textContent='Tekrar dene'}};
+ }
  function listen(){
   if(!FB?.auth?.currentUser||uid===FB.auth.currentUser.uid)return;
   if(stopLive)stopLive();uid=FB.auth.currentUser.uid;items=localItems();renderBadge();
@@ -141,8 +153,9 @@
   scan();scanTimer=setInterval(scan,30000);
  }
  function authChanged(u){
-  if(!u){if(stopLive)stopLive();stopLive=null;uid=null;clearInterval(scanTimer);return}
+  if(!u){if(stopLive)stopLive();stopLive=null;uid=null;promptUid=null;clearInterval(scanTimer);$id('ca-push-optin')?.remove();return}
   listen();
+  if(promptUid!==u.uid){promptUid=u.uid;setTimeout(()=>showEnablePrompt(u),1800)}
  }
  function boot(){
   ensureButton();
