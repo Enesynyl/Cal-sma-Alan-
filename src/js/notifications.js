@@ -35,7 +35,7 @@
   const close=()=>panel.remove();panel.querySelector('.ca-notif-close').onclick=close;panel.addEventListener('click',e=>{if(e.target===panel)close()});
   const renderTab=()=>{
    const isForYou=activeTab==='for-you',list=isForYou?adminItems():localItems();
-   panel.querySelectorAll('[data-tab]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===activeTab)));
+   panel.querySelectorAll('[data-tab]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===activeTab)));panel.querySelector('[data-action="clear"]').hidden=isForYou;
    panel.querySelector('#ca-notif-content').innerHTML=list.length?list.map(x=>'<article class="'+(x.read?'read':'')+'"><span>'+(isForYou?'✦':'◈')+'</span><div class="ca-notif-item-body"><b>'+esc(x.title)+'</b><p>'+esc(x.body)+'</p>'+(x.imageUrl?'<img class="ca-notif-image" src="'+esc(x.imageUrl)+'" alt="">':'')+(x.linkUrl?'<a class="ca-notif-link" href="'+esc(x.linkUrl)+'" target="_blank" rel="noopener noreferrer">Detayları görüntüle ↗</a>':'')+'<small>'+new Date(x.at).toLocaleString('tr-TR')+'</small></div>'+(isForYou?'':'<button type="button" class="ca-notif-delete" data-delete="'+esc(x.id)+'" aria-label="Bildirimi sil" title="Bildirimi sil">×</button>')+'</article>').join(''):'<div class="ca-notif-empty">'+(isForYou?'Senin için henüz yeni bir içerik yok.':'Henüz bildirimin yok.')+'<small>'+(isForYou?'Sana özel bildirimler burada görünecek.':'Hatırlatmalar ve hesap etkinlikleri burada görünecek.')+'</small></div>';
   };
   panel.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{activeTab=b.dataset.tab;renderTab()});
