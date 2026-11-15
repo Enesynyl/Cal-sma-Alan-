@@ -55,6 +55,7 @@
   // Push delivery uses this device's active subscription directly.
   // No Firestore write is needed for enabling or testing browser notifications.
   localStorage.setItem('ca_push_enabled_'+u.uid,'1');
+  try{const token=await u.getIdToken();const saved=await fetch('/api/admin/register-subscription',{method:'POST',headers:{'content-type':'application/json',authorization:'Bearer '+token},body:JSON.stringify({subscription:sub.toJSON()})});if(!saved.ok)console.warn('Cihaz aboneliği merkezi kaydedilemedi:',saved.status)}catch(e){console.warn('Cihaz aboneliği merkezi kaydedilemedi:',e)}
   add('Bildirimler açıldı','Bu cihaz Çalışma Alanım bildirimlerini alabilir.','Sistem');
   return true;
  }
