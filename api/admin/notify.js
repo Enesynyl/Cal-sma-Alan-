@@ -20,11 +20,11 @@ export default async function handler(req,res){
    try{
     const [sessions,pushes]=await Promise.all([firestoreList(admin.token,'users/'+uid+'/activeDevices'),firestoreList(admin.token,'users/'+uid+'/pushSubscriptions')]);
     const live=new Map((sessions.documents||[]).map(doc=>({id:doc.name.split('/').pop(),...fieldsToObject(doc.fields||{})})).filter(x=>x.deviceId&&now-Number(x.updatedAt||0)<=120000&&now>=Number(x.updatedAt||0)).map(x=>[x.deviceId,x]));
-    if(live.size){
-     active.push({uid,devices:live.size});
-     const id='admin_'+now+'_'+Math.random().toString(36).slice(2,8);
-     writes.push({update:{name:ROOT+'/users/'+uid+'/notifications/'+id,fields:{title:{stringValue:title},body:{stringValue:body},type:{stringValue:'Duyuru'},source:{stringValue:'admin'},createdAt:{integerValue:String(now)},...(imageUrl?{imageUrl:{stringValue:imageUrl}}:{}),...(linkUrl?{linkUrl:{stringValue:linkUrl}}:{})}}});
-    }
+    if(live.size)active.push({uid,devices:live.size});
+    // Store one durable inbox item on the account, even when no device is online.
+    // Push delivery below remains restricted to currently active devices.
+    const id='admin_'+now+'_'+Math.random().toString(36).slice(2,8);
+    writes.push({update:{name:ROOT+'/users/'+uid+'/notifications/'+id,fields:{title:{stringValue:title},body:{stringValue:body},type:{stringValue:'Duyuru'},source:{stringValue:'admin'},createdAt:{integerValue:String(now)},...(imageUrl?{imageUrl:{stringValue:imageUrl}}:{}),...(linkUrl?{linkUrl:{stringValue:linkUrl}}:{})}}});
     for(const doc of pushes.documents||[]){const s=fieldsToObject(doc.fields||{});if(s.deviceId&&live.has(s.deviceId)&&s.endpoint&&s.p256dh&&s.auth)subs.push({uid,deviceId:s.deviceId,subscription:{endpoint:s.endpoint,keys:{p256dh:s.p256dh,auth:s.auth}}})}
    }catch(e){console.warn('active device lookup failed',uid,e.message)}
   }
