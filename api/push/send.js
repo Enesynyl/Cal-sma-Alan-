@@ -11,7 +11,7 @@ export default async function handler(req,res){
  if(req.method!=='POST')return res.status(405).json({error:'Method not allowed',revision:SERVER_REVISION});
  let keySource='none',keyLength=0,keyFormat='missing';
  try{
-  const token=String(req.headers.authorization||'').replace(/^Bearer\\s+/i,'');
+  const token=String(req.headers.authorization||'').replace(/^Bearer\s+/i,'');
   if(!token)return res.status(401).json({error:'Oturum gerekli.',revision:SERVER_REVISION});
   const verify=await fetch('https://identitytoolkit.googleapis.com/v1/accounts:lookup?key='+API_KEY,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({idToken:token})});
   const auth=await verify.json();const user=auth.users?.[0];if(!verify.ok||!user?.localId){const authCode=String(auth?.error?.message||'AUTH_LOOKUP_FAILED').slice(0,120);console.warn('push-send:auth-rejected',{trace,revision:SERVER_REVISION,httpStatus:verify.status,authCode});return res.status(401).json({error:'Oturum doğrulanamadı: '+authCode,authCode,revision:SERVER_REVISION});}
