@@ -22,7 +22,8 @@ export async function requireAdmin(req,res){
  const token=String(req.headers.authorization||'').replace(/^Bearer\s+/i,'');if(!token){res.status(401).json({error:'Oturum gerekli.'});return null}
  const v=await fetch('https://identitytoolkit.googleapis.com/v1/accounts:lookup?key='+API_KEY,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({idToken:token})});
  const d=await v.json(),u=d.users?.[0];if(!v.ok||!u){res.status(401).json({error:'Oturum doğrulanamadı.'});return null}
- if(String(u.email||'').toLowerCase()!==ADMIN_EMAIL||!u.emailVerified){res.status(403).json({error:'Bu işlem yalnızca yönetici hesabına açıktır.'});return null}
+ let attrs={};try{attrs=JSON.parse(u.customAttributes||'{}')}catch{};
+ if((String(u.email||'').toLowerCase()!==ADMIN_EMAIL&&!attrs.admin)||!u.emailVerified){res.status(403).json({error:'Bu işlem yalnızca yönetici hesabına açıktır.'});return null}
  try{return {uid:u.localId,email:u.email,token:await googleToken()}}catch(e){res.status(503).json({error:'Yönetici servisi yapılandırılmamış: '+e.message});return null}
 }
 export async function firestoreGet(token,path){
