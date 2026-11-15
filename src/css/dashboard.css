@@ -22,7 +22,6 @@
 .vin .tile:nth-child(2){animation-delay:.05s}.vin .tile:nth-child(3){animation-delay:.1s}.vin .tile:nth-child(4){animation-delay:.15s}
 .utb.on{background:var(--ac2);border-color:var(--ac);color:var(--ac);font-weight:600}
 body[data-auth-required="1"] #app{visibility:hidden}body[data-auth-required="1"] #dl{z-index:9999}
-
 /* Today dashboard: personal drag-and-drop layout */
 .today-layout{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start}
 .today-widget{position:relative;min-width:0;min-height:0}
@@ -46,13 +45,10 @@ body[data-auth-required="1"] #app{visibility:hidden}body[data-auth-required="1"]
 .today-custom-card h3{margin:0 0 10px;color:#f2f7ff}
 .today-custom-card p{margin:0;line-height:1.6;white-space:pre-wrap}
 @media(max-width:700px){.today-layout{grid-template-columns:1fr;gap:12px}.today-widget.today-wide{grid-column:1}.today-edit-bar{align-items:flex-start;flex-direction:column}.today-edit-bar>div{width:100%}.today-edit-bar>div button{flex:1}}
-
 /* Keep the Today page editor action visible even when the dashboard is scrolled. */
 body:not(.login-mode) .today-edit-floating{padding:13px 20px!important;border:1px solid #82c0ef!important;border-radius:999px!important;background:linear-gradient(135deg,#82c0ef,#4b83b5)!important;color:#071525!important;font-weight:750!important;box-shadow:0 8px 28px rgba(0,0,0,.28)!important}
 body:not(.login-mode) .today-edit-floating:active{transform:scale(.97)}
 @media(max-width:700px){body:not(.login-mode) .today-edit-floating{right:14px!important;bottom:16px!important}}
-
-
 /* Intelligence dashboard — reference-led dark glass layout */
 body:not(.login-mode) .wrap{background:transparent}
 body:not(.login-mode) .shell:has(.page-bugun){gap:14px;min-height:calc(100dvh - 36px)}
@@ -145,8 +141,8 @@ body:not(.login-mode) .shell:has(.page-bugun)>.main{padding:0 2px 28px;min-width
 .intel-task-dot{flex:none;width:8px;height:8px;border-radius:50%;background:#70b6ff;box-shadow:0 0 10px rgba(112,182,255,.4)}
 .intel-task-row>span:nth-child(2){display:flex;flex:1;min-width:0;flex-direction:column;gap:4px}.intel-task-row b{font-size:10px}.intel-task-row small{font-size:9px;color:#8ea3bf}.intel-task-row em{font-size:8px;font-style:normal;color:#d6b678}
 .intel-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:120px;text-align:center;color:#dfeeff}.intel-empty>span{font-size:25px;color:#75baff}.intel-empty b{font-size:11px}.intel-empty small{font-size:9px;color:#8da3bf}.intel-empty button{margin-top:6px;padding:7px 11px;border-radius:9px;background:#315fc9;color:#fff;font-size:10px}.intel-empty.compact{min-height:80px}
-.intel-search-result,.intel-notice{display:flex;flex-direction:column;gap:4px;width:100%;margin:6px 0;padding:10px;border:1px solid var(--bd);border-radius:10px;background:rgba(255,255,255,.04);text-align:left;color:var(--tx)}
-.intel-search-result small,.intel-notice small{color:var(--mu);font-size:11px}
+.intel-notice{display:flex;flex-direction:column;gap:4px;width:100%;margin:6px 0;padding:10px;border:1px solid var(--bd);border-radius:10px;background:rgba(255,255,255,.04);text-align:left;color:var(--tx)}
+.intel-notice small{color:var(--mu);font-size:11px}
 @keyframes intel-rise{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:1120px){.intel-grid{grid-template-columns:minmax(0,1fr) minmax(220px,.8fr);grid-template-rows:auto}.intel-week{grid-column:1/3;grid-row:1}.intel-focus{grid-column:1;grid-row:2}.intel-ai{grid-column:2;grid-row:2}.intel-docs{grid-column:1;grid-row:3}.intel-performance{grid-column:2;grid-row:3}.intel-tasks{grid-column:1/3;grid-row:4}}
 @media(max-width:700px){
@@ -159,7 +155,6 @@ body:not(.login-mode) .shell:has(.page-bugun)>.main{padding:0 2px 28px;min-width
  body:not(.login-mode) .shell:has(.page-bugun)>.main{padding:0 0 14px}
  .intel-topbar{height:auto;min-height:58px;gap:8px;padding:8px 10px;margin-bottom:14px}
  .intel-brand{min-width:0;gap:7px}.intel-brand>span:last-child{font-size:11px}.intel-brand small{font-size:7px}.intel-brand-mark{width:30px;height:30px}
- .intel-search{height:35px;min-width:0;padding:0 7px}.intel-search>span{font-size:17px}.intel-search input{font-size:10px!important}.intel-search button{display:none}
  .intel-top-actions{gap:5px}.intel-profile{padding:3px}.intel-profile b,.intel-profile small{display:none}.intel-profile>span{width:27px;height:27px}
  .intel-welcome{align-items:center;margin:0 1px 13px}.intel-welcome h1{font-size:23px}.intel-welcome p{font-size:10px}.intel-primary{padding:9px 11px;font-size:10px;white-space:nowrap}
  .intel-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:9px}
@@ -173,14 +168,8 @@ body:not(.login-mode) .shell:has(.page-bugun)>.main{padding:0 2px 28px;min-width
  .intel-score-ring{width:105px;height:105px}.intel-score-ring b{font-size:21px}.intel-mini-stats{margin:9px 0}.intel-mini-stats b{font-size:12px}.intel-mini-stats small{font-size:7px}.intel-outline{font-size:8px;padding:8px 5px}
  .intel-ai-visual{padding:10px}.intel-ai-core{width:48px;height:48px;border-radius:15px}.intel-ai-copy p{font-size:9px}
 }
-@media(max-width:390px){.intel-brand>span:last-child{display:none}.intel-search{flex:1}.intel-grid{gap:7px}.intel-panel{padding:10px}.intel-day-events{gap:3px}}
 @media(prefers-reduced-motion:reduce){.intel-panel{animation:none}}
-
-
-/* iPhone search bar overflow correction */
 .intel-topbar,.intel-topbar *{box-sizing:border-box}
-.intel-search{min-width:0;width:100%;max-width:460px;overflow:hidden;flex:1 1 0}
-.intel-search input{
  display:block;width:0!important;min-width:0!important;max-width:100%;
  flex:1 1 0!important;height:100%;margin:0!important;padding:0!important;
  border:0!important;border-radius:0!important;outline:0!important;
@@ -188,57 +177,35 @@ body:not(.login-mode) .shell:has(.page-bugun)>.main{padding:0 2px 28px;min-width
  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
 }
 @media(max-width:700px){
- .intel-topbar{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:7px;padding:7px 8px;overflow:hidden}
+ .intel-topbar{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px;padding:7px 8px;overflow:hidden}
  .intel-brand{width:auto;min-width:0;white-space:nowrap}
  .intel-brand-mark{flex:none}
- .intel-search{width:100%;min-width:0;max-width:none;height:38px;gap:6px;padding:0 8px;flex:none}
- .intel-search input{font-size:11px!important;line-height:normal!important}
- .intel-search input::placeholder{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
  .intel-top-actions{min-width:0;gap:5px;margin:0}
 }
 @media(max-width:390px){
- .intel-topbar{grid-template-columns:32px minmax(0,1fr) 67px;gap:6px}
+ .intel-topbar{grid-template-columns:minmax(0,1fr) 67px;gap:6px}
  .intel-brand-mark{width:30px;height:30px}
- .intel-search{height:36px;padding:0 6px}
- .intel-search input{font-size:10px!important}
  .intel-icon-btn{width:30px;height:32px}
  .intel-profile{padding:2px}
  .intel-profile>span{width:27px;height:27px}
 }
-
-
-/* Final polish: remove inner search seams and optically center notification glyph */
-.intel-search{position:relative;isolation:isolate}
-.intel-search input,
-.intel-search input:focus,
-.intel-search input:focus-visible,
-.intel-search input:active{
  -webkit-appearance:none!important;appearance:none!important;
  border:0!important;border-left:0!important;border-right:0!important;
  outline:0!important;outline-offset:0!important;
  box-shadow:none!important;
  background:transparent!important;
 }
-.intel-search input::-webkit-search-decoration,
-.intel-search input::-webkit-search-cancel-button,
-.intel-search input::-webkit-search-results-button,
-.intel-search input::-webkit-search-results-decoration{display:none!important;-webkit-appearance:none!important}
-.intel-search>span{flex:0 0 16px;width:16px;text-align:center;line-height:1}
 .intel-icon-btn{
  display:grid!important;place-items:center!important;
  padding:0!important;line-height:1!important;text-align:center!important;
 }
 .intel-icon-btn>i{display:block;right:-4px;top:-5px}
 @media(max-width:700px){
- .intel-search{gap:7px;padding-left:8px;padding-right:8px}
- .intel-search>span{flex-basis:15px;width:15px}
  .intel-icon-btn{width:36px;height:36px;flex:0 0 36px}
 }
 @media(max-width:390px){
  .intel-icon-btn{width:34px;height:34px;flex:0 0 34px}
 }
-
-
 /* Elegant scroll reveal: cards glide into view and gently fade out when leaving. */
 .intel-dashboard .intel-reveal{
  opacity:0;
@@ -267,8 +234,6 @@ body:not(.login-mode) .shell:has(.page-bugun)>.main{padding:0 2px 28px;min-width
   opacity:1;transform:none;filter:none;transition:none;will-change:auto
  }
 }
-
-
 /* Scroll reveal refinement: keep upcoming cards fully hidden until they enter view. */
 .intel-dashboard .intel-reveal{
  opacity:0!important;
@@ -297,8 +262,6 @@ body:not(.login-mode) .shell:has(.page-bugun)>.main{padding:0 2px 28px;min-width
   filter:none!important;transition:none!important
  }
 }
-
-
 /* Slower, more cinematic staggered entrance for scroll-revealed cards */
 .intel-dashboard .intel-reveal{
  transform:translate3d(0,48px,0) scale(.975)!important;
@@ -321,8 +284,6 @@ body:not(.login-mode) .shell:has(.page-bugun)>.main{padding:0 2px 28px;min-width
 .intel-dashboard .intel-panel.intel-reveal:nth-of-type(4){transition-delay:.22s,.22s,0s!important}
 .intel-dashboard .intel-panel.intel-reveal:nth-of-type(5){transition-delay:.28s,.28s,0s!important}
 .intel-dashboard .intel-panel.intel-reveal:nth-of-type(6){transition-delay:.34s,.34s,0s!important}
-
-
 /* Consistent card entrance: disable the old panel keyframe so scroll transitions control every card. */
 .intel-dashboard .intel-welcome.intel-reveal,
 .intel-dashboard .intel-panel.intel-reveal{
@@ -363,8 +324,6 @@ body:not(.login-mode) .shell:has(.page-bugun)>.main{padding:0 2px 28px;min-width
   transition:none!important;animation:none!important;will-change:auto
  }
 }
-
-
 /* Extra-slow, fluid scroll reveal timing */
 .intel-dashboard .intel-welcome.intel-reveal,
 .intel-dashboard .intel-panel.intel-reveal{
@@ -380,8 +339,6 @@ body:not(.login-mode) .shell:has(.page-bugun)>.main{padding:0 2px 28px;min-width
   transform 1.85s cubic-bezier(.16,1,.3,1),
   visibility 0s!important;
 }
-
-
 /* Workspace-wide scroll reveal: same slow scale-up motion as Today dashboard */
 #app .main .page-reveal{
  opacity:0!important;
@@ -410,8 +367,6 @@ body:not(.login-mode) .shell:has(.page-bugun)>.main{padding:0 2px 28px;min-width
   transition:none!important;will-change:auto
  }
 }
-
-
 /* Cinematic reveal v2: slower fade, deeper scale-up and softer landing */
 .intel-dashboard .intel-welcome.intel-reveal,
 .intel-dashboard .intel-panel.intel-reveal{
@@ -464,8 +419,6 @@ body:not(.login-mode) .shell:has(.page-bugun)>.main{padding:0 2px 28px;min-width
   transition:none!important;will-change:auto
  }
 }
-
-
 /* Keep the cinematic slow timing exclusive to Today; other pages use a natural pace. */
 #app .main .page-reveal,
 #app .main .page-reveal.page-reveal-in{
@@ -480,8 +433,6 @@ body:not(.login-mode) .shell:has(.page-bugun)>.main{padding:0 2px 28px;min-width
 #app .main .page-reveal.page-reveal-in{
  transform:translate3d(0,0,0) scale(1)!important;
 }
-
-
 /* Other pages: medium-slow reveal, while Today keeps its cinematic timing. */
 #app .main .page-reveal,
 #app .main .page-reveal.page-reveal-in{
@@ -496,8 +447,6 @@ body:not(.login-mode) .shell:has(.page-bugun)>.main{padding:0 2px 28px;min-width
 #app .main .page-reveal.page-reveal-in{
  transform:translate3d(0,0,0) scale(1)!important;
 }
-
-
 /* Secondary pages: a touch slower; Today dashboard remains unchanged. */
 #app .main .page-reveal,
 #app .main .page-reveal.page-reveal-in{
@@ -512,7 +461,6 @@ body:not(.login-mode) .shell:has(.page-bugun)>.main{padding:0 2px 28px;min-width
 #app .main .page-reveal.page-reveal-in{
  transform:translate3d(0,0,0) scale(1)!important;
 }
-
 /* Bugün sayfasındaki marka alanı diğer sekmelerle aynı yatay düzende */
 body:not(.login-mode) .shell:has(.page-bugun)>.side .wsb{
  width:100%;height:auto;min-height:54px;padding:7px 9px;
@@ -527,7 +475,6 @@ body:not(.login-mode) .shell:has(.page-bugun)>.side .wsb .lb{
  display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
  text-align:left;font-size:13px;font-weight:750;
 }
-
 /* Sidebar brand lock: identical logo/name scale on Today and every other section */
 body:not(.login-mode) .shell>.side .wsb{
  box-sizing:border-box!important;
@@ -570,7 +517,6 @@ body:not(.login-mode) .shell>.side .wsb .lb{
 @media(max-width:700px){
  body:not(.login-mode) .shell:has(.page-bugun)>.side .wsb{display:none!important}
 }
-
 /* Today topbar refresh: clean light-mode search, balanced spacing and mobile-safe layout. */
 html[data-theme="light"] body:not(.login-mode) .intel-topbar{
  background:rgba(255,255,255,.96)!important;background-image:none!important;color:#20334a!important;
@@ -579,27 +525,19 @@ html[data-theme="light"] body:not(.login-mode) .intel-topbar{
 }
 html[data-theme="light"] body:not(.login-mode) .intel-brand{color:#24364b!important}
 html[data-theme="light"] body:not(.login-mode) .intel-brand small{color:#6484a8!important}
-html[data-theme="light"] body:not(.login-mode) .intel-search{
  height:44px!important;max-width:none!important;min-width:0!important;flex:1 1 320px!important;
  background:#f1f5fa!important;border:1px solid #d5dfeb!important;border-radius:14px!important;
  color:#5b718a!important;box-shadow:inset 0 1px 2px rgba(30,55,85,.04)!important;
 }
-html[data-theme="light"] body:not(.login-mode) .intel-search input,html[data-theme="light"] body:not(.login-mode) .intel-search input:focus{
  background:transparent!important;color:#24364b!important;-webkit-text-fill-color:#24364b!important;
  font-size:14px!important;font-weight:550!important;min-width:0!important;
 }
-html[data-theme="light"] body:not(.login-mode) .intel-search input::placeholder{color:#8191a4!important;-webkit-text-fill-color:#8191a4!important;opacity:1!important}
-html[data-theme="light"] body:not(.login-mode) .intel-search button{background:#2867a5!important;color:#fff!important;border:0!important;border-radius:10px!important;padding:7px 14px!important}
 html[data-theme="light"] body:not(.login-mode) .intel-icon-btn{background:#f1f5fa!important;color:#34516f!important;border:1px solid #d5dfeb!important}
 html[data-theme="light"] body:not(.login-mode) .intel-profile{background:#f1f5fa!important;color:#24364b!important;border:1px solid #d5dfeb!important}
 html[data-theme="light"] body:not(.login-mode) .intel-profile small{color:#637890!important}
 @media(max-width:700px){
  html[data-theme="light"] body:not(.login-mode) .intel-topbar{grid-template-columns:38px minmax(0,1fr) auto!important;gap:8px!important;padding:9px!important;border-radius:19px!important}
- html[data-theme="light"] body:not(.login-mode) .intel-search{height:42px!important;min-width:0!important;max-width:none!important;padding:0 9px!important;gap:7px!important}
- html[data-theme="light"] body:not(.login-mode) .intel-search input{font-size:12px!important;min-width:0!important;width:0!important}
- html[data-theme="light"] body:not(.login-mode) .intel-search button{display:none!important}
  html[data-theme="light"] body:not(.login-mode) .intel-top-actions{gap:5px!important}
 }
-
 /* Remove the unwanted club/shortcut control from the Today header. */
 .intel-top-actions .intel-icon-btn{display:none!important}
