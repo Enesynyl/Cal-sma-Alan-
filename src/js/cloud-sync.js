@@ -132,7 +132,7 @@ async function fbAct(a){try{
   const c=await f.au.signInWithPopup(f.auth,provider);await fbAfter(c.user);return;
  }
  const f=await fbLoad();
- if(a==='out'){fbSay('Çıkış yapılıyor…');if(lsg('fbDirty')==='1'&&f.auth.currentUser){try{await fbUp(true)}catch(x){if(x.message!=='conflict'){toast('Son değişiklikler buluta gönderilemedi, çıkış yapılmadı');return fbSay('Son değişiklikler buluta gönderilemedi, çıkış yapılmadı: '+fbErr(x))}}}await f.au.signOut(f.auth);await fbWipe();lss('fbOwner','');lss('fbAuto','0');lss('fbPromptLogin','0');lss('fbLoginPromptSeen','1');lss('fbLoggedOut','1');dlg();fbLoginPage()}
+ if(a==='out'){fbSay('Çıkış yapılıyor…');if(lsg('fbDirty')==='1'&&f.auth.currentUser){try{await fbUp(true)}catch(x){if(x.message!=='conflict'){toast('Son değişiklikler buluta gönderilemedi, çıkış yapılmadı');return fbSay('Son değişiklikler buluta gönderilemedi, çıkış yapılmadı: '+fbErr(x))}}}await window.CANotifications?.logout?.(f.auth.currentUser);await f.au.signOut(f.auth);await fbWipe();lss('fbOwner','');lss('fbAuto','0');lss('fbPromptLogin','0');lss('fbLoginPromptSeen','1');lss('fbLoggedOut','1');dlg();fbLoginPage()}
  else if(a==='up'){fbSay('Yükleniyor…');await fbUp();lss('fbAuto','1');const c=$('fba');if(c)c.checked=true;fbSay('Buluta yedeklendi ✅ Otomatik yedek açık.')}
  else ask('Bulut verisi bu cihazdaki verinin yerine geçecek. Emin misin?',async()=>{try{await fbDown()}catch(x){toast(fbErr(x));fbUi()}})
  }catch(x){fbSay(fbErr(x))}}
