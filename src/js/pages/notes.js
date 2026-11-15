@@ -10,12 +10,20 @@ function dfPaste(ev){ev.preventDefault();document.execCommand('insertText',false
 function dfD(h){const r=$('dfroot');if(r){r.innerHTML=h;return}const d=$('dl');d.innerHTML=h;if(!d.open)d.showModal()}
 function dfAc(){DF={d:null,k:null,p:0,x:null};cur.m='not';cur.t=null;render()}
 function dfLandscape(){
- try{
+ const root=$('dfroot');
+ const lock=()=>{try{
   if(screen.orientation&&typeof screen.orientation.lock==='function'){
    const p=screen.orientation.lock('landscape');
-   if(p&&typeof p.catch==='function')p.catch(()=>toast('Yatay kullanım için telefonun otomatik döndürmesini açıp cihazı yan çevir. 📱'));
-  }else toast('Tarayıcı otomatik döndürmeyi desteklemiyor. Telefonu yan çevirerek yatay kullanabilirsin. 📱');
- }catch(e){toast('Yatay kullanım için otomatik döndürmeyi açıp telefonu yan çevir. 📱')}
+   if(p&&typeof p.catch==='function')p.catch(()=>toast('Otomatik yatay mod tarayıcı tarafından desteklenmiyor. Telefonu yan çevirip otomatik döndürmeyi aç. 📱'));
+  }else toast('Bu tarayıcı otomatik döndürmeyi desteklemiyor. Telefonu yan çevirip otomatik döndürmeyi aç. 📱');
+ }catch(e){toast('Telefonu yan çevirip otomatik döndürmeyi aç. 📱')}};
+ try{
+  if(root&&root.requestFullscreen&&!document.fullscreenElement){
+   const f=root.requestFullscreen();
+   if(f&&typeof f.then==='function'){f.then(lock).catch(lock);return}
+  }
+ }catch(e){}
+ lock();
 }
 function dfPortrait(){try{screen.orientation?.unlock?.()}catch(e){}}
 function dfOpen(c,k){DF={d:c,k,p:0,x:null};cur.m='not';cur.t=null;render()}
