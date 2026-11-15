@@ -97,26 +97,45 @@
   if(!reg&&'serviceWorker'in navigator)navigator.serviceWorker.register('/sw.js').then(x=>reg=x).catch(()=>{});
   scheduleReminders();
  }
+ function notify(title,body,type='Hatırlatma',opts={}){
+  add(title,body,type);
+  const key=opts.key||('evt_'+uid+'_'+String(title)+'_'+String(body));
+  try{const k='ca_evt_'+key;if(localStorage.getItem(k))return;localStorage.setItem(k,'1')}catch{}
+  if(localStorage.getItem('ca_push_enabled_'+uid)==='1'){
+   sendPush(title,body).catch(e=>console.warn('Canlı bildirim gönderilemedi:',e.message));
+  }else if(Notification?.permission==='granted'&&reg){
+   reg.showNotification(title,{body,icon:'/logo.svg',badge:'/logo.svg',tag:key,renotify:false,data:{url:opts.url||'/'}}).catch(()=>{});
+  }
+ }
+ const seenStates=new Map();
  function scheduleReminders(){
-  clearInterval(scanTimer);const scan=async()=>{
+  clearInterval(scanTimer);
+  const scan=async()=>{
    if(!uid||!FB?.auth?.currentUser||!W?.id)return;
-   const now=Date.now();if(now-lastScan<45000)return;lastScan=now;
+   const now=Date.now();if(now-lastScan<20000)return;lastScan=now;
    try{
-    const rows=await recs(W.id);const today=new Date();today.setHours(0,0,0,0);
+    const rows=await recs(W.id);const thresholds=[['24s',86400000,'1 gün'],['1s',3600000,'1 saat'],['15d',900000,'15 dakika'],['now',0,'şimdi']];
     for(const r of rows){
      if(!['gorev','odev','sinav','takvim'].includes(r.type))continue;
      const date=r.son||r.tarih;if(!date)continue;
-     const at=new Date(date+'T'+(r.saat||'09:00')+':00').getTime();const diff=at-now;
-     if(diff<0||diff>24*60*60*1000)continue;
-     const key='ca_reminder_'+uid+'_'+r.id+'_'+date;if(localStorage.getItem(key))continue;
-     localStorage.setItem(key,'1');
-     const name=r.ad||r.on||'Etkinlik';const label=r.type==='sinav'?'Sınav':r.type==='odev'?'Ödev':r.type==='takvim'?'Etkinlik':'Görev';
-     add('Yaklaşan '+label,name+' için 24 saatten az kaldı.','Hatırlatma');
-     if(localStorage.getItem('ca_push_enabled_'+uid)==='1')sendPush('Yaklaşan '+label,name+' için 24 saatten az kaldı.').catch(()=>{});
+     if(['gorev','odev'].includes(r.type)&&['Tamamlandı','İptal edildi'].includes(r.durum))continue;
+     const at=new Date(date+'T'+(r.saat||'23:59')+':00').getTime(),diff=at-now;
+     const name=r.ad||r.on||'Etkinlik',label=r.type==='sinav'?'Sınav':r.type==='odev'?'Ödev':r.type==='takvim'?'Etkinlik':'Görev';
+     for(const [code,ms,txt] of thresholds){
+      const crossed=code==='now'?diff<=0&&diff>-60000:diff<=ms&&diff>ms-60000;
+      if(crossed)notify(label+' hatırlatması',name+(code==='now'?' için zamanı geldi.':' için '+txt+' kaldı.'),'Hatırlatma',{key:r.id+'_'+date+'_'+code,url:'/'});
+     }
+     const stateKey=r.id+'_state',previous=seenStates.get(stateKey);
+     if(previous&&previous!=='Tamamlandı'&&r.durum==='Tamamlandı')notify('Görev tamamlandı',name+' tamamlandı. Eline sağlık!','Görev',{key:r.id+'_completed_'+date});
+     seenStates.set(stateKey,r.durum||'');
+    }
+    if(typeof yDers==='function'){
+     const c=typeof dhc==='function'?dhc():{on:true,dk:30,aksam:true};
+     if(c.on){const lessons=await yDers();for(const x of lessons){if(!x.tm||x.o>0)continue;const diff=x.st.getTime()-now;if(diff>0&&diff<=c.dk*60000&&diff>c.dk*60000-60000)notify('Dersin yaklaşıyor',x.r.ad+' '+Math.max(1,Math.round(diff/60000))+' dakika içinde başlayacak.','Ders',{key:'lesson_'+x.r.id+'_'+iso(x.st)+'_'+x.m.s})}}
     }
    }catch(e){console.warn('Hatırlatma taraması:',e)}
   };
-  scan();scanTimer=setInterval(scan,60000);
+  scan();scanTimer=setInterval(scan,30000);
  }
  function authChanged(u){
   if(!u){if(stopLive)stopLive();stopLive=null;uid=null;clearInterval(scanTimer);return}
@@ -128,6 +147,6 @@
   setInterval(()=>{ensureButton();if(FB?.auth?.currentUser)authChanged(FB.auth.currentUser)},1500);
   document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&FB?.auth?.currentUser)scheduleReminders()});
  }
- window.CANotifications={add,enablePush,sendPush,openCenter};
+ window.CANotifications={add,notify,enablePush,sendPush,openCenter};
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 })();
