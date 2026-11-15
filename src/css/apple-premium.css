@@ -1691,3 +1691,20 @@ html[data-theme="light"] body:not(.login-mode) #app :is(.intel-empty,.empty) :is
 html[data-theme="light"] body:not(.login-mode) #app :is(button.p,.intel-empty button) {background:#2867a5!important;color:#fff!important;-webkit-text-fill-color:#fff!important;}
 html[data-theme="light"] body:not(.login-mode) #app :is(.today-theme-switch button.active) {background:#e4eef9!important;color:#174f86!important;-webkit-text-fill-color:#174f86!important;}
 @media(max-width:600px){html[data-theme="light"] body:not(.login-mode) #app :is(.task-card,.note-card,.uni-row,.uni-result) {max-width:100%!important;white-space:normal!important;}}
+
+/* University identity hero: light, readable institutional header in light theme. */
+html[data-theme="light"] body:not(.login-mode) #app .hero{
+ background:linear-gradient(135deg,#ffffff 0%,#edf4fb 100%)!important;
+ background-color:#fff!important;color:#20334a!important;
+ border:1px solid #d5e0ec!important;border-radius:24px!important;
+ box-shadow:0 8px 24px rgba(35,61,91,.08)!important;
+}
+html[data-theme="light"] body:not(.login-mode) #app .hero :is(h1,h2,h3,b,strong,span){
+ color:#20334a!important;-webkit-text-fill-color:#20334a!important;text-shadow:none!important;
+}
+html[data-theme="light"] body:not(.login-mode) #app .hero :is(p,small,.m){
+ color:#60758c!important;-webkit-text-fill-color:#60758c!important;
+}
+html[data-theme="light"] body:not(.login-mode) #app .hero .big{
+ background:#e4eef8!important;color:#2867a5!important;border-radius:16px!important;
+}
