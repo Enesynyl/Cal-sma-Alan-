@@ -103,7 +103,7 @@
   try{const k='ca_evt_'+key;if(localStorage.getItem(k))return;localStorage.setItem(k,'1')}catch{}
   if(localStorage.getItem('ca_push_enabled_'+uid)==='1'){
    sendPush(title,body).catch(e=>console.warn('Canlı bildirim gönderilemedi:',e.message));
-  }else if(Notification?.permission==='granted'&&reg){
+  }else if(typeof Notification!=='undefined'&&Notification.permission==='granted'&&reg){
    reg.showNotification(title,{body,icon:'/logo.svg',badge:'/logo.svg',tag:key,renotify:false,data:{url:opts.url||'/'}}).catch(()=>{});
   }
  }
