@@ -122,7 +122,7 @@
     const at=Number(d.createdAt);if(!Number.isFinite(at)||Date.now()-at>30*86400000)return;
     if(d.source==='admin'||d.type==='Duyuru'){
      const existing=adminItems();if(existing.some(x=>x.id===ch.doc.id))return;
-     saveAdminItems([{id:ch.doc.id,title:d.title||'Yönetici duyurusu',body:d.body||'',type:'Duyuru',at,read:false},...existing]);
+     saveAdminItems([{id:ch.doc.id,title:d.title||'Yönetici duyurusu',body:d.body||'',imageUrl:d.imageUrl||'',linkUrl:d.linkUrl||'',type:'Duyuru',at,read:false},...existing]);
     }else add(d.title||'Yeni bildirim',d.body||'',d.type||'Bilgi');
     if($id('ca-notif-backdrop')){const tab=$id('ca-notif-backdrop').querySelector('[aria-selected="true"]')?.dataset.tab;if(tab==='for-you')$id('ca-notif-content').innerHTML='';}
    }));
