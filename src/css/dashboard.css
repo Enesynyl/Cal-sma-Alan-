@@ -603,3 +603,6 @@ html[data-theme="light"] body:not(.login-mode) .intel-profile small{color:#63789
  html[data-theme="light"] body:not(.login-mode) .intel-search button{display:none!important}
  html[data-theme="light"] body:not(.login-mode) .intel-top-actions{gap:5px!important}
 }
+
+/* Remove the unwanted club/shortcut control from the Today header. */
+.intel-top-actions .intel-icon-btn{display:none!important}
