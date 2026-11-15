@@ -44,8 +44,14 @@
   const permission=await Notification.requestPermission();if(permission!=='granted')throw new Error('Bildirim izni verilmedi. Tarayıcı ayarlarından izin verebilirsin.');
   reg=reg||await navigator.serviceWorker.register('/sw.js');
   const cfgResponse=await fetch('/api/push/config',{cache:'no-store'});const cfg=await cfgResponse.json().catch(()=>({}));if(!cfgResponse.ok||!cfg.publicKey)throw new Error(cfg.error||'Push anahtarı sunucudan alınamadı. Sayfayı yenileyip tekrar dene.');
+  const expectedKey=decodeKey(cfg.publicKey);
   let sub=await reg.pushManager.getSubscription();
-  if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:decodeKey(cfg.publicKey)});
+  if(sub){
+   const currentKey=sub.options?.applicationServerKey;
+   const sameKey=currentKey&&currentKey.byteLength===expectedKey.byteLength&&Array.from(new Uint8Array(currentKey)).every((v,i)=>v===expectedKey[i]);
+   if(!sameKey){await sub.unsubscribe();sub=null;}
+  }
+  if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:expectedKey});
   // Push delivery uses this device's active subscription directly.
   // No Firestore write is needed for enabling or testing browser notifications.
   localStorage.setItem('ca_push_enabled_'+u.uid,'1');
