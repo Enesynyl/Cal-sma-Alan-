@@ -6,6 +6,7 @@
  const storeKey=()=> 'ca_notifications_'+uid;
  const adminStoreKey=()=> 'ca_admin_notifications_'+uid;
  const adminItems=()=>{try{return JSON.parse(localStorage.getItem(adminStoreKey())||'[]')}catch{return []}};
+ const deleteLocalItem=id=>saveItems(localItems().filter(x=>x.id!==id));
  const saveAdminItems=a=>{try{localStorage.setItem(adminStoreKey(),JSON.stringify(a.slice(0,100)))}catch{};renderBadge()};
  const localItems=()=>{try{return JSON.parse(localStorage.getItem(storeKey())||'[]')}catch{return []}};
  const saveItems=a=>{items=a.slice(0,80);try{localStorage.setItem(storeKey(),JSON.stringify(items))}catch{};renderBadge()};
@@ -35,13 +36,14 @@
   const renderTab=()=>{
    const isForYou=activeTab==='for-you',list=isForYou?adminItems():localItems();
    panel.querySelectorAll('[data-tab]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===activeTab)));
-   panel.querySelector('#ca-notif-content').innerHTML=list.length?list.map(x=>'<article class="'+(x.read?'read':'')+'"><span>'+(isForYou?'✦':'◈')+'</span><div><b>'+esc(x.title)+'</b><p>'+esc(x.body)+'</p><small>'+new Date(x.at).toLocaleString('tr-TR')+'</small></div></article>').join(''):'<div class="ca-notif-empty">'+(isForYou?'Senin için henüz yeni bir içerik yok.':'Henüz bildirimin yok.')+'<small>'+(isForYou?'Sana özel bildirimler burada görünecek.':'Hatırlatmalar ve hesap etkinlikleri burada görünecek.')+'</small></div>';
+   panel.querySelector('#ca-notif-content').innerHTML=list.length?list.map(x=>'<article class="'+(x.read?'read':'')+'"><span>'+(isForYou?'✦':'◈')+'</span><div class="ca-notif-item-body"><b>'+esc(x.title)+'</b><p>'+esc(x.body)+'</p><small>'+new Date(x.at).toLocaleString('tr-TR')+'</small></div>'+(isForYou?'':'<button type="button" class="ca-notif-delete" data-delete="'+esc(x.id)+'" aria-label="Bildirimi sil" title="Bildirimi sil">×</button>')+'</article>').join(''):'<div class="ca-notif-empty">'+(isForYou?'Senin için henüz yeni bir içerik yok.':'Henüz bildirimin yok.')+'<small>'+(isForYou?'Sana özel bildirimler burada görünecek.':'Hatırlatmalar ve hesap etkinlikleri burada görünecek.')+'</small></div>';
   };
   panel.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{activeTab=b.dataset.tab;renderTab()});
+  panel.querySelector('#ca-notif-content').addEventListener('click',e=>{const b=e.target.closest('[data-delete]');if(!b||activeTab==='for-you')return;deleteLocalItem(b.dataset.delete);renderTab()});
   renderTab();
   panel.querySelector('[data-action="enable"]').onclick=async()=>{try{await enablePush();status('Bildirimler etkinleştirildi. Bu cihaz bildirim alabilir.')}catch(e){status(e.message)}};
   const testButton=panel.querySelector('[data-action="test"]');if(testButton)testButton.onclick=async()=>{try{await sendPush('Çalışma Alanım hazır!','Canlı bildirim bağlantın çalışıyor.');status('Test bildirimi gönderildi.')}catch(e){status(e.message)}};
-  panel.querySelector('[data-action="clear"]').onclick=()=>{if(activeTab==='for-you')saveAdminItems(adminItems().map(x=>({...x,read:true})));else saveItems(localItems().map(x=>({...x,read:true})));renderTab()};
+  panel.querySelector('[data-action="clear"]').textContent='Toplu sil';panel.querySelector('[data-action="clear"]').onclick=()=>{if(activeTab==='for-you')return;if(!confirm('Bildirimler sekmesindeki tüm bildirimler silinsin mi?'))return;saveItems([]);renderTab()};
   function status(t){const el=$id('ca-notif-status');if(el)el.textContent=t}
  }
  async function getUser(){const f=await fbLoad();const u=f.auth.currentUser;if(!u)throw new Error('Push bildirimleri için hesabına giriş yapmalısın.');return {f,u}}
