@@ -13,3 +13,11 @@
 .side .nav2{padding-top:12px;border-top:1px solid var(--bd)}
 @media(min-width:700px){.side{flex-basis:228px;width:228px}.side .nav button,.bgon .side .nav button{padding:8px 14px 8px 8px}.side .wsb{padding:8px 14px 8px 8px}}
 
+
+/* Stable sidebar alignment across every workspace section */
+.side .wsb{display:flex;align-items:center;justify-content:flex-start;gap:10px;min-height:54px;min-width:0}
+.side .wsb .brandmark,.side .wsb .ib{width:36px;height:36px;flex:0 0 36px;display:grid;place-items:center;margin:0}
+.side .wsb .lb{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left}
+.side .nav button,.bgon .side .nav button{display:flex;align-items:center;justify-content:flex-start;min-width:0;text-align:left}
+.side .nav button .ib{width:36px;height:36px;flex:0 0 36px;margin:0;display:grid;place-items:center;line-height:1}
+.side .nav button .lb{min-width:0;text-align:left}
