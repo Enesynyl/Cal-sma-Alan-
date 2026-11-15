@@ -58,7 +58,7 @@
  async function refreshAdminItems(){
   const f=await fbLoad(),u=f.auth.currentUser;if(!u)return;
   const token=await u.getIdToken();
-  const response=await fetch('/api/notifications/list?deviceId='+encodeURIComponent(deviceId()),{method:'GET',cache:'no-store',headers:{authorization:'Bearer '+token}});
+  const response=await fetch('/api/notifications/list',{method:'GET',cache:'no-store',headers:{authorization:'Bearer '+token}});
   const data=await response.json().catch(()=>({}));
   if(!response.ok||!data.ok)throw new Error(data.error||'Bildirimler sunucudan alınamadı.');
   const current=adminItems(),byId=new Map(current.map(x=>[x.id,x]));
