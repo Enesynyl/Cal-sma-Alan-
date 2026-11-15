@@ -530,3 +530,46 @@ body:not(.login-mode) .shell:has(.page-bugun)>.side .wsb .lb{
  display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
  text-align:left;font-size:13px;font-weight:750;
 }
+
+/* Sidebar brand lock: identical logo/name scale on Today and every other section */
+body:not(.login-mode) .shell>.side .wsb{
+ box-sizing:border-box!important;
+ min-height:54px!important;
+ height:54px!important;
+ padding:7px 9px!important;
+ gap:10px!important;
+ align-items:center!important;
+ justify-content:flex-start!important;
+ flex-direction:row!important;
+}
+body:not(.login-mode) .shell>.side .wsb .brandmark,
+body:not(.login-mode) .shell>.side .wsb .ib{
+ box-sizing:border-box!important;
+ width:36px!important;
+ min-width:36px!important;
+ max-width:36px!important;
+ height:36px!important;
+ min-height:36px!important;
+ max-height:36px!important;
+ flex:0 0 36px!important;
+ margin:0!important;
+ padding:0!important;
+ display:grid!important;
+ place-items:center!important;
+ font-size:18px!important;
+}
+body:not(.login-mode) .shell>.side .wsb .lb{
+ display:block!important;
+ min-width:0!important;
+ margin:0!important;
+ font-size:13px!important;
+ line-height:1.2!important;
+ font-weight:750!important;
+ text-align:left!important;
+ white-space:nowrap!important;
+ overflow:hidden!important;
+ text-overflow:ellipsis!important;
+}
+@media(max-width:700px){
+ body:not(.login-mode) .shell:has(.page-bugun)>.side .wsb{display:none!important}
+}
