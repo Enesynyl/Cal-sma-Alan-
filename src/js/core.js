@@ -40,8 +40,8 @@ async function init(){
   window.__startupStage='Depolama izni kontrol ediliyor';
   try{await navigator.storage?.persist?.()}catch(storageError){}
   window.__startupStage='Görünüm ayarları okunuyor';
-  const th=await get('meta','theme');
-  if(th?.v)document.documentElement.dataset.theme=th.v;
+  document.documentElement.dataset.theme='midnight';
+  document.documentElement.style.colorScheme='dark';
   window.__startupStage='Güvenlik ayarları okunuyor';
   const pn=await get('meta','pin');
   if(pn){lock(pn.v);window.appLocalReadyDone?.();return}
