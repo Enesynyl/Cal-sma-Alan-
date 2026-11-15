@@ -12,7 +12,7 @@ export default async function handler(req,res){
   webpush.setVapidDetails(String(process.env.VAPID_SUBJECT||'mailto:calismaalanim451@gmail.com'),PUBLIC,key);
   let users=[];
   if(target==='all'){
-   let page='',count=0;do{const d=await firestoreList(admin.token,'users',page);users.push(...(d.documents||[]).map(x=>x.name.split('/').pop()));page=d.nextPageToken||'';count++}while(page&&count<10);
+   let page='',count=0;do{const q=new URL('https://identitytoolkit.googleapis.com/v1/projects/calisma-alani-34ba7/accounts:batchGet');q.searchParams.set('maxResults','1000');if(page)q.searchParams.set('nextPageToken',page);const r=await fetch(q,{headers:{authorization:'Bearer '+admin.token}}),d=await r.json();if(!r.ok)throw new Error(d.error?.message||'AUTH_USERS_LIST_FAILED');users.push(...(d.users||[]).map(x=>x.localId));page=d.nextPageToken||'';count++}while(page&&count<10);
   }else users=uids;
   const subs=[];
   for(const uid of users){try{const d=await firestoreList(admin.token,'users/'+uid+'/pushSubscriptions');for(const x of d.documents||[]){const s=fieldsToObject(x.fields);subs.push({uid,subscription:{endpoint:s.endpoint,keys:{p256dh:s.p256dh,auth:s.auth}}})}}catch{}}
