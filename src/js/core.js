@@ -1,14 +1,18 @@
 const $=i=>document.getElementById(i),uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
 const e=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-let db,W=null,cur={m:null,t:null,wk:mon(new Date())},WZ={},CF=null;
+let db,dbReady=false,dbOpening=null,W=null,cur={m:null,t:null,wk:mon(new Date())},WZ={},CF=null;
 function mon(d){d=new Date(d);d.setDate(d.getDate()-(d.getDay()+6)%7);d.setHours(0,0,0,0);return d}
 const iso=d=>{d=new Date(d);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
 /* ---- IndexedDB ---- */
-const openDB=()=>new Promise((a,b)=>{let settled=false;const finish=(fn,v)=>{if(settled)return;settled=true;clearTimeout(timer);fn(v)};window.__startupStage='IndexedDB bağlantısı açılıyor';let r;try{if(!('indexedDB'in window))throw new Error('Bu tarayıcı IndexedDB desteği sunmuyor');r=indexedDB.open('calisma-alani',1)}catch(x){finish(b,x);return}const timer=setTimeout(()=>finish(b,new Error('IndexedDB isteği 8 saniyede yanıt vermedi. Başka bir sekme veritabanını kilitlemiş olabilir.')),8000);r.onupgradeneeded=()=>{try{const d=r.result;if(!d.objectStoreNames.contains('ws'))d.createObjectStore('ws',{keyPath:'id'});if(!d.objectStoreNames.contains('rec'))d.createObjectStore('rec',{keyPath:'id'}).createIndex('ws','ws');if(!d.objectStoreNames.contains('meta'))d.createObjectStore('meta',{keyPath:'k'})}catch(x){finish(b,x)}};r.onblocked=()=>finish(b,new Error('IndexedDB yükseltmesi engellendi. Aynı siteyi açık tutan diğer sekmeleri kapatıp yeniden yükleyin.'));r.onsuccess=()=>{r.result.onversionchange=()=>r.result.close();finish(a,r.result)};r.onerror=()=>finish(b,r.error||new Error('IndexedDB açılamadı'))});
+const openDB=()=>new Promise((a,b)=>{let settled=false;const finish=(fn,v)=>{if(settled)return;settled=true;clearTimeout(timer);fn(v)};window.__startupStage='IndexedDB bağlantısı açılıyor';let r;try{if(!('indexedDB'in window))throw new Error('Bu tarayıcı IndexedDB desteği sunmuyor');r=indexedDB.open('calisma-alani',1)}catch(x){finish(b,x);return}const timer=setTimeout(()=>finish(b,new Error('IndexedDB isteği 8 saniyede yanıt vermedi. Başka bir sekme veritabanını kilitlemiş olabilir.')),8000);r.onupgradeneeded=()=>{try{const d=r.result;if(!d.objectStoreNames.contains('ws'))d.createObjectStore('ws',{keyPath:'id'});if(!d.objectStoreNames.contains('rec'))d.createObjectStore('rec',{keyPath:'id'}).createIndex('ws','ws');if(!d.objectStoreNames.contains('meta'))d.createObjectStore('meta',{keyPath:'k'})}catch(x){finish(b,x)}};r.onblocked=()=>finish(b,new Error('IndexedDB yükseltmesi engellendi. Aynı siteyi açık tutan diğer sekmeleri kapatıp yeniden yükleyin.'));r.onsuccess=()=>{const d=r.result;db=d;dbReady=true;d.onversionchange=()=>{if(db===d){dbReady=false;db=null}try{d.close()}catch(_){}};d.onclose=()=>{if(db===d){dbReady=false;db=null}};finish(a,d)};r.onerror=()=>finish(b,r.error||new Error('IndexedDB açılamadı'))});
 const P=r=>new Promise((a,b)=>{r.onsuccess=()=>a(r.result);r.onerror=()=>b(r.error)});
-const tx=(s,m='readonly')=>db.transaction(s,m).objectStore(s);
-const all=s=>P(tx(s).getAll()),put=(s,v)=>{fbDirty(s,s==='meta'?v.k:v.id,'put');return P(tx(s,'readwrite').put(v))},del=(s,k)=>{fbDirty(s,k,'del');return P(tx(s,'readwrite').delete(k))};
-const recs=async(ws,t)=>(await P(tx('rec').index('ws').getAll(ws))).filter(r=>!t||r.type===t);
+const ensureDB=async()=>{if(db&&dbReady)return db;if(dbOpening)return dbOpening;dbOpening=openDB().finally(()=>{dbOpening=null});return dbOpening};
+const runDB=async(store,mode,action)=>{let last;for(let attempt=0;attempt<3;attempt++){try{const d=await ensureDB();const t=d.transaction(store,mode),s=t.objectStore(store);return await action(s,t)}catch(err){last=err;const msg=String(err?.message||err);if(!/closing|closed|InvalidStateError|connection is closing/i.test(msg))throw err;if(db){try{db.close()}catch(_){}}db=null;dbReady=false;await new Promise(r=>setTimeout(r,40*(attempt+1)))}}throw last||new Error('Yerel veritabanı bağlantısı kurulamadı')};
+const all=s=>runDB(s,'readonly',st=>P(st.getAll()));
+const get=(s,k)=>runDB(s,'readonly',st=>P(st.get(k)));
+const put=(s,v)=>{fbDirty(s,s==='meta'?v.k:v.id,'put');return runDB(s,'readwrite',st=>P(st.put(v)))};
+const del=(s,k)=>{fbDirty(s,k,'del');return runDB(s,'readwrite',st=>P(st.delete(k)))};
+const recs=async(ws,t)=>(await runDB('rec','readonly',st=>P(st.index('ws').getAll(ws)))).filter(r=>!t||r.type===t);
 /* ---- Tanımlar ---- */
 const ST='sel:Bekliyor,Devam ediyor,Tamamlandı,İptal edildi';
 const T={
@@ -35,10 +39,10 @@ async function init(){
   window.__startupStage='Depolama izni kontrol ediliyor';
   try{await navigator.storage?.persist?.()}catch(storageError){}
   window.__startupStage='Görünüm ayarları okunuyor';
-  const th=await P(tx('meta').get('theme'));
+  const th=await get('meta','theme');
   if(th?.v)document.documentElement.dataset.theme=th.v;
   window.__startupStage='Güvenlik ayarları okunuyor';
-  const pn=await P(tx('meta').get('pin'));
+  const pn=await get('meta','pin');
   if(pn){lock(pn.v);window.appLocalReadyDone?.();return}
   window.__startupStage='Çalışma alanı hazırlanıyor';
   await boot();
@@ -56,7 +60,7 @@ async function init(){
   }
  }
 }
-async function boot(){const L=await all('ws');for(const x of L)if(!x.u1){x.u1=1;if(!x.mods.includes('uni'))x.mods.splice(Math.min(1,x.mods.length),0,'uni');await put('ws',x)}if(!(await P(tx('meta').get('mig2')))){for(const r of await all('rec'))if(r.type==='hatirlatma')await put('rec',{...r,type:'gorev'});await put('meta',{k:'mig2',v:1})}if(!(await P(tx('meta').get('mig3')))){for(const r of await all('rec'))if(r.type==='dnot')await put('rec',{...r,type:'not',ad:r.konu||'Ders notu',ts:r.ts||parseInt(r.id.slice(0,-5),36)||Date.now()});await put('meta',{k:'mig3',v:1})}for(const x of L)if(x.mode!=='ogr'||!x.v2){x.mode='ogr';if(!x.v2){x.v2=1;x.mods=[...new Set([...x.mods,'kart','odak'])]}await put('ws',x)}if(!L.length){$('app').innerHTML='';return}const m=await P(tx('meta').get('last'));W=L.find(x=>x.id===m?.v)||L[0];render()}
+async function boot(){const L=await all('ws');for(const x of L)if(!x.u1){x.u1=1;if(!x.mods.includes('uni'))x.mods.splice(Math.min(1,x.mods.length),0,'uni');await put('ws',x)}if(!(await get('meta','mig2'))){for(const r of await all('rec'))if(r.type==='hatirlatma')await put('rec',{...r,type:'gorev'});await put('meta',{k:'mig2',v:1})}if(!(await P(tx('meta').get('mig3')))){for(const r of await all('rec'))if(r.type==='dnot')await put('rec',{...r,type:'not',ad:r.konu||'Ders notu',ts:r.ts||parseInt(r.id.slice(0,-5),36)||Date.now()});await put('meta',{k:'mig3',v:1})}for(const x of L)if(x.mode!=='ogr'||!x.v2){x.mode='ogr';if(!x.v2){x.v2=1;x.mods=[...new Set([...x.mods,'kart','odak'])]}await put('ws',x)}if(!L.length){$('app').innerHTML='';return}const m=await P(tx('meta').get('last'));W=L.find(x=>x.id===m?.v)||L[0];render()}
 function wz(){$('app').innerHTML=`<div class="wz"><h1>Çalışma alanınıza ad verin.</h1><p class="m">Verileriniz yalnızca bu cihazdaki yerel veritabanında (IndexedDB) saklanır. Hesap ve internet gerekmez.</p><label>Çalışma alanı adı<input id="wn" placeholder="Üniversite"></label><div class="row"><button class="p" onclick="mk()">Oluştur</button></div></div>`}
 async function mk(){const nm=($('wn')?.value||'').trim()||'Üniversite';W={id:uid(),name:nm,mode:'ogr',mods:[...AV.ogr],v2:1};await put('ws',W);await put('meta',{k:'last',v:W.id});WZ={};cur.m=null;render()}
 
