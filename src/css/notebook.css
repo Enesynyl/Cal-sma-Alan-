@@ -223,3 +223,41 @@ html[data-theme="dark"] #dfroot .fld small{color:#b2c0d0!important;-webkit-text-
  #dfroot>.row{position:sticky!important;bottom:calc(8px + env(safe-area-inset-bottom))!important;z-index:15!important;display:flex!important;justify-content:center!important;gap:8px!important;padding:7px!important;margin:8px auto!important;width:max-content!important;max-width:calc(100% - 16px)!important;border-radius:18px!important;background:rgba(25,39,58,.96)!important;box-shadow:0 8px 26px #0005!important}
  #dfroot>.bar{position:sticky!important;bottom:calc(68px + env(safe-area-inset-bottom))!important;z-index:14!important;width:max-content!important;max-width:calc(100% - 16px)!important;margin:8px auto!important;padding:7px 10px!important;border-radius:18px!important;background:rgba(25,39,58,.96)!important}
 }
+
+
+/* Clean notebook workspace: the paper stays primary, controls stay tucked away. */
+#dfroot .df-topline{min-height:42px!important;padding:4px 6px!important;gap:7px!important;background:transparent!important;border:0!important;box-shadow:none!important}
+#dfroot .df-topline>button{width:38px!important;min-width:38px!important;height:38px!important;flex-basis:38px!important;border-radius:12px!important}
+#dfroot .df-topline h3{font-size:14px!important;opacity:.78!important}
+#dfroot .df-tools{display:none!important}
+#dfroot .df-tools.open{display:block!important}
+#dfroot .df-bottom-dock{position:sticky!important;bottom:calc(8px + env(safe-area-inset-bottom,0px))!important;z-index:30!important;width:max-content!important;max-width:calc(100% - 16px)!important;margin:8px auto!important;padding:5px!important;border-radius:17px!important;background:rgba(25,39,58,.96)!important;border:1px solid #43546b!important;box-shadow:0 8px 26px #0005!important;backdrop-filter:blur(16px)!important}
+#dfroot .df-bottom-toggle{display:flex!important;align-items:center!important;justify-content:center!important;width:40px!important;height:36px!important;min-height:36px!important;padding:0!important;border:0!important;border-radius:12px!important;background:#30445d!important;color:#fff!important;font-size:17px!important}
+#dfroot .df-bottom-content{display:none!important;gap:6px!important;align-items:center!important}
+#dfroot .df-bottom-dock.open{width:min(100%,440px)!important}
+#dfroot .df-bottom-dock.open .df-bottom-content{display:flex!important;flex-direction:column!important}
+#dfroot .df-bottom-content .bar,#dfroot .df-bottom-content .row{display:flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;margin:0!important;padding:3px!important;background:transparent!important;border:0!important;box-shadow:none!important}
+#dfroot .df-bottom-content button{min-height:34px!important;padding:6px 11px!important;font-size:12px!important}
+#dfroot .df-bottom-content .m{color:#e4edf8!important}
+#dfroot .dnb{overflow:visible!important}
+#dfroot .pgc{min-height:560px!important;height:min(72vh,900px)!important;height:min(72dvh,900px)!important;overflow:hidden!important}
+#dfroot .pgc .dti{box-sizing:border-box!important;height:48px!important;padding:8px 16px 4px 58px!important;margin:0!important;line-height:1.4!important;font-size:19px!important}
+#dfroot .pgc.cizgili .dti{padding-left:62px!important}
+#dfroot .pgc .dftxt{box-sizing:border-box!important;display:block!important;width:100%!important;min-height:calc(100% - 48px)!important;padding:0 18px 24px 58px!important;line-height:28px!important;position:relative!important;z-index:1!important;outline:none!important}
+#dfroot .pgc.cizgili .dftxt{padding-left:62px!important}
+#dfroot #dfo{z-index:4!important}
+#dfroot #dfc{z-index:5!important}
+#dfroot .ob{touch-action:none!important}
+#dfroot .ob.sel{outline:2px solid var(--ac)!important;outline-offset:2px!important}
+#dfroot .ob[data-locked="1"]{cursor:default!important}
+#dfroot .ob[data-locked="1"]::after{content:"🔒";position:absolute;right:-9px;top:-11px;width:25px;height:25px;display:grid;place-items:center;border-radius:50%;background:#fff;box-shadow:0 2px 8px #0003;font:14px system-ui;line-height:1}
+#dfroot #dfs{position:sticky!important;bottom:calc(58px + env(safe-area-inset-bottom,0px))!important;z-index:25!important;width:max-content!important;max-width:calc(100% - 12px)!important;margin:8px auto!important;padding:6px 9px!important;border:1px solid #43546b!important;border-radius:15px!important;background:rgba(25,39,58,.97)!important;box-shadow:0 8px 24px #0005!important}
+#dfroot #dfs .m{color:#e4edf8!important}
+#dfroot #dfs button{min-height:34px!important;padding:5px 9px!important;font-size:12px!important}
+#dfroot #dfs button:disabled{opacity:.45!important}
+@media(max-width:700px){
+ #dfroot .df-topline{position:sticky!important;top:env(safe-area-inset-top,0px)!important;z-index:22!important}
+ #dfroot .pgc{height:min(70vh,900px)!important;height:min(70dvh,900px)!important;min-height:480px!important}
+ #dfroot .df-bottom-dock.open{max-width:calc(100% - 10px)!important}
+ #dfroot .df-bottom-content .row,#dfroot .df-bottom-content .bar{flex-wrap:wrap!important}
+}
