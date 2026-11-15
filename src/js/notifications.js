@@ -1,8 +1,13 @@
 /* Çalışma Alanım — canlı bildirim merkezi ve Web Push */
 (()=>{
  const $id=id=>document.getElementById(id);
- let reg=null,uid=null,stopLive=null,scanTimer=null,lastScan=0,items=[];
+ let reg=null,uid=null,stopLive=null,scanTimer=null,lastScan=0,items=[],sessionTimer=null,sessionUid=null;
  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const deviceId=()=>{let id=localStorage.getItem('ca_device_id');if(!id){id=crypto.randomUUID?crypto.randomUUID():'dev_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,14);localStorage.setItem('ca_device_id',id)}return id};
+ const apiCall=async(path,user,method,body={})=>{const token=await user.getIdToken();const r=await fetch(path,{method,cache:'no-store',headers:{'content-type':'application/json',authorization:'Bearer '+token},body:method==='GET'?undefined:JSON.stringify(body)});const d=await r.json().catch(()=>({}));if(!r.ok||d.ok===false)throw new Error(d.error||'Sunucu isteği başarısız.');return d};
+ async function syncSession(user){try{await apiCall('/api/notifications/session',user,'POST',{deviceId:deviceId()})}catch(e){console.warn('Aktif cihaz oturumu kaydedilemedi:',e.message)}}
+ async function attachExistingPush(user){try{if(typeof Notification==='undefined'||Notification.permission!=='granted'||!('serviceWorker'in navigator))return;const registration=await navigator.serviceWorker.getRegistration('/')||await navigator.serviceWorker.ready;const sub=await registration?.pushManager?.getSubscription();if(!sub)return;await apiCall('/api/admin/register-subscription',user,'POST',{subscription:sub.toJSON(),deviceId:deviceId()});localStorage.setItem('ca_push_enabled_'+user.uid,'1')}catch(e){console.warn('Bu cihazın push aboneliği hesaba bağlanamadı:',e.message)}}
+ async function logout(user){if(!user)return;clearInterval(sessionTimer);sessionTimer=null;sessionUid=null;const d=deviceId();try{await apiCall('/api/notifications/session',user,'DELETE',{deviceId:d})}catch(e){console.warn('Oturum kapatma kaydı silinemedi:',e.message)}try{const registration=await navigator.serviceWorker?.getRegistration('/');const sub=await registration?.pushManager?.getSubscription();if(sub)await apiCall('/api/admin/register-subscription',user,'DELETE',{subscription:sub.toJSON()})}catch(e){console.warn('Push cihaz kaydı kaldırılamadı:',e.message)}try{localStorage.removeItem('ca_push_enabled_'+user.uid)}catch{}}
  const storeKey=()=> 'ca_notifications_'+uid;
  const adminStoreKey=()=> 'ca_admin_notifications_'+uid;
  const adminItems=()=>{try{return JSON.parse(localStorage.getItem(adminStoreKey())||'[]')}catch{return []}};
@@ -53,7 +58,7 @@
  async function refreshAdminItems(){
   const f=await fbLoad(),u=f.auth.currentUser;if(!u)return;
   const token=await u.getIdToken();
-  const response=await fetch('/api/notifications/list',{method:'GET',cache:'no-store',headers:{authorization:'Bearer '+token}});
+  const response=await fetch('/api/notifications/list?deviceId='+encodeURIComponent(deviceId()),{method:'GET',cache:'no-store',headers:{authorization:'Bearer '+token}});
   const data=await response.json().catch(()=>({}));
   if(!response.ok||!data.ok)throw new Error(data.error||'Bildirimler sunucudan alınamadı.');
   const current=adminItems(),byId=new Map(current.map(x=>[x.id,x]));
@@ -85,7 +90,7 @@
   if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:expectedKey});
   // Yönetim panelinin cihazları bulabilmesi için aboneliği önce sunucuya kaydet.
   const token=await u.getIdToken();
-  const saved=await fetch('/api/admin/register-subscription',{method:'POST',headers:{'content-type':'application/json',authorization:'Bearer '+token},body:JSON.stringify({subscription:sub.toJSON()})});
+  const saved=await fetch('/api/admin/register-subscription',{method:'POST',headers:{'content-type':'application/json',authorization:'Bearer '+token},body:JSON.stringify({subscription:sub.toJSON(),deviceId:deviceId()})});
   const savedData=await saved.json().catch(()=>({}));
   if(!saved.ok||!savedData.saved)throw new Error(savedData.error||'Cihaz aboneliği sunucuya kaydedilemedi. Tekrar deneyebilirsin.');
   localStorage.setItem('ca_push_enabled_'+u.uid,'1');
@@ -189,7 +194,8 @@
   scan();scanTimer=setInterval(scan,30000);
  }
  function authChanged(u){
-  if(!u){if(stopLive)stopLive();stopLive=null;uid=null;promptUid=null;clearInterval(scanTimer);$id('ca-push-optin')?.remove();return}
+  if(!u){if(stopLive)stopLive();stopLive=null;uid=null;promptUid=null;clearInterval(scanTimer);clearInterval(sessionTimer);sessionTimer=null;sessionUid=null;$id('ca-push-optin')?.remove();return}
+  if(sessionUid!==u.uid){clearInterval(sessionTimer);sessionUid=u.uid;syncSession(u);attachExistingPush(u);sessionTimer=setInterval(()=>{if(FB?.auth?.currentUser?.uid===u.uid)syncSession(u)},45000)}
   listen();
   if(promptUid!==u.uid){promptUid=u.uid;setTimeout(()=>showEnablePrompt(u),1800)}
  }
@@ -199,6 +205,6 @@
   setInterval(()=>{ensureButton();if(FB?.auth?.currentUser)authChanged(FB.auth.currentUser)},1500);
   document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&FB?.auth?.currentUser)scheduleReminders()});
  }
- window.CANotifications={add,notify,enablePush,sendPush,openCenter};
+ window.CANotifications={add,notify,enablePush,sendPush,openCenter,logout};
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 })();
