@@ -16,7 +16,7 @@ async function render(){
  $('app').innerHTML=`<div class="shell"><aside class="side"><div class="wsb" title="${e(W.name)}">${W.icon?`<i class="ib">${e(W.icon)}</i>`:'<img class="brandmark" src="/logo.svg" alt="Çalışma Alanım">'}<span class="lb">${e(W.name)}</span></div>
  <div class="nav"><button title="Bugün" class="${cur.m==='bugun'?'on':''}" onclick="cur.m='bugun';render()"><i class="ib">🏠</i><span class="lb">Bugün</span></button>${ms.map(k=>`<button title="${e(mn(k))}" class="${cur.m===k?'on':''}" onclick="cur.m='${k}';cur.t=null;cur.q='';cur.d='';render()"><i class="ib">${mi(k)}</i><span class="lb">${mn(k)}</span></button>`).join('')}</div>
  </aside>
- <main class="main page-${cur.m}">${cur.m==='bugun'?'<div class="today-theme-switch"><span>Görünüm</span><button onclick="setTheme(\'light\')">☀️ Açık</button><button onclick="setTheme(\'dark\')">🌙 Koyu</button></div>':''}${tabs.length>1&&cur.m!=='ayar'?`<div class="tabs">${tabs.map(t=>`<button class="${cur.t===t?'on':''}" onclick="cur.t='${t}';cur.q='';cur.d='';render()">${TL[t]}</button>`).join('')}</div>`:''}${body}</main></div>`;ensureSpotifyUI();if(cur.m==='bugun')initIntelScrollReveal();else initPageScrollReveal();
+ <main class="main page-${cur.m}">${cur.m==='bugun'?'':''}${tabs.length>1&&cur.m!=='ayar'?`<div class="tabs">${tabs.map(t=>`<button class="${cur.t===t?'on':''}" onclick="cur.t='${t}';cur.q='';cur.d='';render()">${TL[t]}</button>`).join('')}</div>`:''}${body}</main></div>`;ensureSpotifyUI();if(cur.m==='bugun')initIntelScrollReveal();else initPageScrollReveal();
 }
 
 /* Today-only visual editor */
