@@ -11,3 +11,7 @@
 .ca-push-optin{position:fixed;z-index:1900;left:50%;bottom:24px;transform:translateX(-50%);width:min(560px,calc(100% - 32px));display:flex;align-items:center;gap:13px;padding:17px 18px;border:1px solid rgba(139,190,245,.34);border-radius:20px;background:linear-gradient(135deg,rgba(24,43,68,.98),rgba(9,18,32,.98));color:#edf5ff;box-shadow:0 18px 60px rgba(0,0,0,.42);backdrop-filter:blur(18px)}
 .ca-push-optin-icon{font-size:25px}.ca-push-optin-copy{flex:1;min-width:0}.ca-push-optin-copy b{font-size:14px}.ca-push-optin-copy p{margin:4px 0 0;color:#b5c7dc;font-size:12px;line-height:1.45}.ca-push-optin-enable{flex:none;padding:10px 14px;border-radius:12px;background:#8fc5ff;color:#10243c;font-weight:700;font-size:12px}.ca-push-optin-enable:disabled{opacity:.6}.ca-push-optin-close{position:absolute;right:7px;top:5px;background:transparent;color:#b8cce3;font-size:20px}
 @media(max-width:700px){.ca-push-optin{bottom:calc(82px + env(safe-area-inset-bottom));padding:15px 12px;gap:9px}.ca-push-optin-copy p{font-size:11px}.ca-push-optin-enable{padding:9px 10px}}
+
+.ca-notif-tabs{display:flex;gap:8px;padding:4px;border:1px solid #ffffff16;border-radius:13px;background:#ffffff08}
+.ca-notif-tabs button{flex:1;padding:10px 12px;border-radius:10px;background:transparent;color:#aebfd4;font-size:12px;font-weight:650;transition:background .18s,color .18s}
+.ca-notif-tabs button[aria-selected="true"]{background:linear-gradient(135deg,rgba(100,163,230,.28),rgba(69,111,167,.16));color:#eff7ff;box-shadow:inset 0 0 0 1px rgba(146,194,244,.22)}
