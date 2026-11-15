@@ -67,7 +67,7 @@ const panel=s=>po().filter(k=>!(W.poff||[]).includes(k)).map(k=>s[k]||'').join('
 const ptog=(k,c)=>upd({poff:c?(W.poff||[]).filter(x=>x!==k):[...(W.poff||[]),k]});
 function pmv(k,d){const a=po(),i=a.indexOf(k),j=i+d;if(j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]];upd({porder:a})}
 async function duzen(L){return `<h1>Düzen</h1><p class="m">Arayüz, tüm hesaplarda sabit Midnight Glass mavi paletini kullanır.</p><div class="card"><h3>Arayüz rengi</h3><p class="m">Vurgu rengi tüm kullanıcılar için sabittir; kişisel renkler arayüzü değiştirmez.</p><div class="palette-fixed"><span></span><b>Midnight Glass · Buz mavisi</b></div></div>${bgCard()}`}
-async function ayar(L){const s=await settings(L),i=s.indexOf('<h3>Görünüm</h3>'),j=s.indexOf('<div class="card"><h3>Veri</h3>');return s.slice(0,i).replace(/<label>Kullanım modu[\s\S]*?<\/select><\/label>/,'')+'</div>'+s.slice(j)}
+async function ayar(L){return await settings(L)}
 const lumOf=u=>new Promise(r=>{const m=new Image();m.onload=()=>{const c=document.createElement('canvas');c.width=c.height=24;const x=c.getContext('2d');x.drawImage(m,0,0,24,24);const d=x.getImageData(0,0,24,24).data;let s=0;for(let i=0;i<d.length;i+=4)s+=.2126*d[i]+.7152*d[i+1]+.0722*d[i+2];r(s/(d.length/4)/255<.5)};m.onerror=()=>r(false);m.src=u});
 const G=[['Gece mavisi','linear-gradient(135deg,#111b2a,#1b2d43)'],['Çelik','linear-gradient(135deg,#1c2b3e,#344b66)'],['Buz','linear-gradient(135deg,#263d56,#456482)'],['Okyanus','linear-gradient(135deg,#10243a,#234b70)'],['Derin gece','linear-gradient(135deg,#080d16,#142338)']];
 const pg=i=>upd({bg:{t:'g',v:G[i][1],dark:i===4}});
