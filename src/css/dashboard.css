@@ -78,9 +78,6 @@ body:not(.login-mode) .shell:has(.page-bugun)>.main{padding:0 2px 28px;min-width
 .intel-brand{display:flex;align-items:center;gap:10px;min-width:205px;font-weight:800;letter-spacing:-.03em;color:#f3f7ff}
 .intel-brand>span:last-child{display:flex;flex-direction:column;font-size:14px;line-height:1.2}.intel-brand small{font-size:8px;letter-spacing:.22em;color:#7fb9f2;margin-top:3px}
 .intel-brand-mark{display:grid;place-items:center;width:34px;height:34px;border-radius:11px;background:linear-gradient(145deg,#477cff,#1c3c9d);color:#fff;font-size:20px;box-shadow:0 6px 16px rgba(49,97,236,.3)}
-.intel-search{height:38px;max-width:460px;flex:1;display:flex;align-items:center;gap:9px;padding:0 10px;border:1px solid rgba(149,180,220,.17);border-radius:11px;background:rgba(4,11,22,.52);color:#8fa9c7}
-.intel-search>span{font-size:21px}.intel-search input{flex:1;min-width:0;height:100%;padding:0!important;margin:0!important;border:0!important;outline:0;background:transparent!important;color:#eef5ff!important;font-size:12px!important;box-shadow:none!important}
-.intel-search button{padding:5px 10px;border-radius:8px;background:rgba(75,126,198,.2);color:#c7e3ff;font-size:11px}
 .intel-top-actions{display:flex;align-items:center;gap:9px;margin-left:auto}
 .intel-icon-btn{position:relative;width:36px;height:36px;border:1px solid rgba(149,180,220,.18);border-radius:11px;background:rgba(255,255,255,.045);color:#c6d9ef}
 .intel-icon-btn i{position:absolute;right:-4px;top:-5px;min-width:14px;height:14px;padding:0 3px;border-radius:99px;background:#477cff;color:#fff;font-size:9px;font-style:normal}
