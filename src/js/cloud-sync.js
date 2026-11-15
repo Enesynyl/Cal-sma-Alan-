@@ -59,31 +59,44 @@ function fbResetLoginAppearance(){
 }
 function fbInstallLoginLayoutFix(){
  const id='ca-auth-screen-layout-fix';
- if(!document.getElementById(id)){
-  const style=document.createElement('style');style.id=id;
-  style.textContent=`
-   html body.login-mode #app{
-    display:grid!important;grid-template-columns:minmax(0,1fr)!important;place-items:center!important;
-    width:100vw!important;max-width:none!important;min-height:100svh!important;height:auto!important;
-    margin:0!important;padding:clamp(24px,5vh,56px) 16px!important;overflow-x:hidden!important;overflow-y:auto!important;
-   }
-   html body.login-mode #app>.login-shell{
-    display:flex!important;flex:0 1 auto!important;flex-direction:column!important;align-items:stretch!important;
-    width:min(100%,480px)!important;max-width:480px!important;min-width:0!important;min-height:0!important;height:auto!important;
-    margin:0 auto!important;padding:0!important;align-self:center!important;justify-self:center!important;gap:18px!important;
-   }
-   html body.login-mode #app>.login-shell>.login-brand,
-   html body.login-mode #app>.login-shell>.login-card{width:100%!important;max-width:100%!important;min-width:0!important}
-   html body.login-mode #ca-notif-button,
-   html body.login-mode #ca-notif-backdrop{display:none!important;visibility:hidden!important;pointer-events:none!important}
-   @media(max-width:600px){
-    html body.login-mode #app{padding:calc(env(safe-area-inset-top) + 22px) 14px calc(env(safe-area-inset-bottom) + 22px)!important}
-    html body.login-mode #app>.login-shell{width:min(100%,460px)!important;max-width:460px!important}
-   }`;
-  document.head.appendChild(style);
- }
-}
-function fbSetLoggedOutChrome(isLoggedOut){
+ let style=document.getElementById(id);
+ if(!style){style=document.createElement('style');style.id=id;document.head.appendChild(style)}
+ // Keep a single, stable login presentation even if an older cached stylesheet is present.
+ style.textContent=`
+  html body.login-mode{min-height:100svh!important;color:#eff5ff!important;background:radial-gradient(ellipse at 50% 0%,rgba(91,139,190,.22),transparent 43%),linear-gradient(155deg,#080e18,#101c2c 58%,#080e18)!important;overflow-x:hidden!important}
+  html body.login-mode #app{display:grid!important;grid-template-columns:minmax(0,1fr)!important;place-items:center!important;width:100%!important;max-width:100%!important;min-height:100svh!important;height:auto!important;margin:0!important;padding:clamp(24px,5vh,56px) 16px!important;overflow-x:hidden!important;overflow-y:auto!important}
+  html body.login-mode #app>.login-shell{display:flex!important;flex:0 1 auto!important;flex-direction:column!important;align-items:stretch!important;gap:18px!important;width:min(100%,480px)!important;max-width:480px!important;min-width:0!important;min-height:0!important;height:auto!important;margin:0 auto!important;padding:0!important;background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important}
+  html body.login-mode #app>.login-shell>.login-brand{display:flex!important;align-items:center!important;justify-content:center!important;gap:13px!important;width:100%!important;max-width:100%!important;min-width:0!important;margin:0!important;padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important;text-align:left!important}
+  html body.login-mode .login-brand img{display:block!important;width:52px!important;height:52px!important;flex:0 0 52px!important;border-radius:16px!important;box-shadow:0 8px 24px rgba(0,0,0,.28)!important}
+  html body.login-mode .login-brand h2{margin:0 0 3px!important;color:#f3f7ff!important;font-size:23px!important;letter-spacing:-.04em!important}
+  html body.login-mode .login-brand p{margin:0!important;color:#9fb2c9!important;font-size:12px!important;letter-spacing:.07em!important}
+  html body.login-mode #app>.login-shell>.login-card{display:block!important;width:100%!important;max-width:100%!important;min-width:0!important;margin:0!important;padding:clamp(20px,5vw,30px)!important;border:1px solid rgba(176,207,239,.19)!important;border-radius:26px!important;background:linear-gradient(145deg,rgba(22,35,53,.94),rgba(12,21,34,.97))!important;box-shadow:0 24px 72px rgba(0,0,0,.38),inset 0 1px 0 rgba(255,255,255,.06)!important;backdrop-filter:blur(28px)!important;-webkit-backdrop-filter:blur(28px)!important;overflow:hidden!important}
+  html body.login-mode .login-heading{margin:0 0 20px!important}
+  html body.login-mode .login-heading>span{display:block!important;margin-bottom:9px!important;color:#86bce9!important;font-size:10px!important;font-weight:800!important;letter-spacing:.16em!important}
+  html body.login-mode .login-heading h1{margin:0 0 7px!important;color:#f4f8ff!important;font-size:clamp(25px,6vw,30px)!important;line-height:1.15!important;letter-spacing:-.04em!important}
+  html body.login-mode .login-heading p{margin:0!important;color:#a9bad0!important;font-size:14px!important;line-height:1.5!important}
+  html body.login-mode .login-tabs{display:grid!important;grid-template-columns:1fr 1fr!important;gap:7px!important;width:100%!important;padding:5px!important;margin:0 0 18px!important;border:1px solid rgba(164,196,229,.12)!important;border-radius:15px!important;background:rgba(2,9,18,.45)!important}
+  html body.login-mode .login-tabs button{display:block!important;width:100%!important;min-height:43px!important;padding:8px 10px!important;border:1px solid transparent!important;border-radius:11px!important;background:transparent!important;color:#b7c8dc!important;font-size:14px!important;font-weight:650!important}
+  html body.login-mode .login-tabs button.p{background:linear-gradient(135deg,#78b8e9,#477eae)!important;color:#071522!important;box-shadow:0 5px 16px rgba(68,132,188,.22)!important}
+  html body.login-mode .login-fields{display:flex!important;flex-direction:column!important;gap:12px!important;width:100%!important;max-width:100%!important;min-width:0!important}
+  html body.login-mode .login-fields label{display:block!important;width:100%!important;margin:0!important;padding:0!important;color:#dce8f6!important;font-size:13px!important;font-weight:650!important}
+  html body.login-mode .login-fields input,html body.login-mode .login-fields select{display:block!important;box-sizing:border-box!important;width:100%!important;max-width:100%!important;min-width:0!important;min-height:49px!important;margin:7px 0 0!important;padding:12px 14px!important;border:1px solid rgba(163,197,232,.22)!important;border-radius:13px!important;background:rgba(4,12,22,.58)!important;color:#f2f7ff!important;font-size:16px!important;box-shadow:none!important}
+  html body.login-mode .login-fields .fb-password{display:flex!important;align-items:stretch!important;gap:8px!important;width:100%!important;max-width:100%!important;min-width:0!important}
+  html body.login-mode .login-fields .fb-password input{flex:1 1 0!important;width:1%!important;min-width:0!important}
+  html body.login-mode .login-fields .fb-password button{flex:0 0 48px!important;width:48px!important;height:49px!important;min-height:49px!important;margin-top:7px!important;border-radius:13px!important;background:rgba(255,255,255,.07)!important;color:#eaf3ff!important}
+  html body.login-mode .login-actions{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:9px!important;width:100%!important;margin:20px 0 0!important}
+  html body.login-mode .login-actions button{display:block!important;width:100%!important;min-height:49px!important;border-radius:14px!important;font-size:15px!important;font-weight:750!important}
+  html body.login-mode .login-actions button.p{background:linear-gradient(135deg,#82c0ef,#4b83b5)!important;color:#071522!important;border:1px solid rgba(204,231,255,.28)!important}
+  html body.login-mode .login-actions .login-google{background:rgba(255,255,255,.045)!important;color:#e9f2fd!important;border:1px solid rgba(170,201,233,.2)!important}
+  html body.login-mode .login-google span{display:inline-grid!important;place-items:center!important;width:22px!important;height:22px!important;margin-right:8px!important;border-radius:50%!important;background:#fff!important;color:#4285f4!important;font-weight:850!important}
+  html body.login-mode .login-message{min-height:0!important;margin:10px 0 0!important;color:#f2c4a8!important;font-size:13px!important;line-height:1.45!important;overflow-wrap:anywhere!important}
+  html body.login-mode .login-forgot{display:block!important;width:auto!important;min-height:0!important;margin:12px auto 0!important;padding:7px 10px!important;background:transparent!important;border:0!important;color:#9ec9ee!important;font-size:13px!important;text-decoration:underline!important;text-underline-offset:3px!important}
+  html body.login-mode .login-fields .fb-reg[hidden],html body.login-mode .login-fields .fb-reg[aria-hidden="true"]{display:none!important;visibility:hidden!important}
+  html body.login-mode #ca-notif-button,html body.login-mode #ca-notif-backdrop{display:none!important;visibility:hidden!important;pointer-events:none!important}
+  @media(max-width:600px){html body.login-mode #app{padding:calc(env(safe-area-inset-top) + 22px) 14px calc(env(safe-area-inset-bottom) + 22px)!important}html body.login-mode #app>.login-shell{width:min(100%,460px)!important;max-width:460px!important}html body.login-mode .login-card{padding:21px 18px!important;border-radius:22px!important}}
+  @media(max-width:390px){html body.login-mode .login-card{padding:18px 15px!important}html body.login-mode .login-fields input{font-size:16px!important}}
+ `;
+}function fbSetLoggedOutChrome(isLoggedOut){
  if(isLoggedOut){
   fbInstallLoginLayoutFix();
   document.getElementById('ca-notif-backdrop')?.remove();
