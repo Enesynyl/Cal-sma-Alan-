@@ -4,7 +4,7 @@ const API_KEY='AIzaSyBQ3I3HgnLqrmfnPJCPiAfBj67CeifoxCI';
 const ADMIN_EMAIL='ebsyonyol48@gmail.com';
 let cached=null;
 function b64(v){return Buffer.from(v).toString('base64url')}
-async function googleToken(){
+export async function googleToken(){
  if(cached&&cached.exp>Date.now()+60000)return cached.token;
  const raw=process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
  if(!raw)throw new Error('FIREBASE_SERVICE_ACCOUNT_JSON_MISSING');
@@ -17,6 +17,12 @@ async function googleToken(){
  const r=await fetch('https://oauth2.googleapis.com/token',{method:'POST',headers:{'content-type':'application/x-www-form-urlencoded'},body:new URLSearchParams({grant_type:'urn:ietf:params:oauth:grant-type:jwt-bearer',assertion})});
  const d=await r.json();if(!r.ok)throw new Error(d.error_description||'GOOGLE_OAUTH_FAILED');
  cached={token:d.access_token,exp:Date.now()+d.expires_in*1000};return cached.token;
+}
+export async function requireUser(req,res){
+ const token=String(req.headers.authorization||'').replace(/^Bearer\\s+/i,'');if(!token){res.status(401).json({error:'Oturum gerekli.'});return null}
+ const v=await fetch('https://identitytoolkit.googleapis.com/v1/accounts:lookup?key='+API_KEY,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({idToken:token})});
+ const d=await v.json(),u=d.users?.[0];if(!v.ok||!u){res.status(401).json({error:'Oturum doğrulanamadı.'});return null}
+ try{return {uid:u.localId,token:await googleToken()}}catch(e){res.status(503).json({error:'Bildirim servisi yapılandırılmamış: '+e.message});return null}
 }
 export async function requireAdmin(req,res){
  const token=String(req.headers.authorization||'').replace(/^Bearer\s+/i,'');if(!token){res.status(401).json({error:'Oturum gerekli.'});return null}
