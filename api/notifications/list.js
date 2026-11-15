@@ -4,11 +4,9 @@ export default async function handler(req,res){
  if(req.method!=='GET')return json(res,405,{error:'Method not allowed'});
  try{
   const user=await requireUser(req,res);if(!user)return;
-  const deviceId=String(req.query?.deviceId||'');
-  if(!/^[A-Za-z0-9_-]{8,80}$/.test(deviceId))return json(res,400,{error:'Cihaz kimliği eksik veya geçersiz.'});
   const rows=[];let page='',count=0;
   do{
-   const d=await firestoreList(user.token,'users/'+user.uid+'/devices/'+deviceId+'/notifications',page);
+   const d=await firestoreList(user.token,'users/'+user.uid+'/notifications',page);
    for(const doc of d.documents||[]){
     const x=fieldsToObject(doc.fields||{});
     rows.push({id:doc.name.split('/').pop(),title:x.title||'Yönetici duyurusu',body:x.body||'',type:x.type||'Duyuru',source:x.source||'',createdAt:Number(x.createdAt||0),imageUrl:x.imageUrl||'',linkUrl:x.linkUrl||''});
