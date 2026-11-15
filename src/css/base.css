@@ -789,3 +789,39 @@ html body:not(.login-mode) :is(dialog,.modal,.sheet,.wz) :is(input[type=date],in
   padding:11px 10px!important;font-size:16px!important;
  }
 }
+
+/* Explicit app-wide theme palettes: readable contrast in both modes. */
+:root[data-theme="dark"]{
+ color-scheme:dark!important;
+ --bg:#101722!important;--sf:#182536!important;--tx:#edf4fc!important;--mu:#aebed0!important;
+ --ac:#83b8e8!important;--ac2:rgba(112,164,214,.18)!important;--bd:rgba(177,202,231,.22)!important;
+}
+:root[data-theme="dark"] body:not(.login-mode){background-color:var(--bg)!important;color:var(--tx)!important}
+:root[data-theme="dark"] body:not(.login-mode) :is(.card,.it,.st,.sec,.panel,.box,.modal,.sheet,.section,.cal div,.deadline-tile,.focus-stat,.home-plan,.home-calendar,.home-left .sec,.tile){
+ background-color:var(--sf)!important;color:var(--tx)!important;border-color:var(--bd)!important;
+}
+:root[data-theme="dark"] body:not(.login-mode) :is(.card,.it,.st,.sec,.panel,.box,.modal,.sheet,.section,.cal div,.deadline-tile,.focus-stat,.home-plan,.home-calendar,.home-left .sec,.tile) :is(h1,h2,h3,h4,p,span,div,small,label,strong,b,em,i){color:inherit}
+:root[data-theme="dark"] body:not(.login-mode) :is(.m,.muted,.hint,.help,.desc,.subtitle,.meta,small){color:var(--mu)!important}
+:root[data-theme="dark"] body:not(.login-mode) :is(input,select,textarea){background:#0d1724!important;color:var(--tx)!important;border-color:var(--bd)!important;-webkit-text-fill-color:var(--tx)!important;color-scheme:dark!important}
+:root[data-theme="dark"] body:not(.login-mode) :is(button,.nav button){color:var(--tx)}
+:root[data-theme="light"]{
+ color-scheme:light!important;
+ --bg:#f3f6fb!important;--sf:#ffffff!important;--tx:#1c2938!important;--mu:#596b80!important;
+ --ac:#2867a5!important;--ac2:#e4eef9!important;--bd:#d2dce8!important;
+}
+:root[data-theme="light"] body:not(.login-mode){background-color:var(--bg)!important;color:var(--tx)!important}
+:root[data-theme="light"] body:not(.login-mode) :is(.card,.it,.st,.sec,.panel,.box,.modal,.sheet,.section,.cal div,.deadline-tile,.focus-stat,.home-plan,.home-calendar,.home-left .sec,.tile,.side,.top){
+ background-color:#fff!important;color:#1c2938!important;border-color:#d2dce8!important;
+ box-shadow:0 5px 18px rgba(24,45,70,.07)!important;
+}
+:root[data-theme="light"] body:not(.login-mode) :is(.card,.it,.st,.sec,.panel,.box,.modal,.sheet,.section,.cal div,.deadline-tile,.focus-stat,.home-plan,.home-calendar,.home-left .sec,.tile,.side,.top) :is(h1,h2,h3,h4,p,span,div,small,label,strong,b,em,i){color:inherit}
+:root[data-theme="light"] body:not(.login-mode) :is(.m,.muted,.hint,.help,.desc,.subtitle,.meta,small){color:#596b80!important}
+:root[data-theme="light"] body:not(.login-mode) :is(input,select,textarea){background:#fff!important;color:#1c2938!important;border-color:#c5d1df!important;-webkit-text-fill-color:#1c2938!important;caret-color:#1c2938!important;color-scheme:light!important}
+:root[data-theme="light"] body:not(.login-mode) :is(input,textarea)::placeholder{color:#8291a3!important;-webkit-text-fill-color:#8291a3!important}
+:root[data-theme="light"] body:not(.login-mode) button:not(.p){color:#26384c}
+:root[data-theme="light"] body:not(.login-mode) a{color:#245f9d}
+:root[data-theme="light"] body:not(.login-mode) .side .nav button.on{background:#e4eef9!important;color:#174f86!important}
+:root[data-theme="light"] body:not(.login-mode) .tabs button.on{background:#e4eef9!important;color:#174f86!important;border-color:#b7cde5!important}
+:root[data-theme="light"] body:not(.login-mode) .home-day{color:#26384c!important}
+:root[data-theme="light"] body:not(.login-mode) .home-day.today{color:#fff!important}
+:root[data-theme="light"] body:not(.login-mode) .tile :is(b,small,i){color:#26384c!important}
