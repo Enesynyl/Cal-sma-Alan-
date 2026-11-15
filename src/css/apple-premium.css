@@ -1708,3 +1708,77 @@ html[data-theme="light"] body:not(.login-mode) #app .hero :is(p,small,.m){
 html[data-theme="light"] body:not(.login-mode) #app .hero .big{
  background:#e4eef8!important;color:#2867a5!important;border-radius:16px!important;
 }
+
+
+/* FINAL NOTEBOOK OVERRIDES — loaded last so the global glass theme cannot repaint paper. */
+#app #dfroot .dnb,
+#app #dfroot .dnb .pgc,
+#app #dfroot .pgc,
+#app #dfroot .pgc.cizgili,
+#app #dfroot .pgc.kareli,
+#app #dfroot .pgc.noktali,
+#app #dfroot .pgc.duz,
+#app #dfroot .pgc.sari,
+#app #dfroot .pgc.koyu,
+body.dffs #app #dfroot .dnb,
+body.dffs #app #dfroot .pgc{
+  background-color:#fff!important;
+  color:#202a36!important;
+  border-color:#d8e1eb!important;
+  box-shadow:0 10px 30px rgba(26,43,64,.12)!important;
+  -webkit-text-fill-color:#202a36!important;
+}
+#app #dfroot .pgc.cizgili{
+ background-image:linear-gradient(90deg,transparent 48px,#e49a9a 48px,#e49a9a 50px,transparent 50px),repeating-linear-gradient(to bottom,transparent 0,transparent 27px,#c9dced 27px,#c9dced 28px)!important;
+ background-size:100% 100%,100% 28px!important;background-position:0 0!important;
+}
+#app #dfroot .pgc.kareli{
+ background-image:linear-gradient(to right,#d3e0ec 1px,transparent 1px),linear-gradient(to bottom,#d3e0ec 1px,transparent 1px)!important;
+ background-size:28px 28px!important;background-position:0 0!important;
+}
+#app #dfroot .pgc.noktali{
+ background-image:radial-gradient(circle,#9eafc1 1.35px,transparent 1.7px)!important;
+ background-size:24px 24px!important;background-position:12px 12px!important;
+}
+#app #dfroot .pgc.duz{background-image:none!important}
+#app #dfroot .pgc.sari,#app #dfroot .pgc.koyu{background-image:repeating-linear-gradient(to bottom,transparent 0,transparent 27px,#c9dced 27px,#c9dced 28px)!important;background-size:100% 28px!important}
+#app #dfroot .pgc .dti,
+#app #dfroot .pgc .dftxt,
+#app #dfroot .pgc .dftxt *,
+#app #dfroot .pgc .dti::placeholder,
+#app #dfroot .pgc .dftxt:empty:before{
+ color:#202a36!important;-webkit-text-fill-color:#202a36!important;
+}
+#app #dfroot .pgc .dti{background:transparent!important;border:0!important;border-bottom:1px solid #dce4ed!important}
+#app #dfroot .pgc .dftxt{background:transparent!important;line-height:28px!important;overflow-wrap:anywhere!important;white-space:pre-wrap!important}
+#app #dfroot .pgc #dfc{background:transparent!important}
+#app #dfroot .fld{
+ background:linear-gradient(145deg,#fff,#f2f6fb)!important;
+ color:#203148!important;-webkit-text-fill-color:#203148!important;
+ border:1px solid #d0dce9!important;box-shadow:0 7px 18px rgba(31,54,81,.09)!important;
+}
+#app #dfroot .fld :is(b,strong){color:#203148!important;-webkit-text-fill-color:#203148!important}
+#app #dfroot .fld small{color:#60748b!important;-webkit-text-fill-color:#60748b!important}
+#app #dfroot .it{background:#fff!important;color:#203148!important;border:1px solid #d6e0eb!important}
+#app #dfroot .it :is(b,small,span){color:#203148!important;-webkit-text-fill-color:#203148!important}
+#app #dfroot input,#app #dfroot select{background:#fff!important;color:#203148!important;-webkit-text-fill-color:#203148!important;border:1px solid #cbd7e4!important}
+#app #dfroot input::placeholder{color:#8291a2!important;-webkit-text-fill-color:#8291a2!important}
+#app #dfroot .df-tools{background:rgba(255,255,255,.97)!important;color:#26374a!important}
+#app #dfroot .df-tools button,#app #dfroot .df-tools .ph2{background:#f5f8fb!important;color:#26374a!important;border:1px solid #d2dce7!important}
+#app #dfroot .df-tools select{background:#fff!important;color:#26374a!important}
+
+/* Mobile notebook: use the full safe viewport, readable controls and a scrollable writing surface. */
+@media(max-width:700px){
+ body.dffs #app #dfroot{height:100dvh!important;min-height:100dvh!important;overflow:hidden!important}
+ body.dffs #app #dfroot .dnb{inset:0!important;border-radius:0!important}
+ body.dffs #app #dfroot .pgc{inset:0!important;height:100dvh!important;min-height:100dvh!important;padding-top:env(safe-area-inset-top)!important}
+ body.dffs #app #dfroot .pgc .dti{top:calc(74px + env(safe-area-inset-top))!important;left:10px!important;right:10px!important;width:calc(100% - 20px)!important;height:54px!important;padding:0 14px!important;font-size:18px!important}
+ body.dffs #app #dfroot .pgc .dftxt{top:calc(138px + env(safe-area-inset-top))!important;left:0!important;right:0!important;bottom:calc(88px + env(safe-area-inset-bottom))!important;height:auto!important;min-height:0!important;overflow-y:auto!important;padding:0 14px 24px 54px!important;font-size:16px!important;line-height:28px!important;-webkit-overflow-scrolling:touch}
+ body.dffs #app #dfroot .pgc.kareli .dftxt,
+ body.dffs #app #dfroot .pgc.noktali .dftxt,
+ body.dffs #app #dfroot .pgc.duz .dftxt{padding-left:14px!important}
+ body.dffs #app #dfroot>.df-topline{left:10px!important;right:10px!important;top:calc(8px + env(safe-area-inset-top))!important;width:auto!important}
+ body.dffs #app #dfroot>.row{bottom:calc(62px + env(safe-area-inset-bottom))!important}
+ body.dffs #app #dfroot>.bar{bottom:calc(8px + env(safe-area-inset-bottom))!important}
+ body.dffs #app #dfroot>.df-tools{top:calc(64px + env(safe-area-inset-top))!important}
+}
