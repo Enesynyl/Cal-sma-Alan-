@@ -22,7 +22,7 @@ export async function requireUser(req,res){
  const token=String(req.headers.authorization||'').replace(/^Bearer\s+/i,'');if(!token){res.status(401).json({error:'Oturum gerekli.'});return null}
  const v=await fetch('https://identitytoolkit.googleapis.com/v1/accounts:lookup?key='+API_KEY,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({idToken:token})});
  const d=await v.json(),u=d.users?.[0];if(!v.ok||!u){res.status(401).json({error:'Oturum doğrulanamadı.'});return null}
- try{return {uid:u.localId,token:await googleToken()}}catch(e){res.status(503).json({error:'Bildirim servisi yapılandırılmamış: '+e.message});return null}
+ return {uid:u.localId,token};
 }
 export async function requireAdmin(req,res){
  const token=String(req.headers.authorization||'').replace(/^Bearer\s+/i,'');if(!token){res.status(401).json({error:'Oturum gerekli.'});return null}
