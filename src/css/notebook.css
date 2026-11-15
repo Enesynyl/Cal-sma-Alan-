@@ -130,3 +130,42 @@ dialog[open]{animation:dlgIn .28s cubic-bezier(.2,.8,.2,1)}dialog::backdrop{anim
 .pgc.sari{background-color:#fff6b8!important;color:#29261d!important;background-image:linear-gradient(transparent 27px,#d8cc7a 27px)!important}
 .pgc.koyu{background-color:#202633!important;color:#f1f4f8!important;background-image:linear-gradient(transparent 27px,#ffffff25 27px)!important}
 .pgc.koyu .dti,.pgc.koyu .dftxt{color:#f1f4f8!important}
+
+
+/* Notebook paper: always white, independent of app light/dark theme. */
+#dfroot .dnb{background:#fff!important;border:1px solid #d6deea!important;box-shadow:0 12px 32px rgba(22,38,58,.13)!important}
+#dfroot .dspir{background-color:#fff!important;border-bottom:1px solid #dce4ed!important}
+#dfroot .pgc,body.dffs #dfroot .pgc{
+ position:relative!important;background-color:#fff!important;color:#202a36!important;
+ border:1px solid #d9e1ea!important;isolation:isolate;
+}
+#dfroot .pgc.cizgili,body.dffs #dfroot .pgc.cizgili{
+ background-image:linear-gradient(90deg,transparent 48px,#e59a9a 48px,#e59a9a 50px,transparent 50px),repeating-linear-gradient(to bottom,transparent 0,transparent 27px,#c9dced 27px,#c9dced 28px)!important;
+ background-size:100% 100%,100% 28px!important;background-position:0 0,0 0!important;background-repeat:repeat!important;
+}
+#dfroot .pgc.kareli,body.dffs #dfroot .pgc.kareli{
+ background-image:linear-gradient(to right,#d3e0ec 1px,transparent 1px),linear-gradient(to bottom,#d3e0ec 1px,transparent 1px)!important;
+ background-size:28px 28px!important;background-position:0 0!important;background-repeat:repeat!important;
+}
+#dfroot .pgc.noktali,body.dffs #dfroot .pgc.noktali{
+ background-image:radial-gradient(circle,#9eafc1 1.35px,transparent 1.6px)!important;
+ background-size:24px 24px!important;background-position:12px 12px!important;background-repeat:repeat!important;
+}
+#dfroot .pgc.duz,body.dffs #dfroot .pgc.duz{background-image:none!important}
+#dfroot .pgc.sari,#dfroot .pgc.koyu,body.dffs #dfroot .pgc.sari,body.dffs #dfroot .pgc.koyu{
+ background-color:#fff!important;color:#202a36!important;
+ background-image:repeating-linear-gradient(to bottom,transparent 0,transparent 27px,#c9dced 27px,#c9dced 28px)!important;
+ background-size:100% 28px!important;
+}
+#dfroot .pgc .dti,#dfroot .pgc .dftxt,#dfroot .pgc .dftxt *,body.dffs #dfroot .pgc .dti,body.dffs #dfroot .pgc .dftxt,body.dffs #dfroot .pgc .dftxt *{
+ color:#202a36!important;-webkit-text-fill-color:#202a36!important;
+}
+#dfroot .pgc .dti{background:transparent!important;border:0!important;border-bottom:1px solid #dce4ed!important}
+#dfroot .pgc .dftxt{background:transparent!important;min-height:180px;line-height:28px;overflow-wrap:anywhere;word-break:normal;white-space:pre-wrap}
+#dfroot .pgc .dftxt:empty:before{color:#8996a5!important;-webkit-text-fill-color:#8996a5!important}
+#dfroot .pgc.cizgili .dftxt{padding-left:62px!important;padding-right:16px!important}
+#dfroot .pgc .dti::placeholder{color:#8996a5!important;-webkit-text-fill-color:#8996a5!important}
+#dfroot .pgc #dfc{background:transparent!important}
+#dfroot .df-tools select{background:#fff!important;color:#202a36!important;border:1px solid #cbd6e2!important}
+#dfroot .df-tools button,#dfroot .df-tools .ph2{color:#26374a!important;background:#f5f8fb!important;border:1px solid #d2dce7!important}
+#dfroot .df-tools .df-color-label{color:#526276!important}
