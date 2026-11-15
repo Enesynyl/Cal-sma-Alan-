@@ -52,11 +52,13 @@
    if(!sameKey){await sub.unsubscribe();sub=null;}
   }
   if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:expectedKey});
-  // Push delivery uses this device's active subscription directly.
-  // No Firestore write is needed for enabling or testing browser notifications.
+  // Yönetim panelinin cihazları bulabilmesi için aboneliği önce sunucuya kaydet.
+  const token=await u.getIdToken();
+  const saved=await fetch('/api/admin/register-subscription',{method:'POST',headers:{'content-type':'application/json',authorization:'Bearer '+token},body:JSON.stringify({subscription:sub.toJSON()})});
+  const savedData=await saved.json().catch(()=>({}));
+  if(!saved.ok||!savedData.saved)throw new Error(savedData.error||'Cihaz aboneliği sunucuya kaydedilemedi. Tekrar deneyebilirsin.');
   localStorage.setItem('ca_push_enabled_'+u.uid,'1');
-  try{const token=await u.getIdToken();const saved=await fetch('/api/admin/register-subscription',{method:'POST',headers:{'content-type':'application/json',authorization:'Bearer '+token},body:JSON.stringify({subscription:sub.toJSON()})});if(!saved.ok)console.warn('Cihaz aboneliği merkezi kaydedilemedi:',saved.status)}catch(e){console.warn('Cihaz aboneliği merkezi kaydedilemedi:',e)}
-  add('Bildirimler açıldı','Bu cihaz Çalışma Alanım bildirimlerini alabilir.','Sistem');
+  add('Bildirimler açıldı','Bu cihaz bildirim almak üzere kaydedildi.','Sistem');
   return true;
  }
  function decodeKey(s){const p='='.repeat((4-s.length%4)%4);const raw=atob((s+p).replace(/-/g,'+').replace(/_/g,'/'));return Uint8Array.from(raw,c=>c.charCodeAt(0))}
