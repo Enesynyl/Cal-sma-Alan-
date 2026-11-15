@@ -1655,3 +1655,39 @@ html[data-theme="light"] body:not(.login-mode) #app :is(.intel-event,.intel-even
 html[data-theme="light"] body:not(.login-mode) #app :is(.task-priority,.cnt,.badge,.tag,.pill) {color:#174f86!important;-webkit-text-fill-color:#174f86!important}
 html[data-theme="light"] body:not(.login-mode) #app input::placeholder,
 html[data-theme="light"] body:not(.login-mode) #app textarea::placeholder {color:#8291a3!important;-webkit-text-fill-color:#8291a3!important;opacity:1!important}
+
+/* LIGHT THEME v2 — repair legacy dark cards and low-contrast text across every section. */
+html[data-theme="light"] body:not(.login-mode) #app {color:#1d2b3b!important;}
+html[data-theme="light"] body:not(.login-mode) #app :is(.it,.st,.sec,.card,.tile,.task-card,.task-panel,.task-stat,.task-progress-card,.task-empty,.note-card,.note-item,.uni-card,.uni-item,.uni-row,.uni-result,.focus-stat,.focus-card,.focus-panel,.stats-card,.intel-panel,.intel-week,.intel-doc-row,.intel-search-result,.intel-notice,.today-custom-card,.home-plan,.home-calendar,.deadline-tile,.cal div) {
+ background:#fff!important;background-color:#fff!important;background-image:none!important;color:#243448!important;border-color:#d5dfeb!important;box-shadow:0 3px 14px rgba(25,48,75,.07)!important;
+}
+html[data-theme="light"] body:not(.login-mode) #app :is(.it,.st,.sec,.card,.tile,.task-card,.task-panel,.task-stat,.task-progress-card,.task-empty,.note-card,.note-item,.uni-card,.uni-item,.uni-row,.uni-result,.focus-stat,.focus-card,.focus-panel,.stats-card,.intel-panel,.intel-week,.intel-doc-row,.intel-search-result,.intel-notice,.today-custom-card,.home-plan,.home-calendar,.deadline-tile,.cal div) * {
+ color:#243448!important;-webkit-text-fill-color:#243448!important;text-shadow:none!important;
+}
+html[data-theme="light"] body:not(.login-mode) #app :is(.it small,.task-card small,.task-meta,.task-description,.note-meta,.uni-domain,.uni-url,.intel-panel small,.intel-week-foot,.intel-no-event,.focus-caption,.focus-course,.deadline-kind,.m,.muted,.hint,.help,.desc,.subtitle,.meta) {
+ color:#5b6b7e!important;-webkit-text-fill-color:#5b6b7e!important;
+}
+html[data-theme="light"] body:not(.login-mode) #app :is(.task-card,.task-panel,.task-stat,.task-progress-card,.note-card,.note-item,.uni-card,.uni-item,.uni-row,.uni-result,.focus-stat,.stats-card,.intel-panel,.intel-week,.intel-doc-row) {
+ overflow-wrap:anywhere!important;word-break:normal!important;min-width:0!important;
+}
+html[data-theme="light"] body:not(.login-mode) #app :is(.task-card p,.task-card b,.task-card span,.note-card p,.note-card b,.uni-row b,.uni-row small,.uni-result b,.uni-result small) {
+ overflow-wrap:anywhere!important;word-break:normal!important;white-space:normal!important;line-height:1.45!important;
+}
+html[data-theme="light"] body:not(.login-mode) #app :is(.task-card,.note-card,.uni-row,.uni-result) button:not(.p) {
+ color:#243448!important;-webkit-text-fill-color:#243448!important;background:#f0f4f9!important;border-color:#cbd7e5!important;
+}
+html[data-theme="light"] body:not(.login-mode) #app :is(.uni-search,.uni-search input,.intel-search,.intel-search input) {color:#243448!important;-webkit-text-fill-color:#243448!important;}
+html[data-theme="light"] body:not(.login-mode) #app :is(input,select,textarea) {background:#fff!important;color:#1d2b3b!important;-webkit-text-fill-color:#1d2b3b!important;border-color:#c7d4e2!important;color-scheme:light!important;}
+html[data-theme="light"] body:not(.login-mode) #app :is(input,textarea)::placeholder {color:#718096!important;-webkit-text-fill-color:#718096!important;opacity:1!important;}
+html[data-theme="light"] body:not(.login-mode) #app :is(.focus-screen,.focus-ready,.focus-setup,.focus-stats,.focus-stat) {background:#fff!important;background-image:none!important;color:#1d2b3b!important;}
+html[data-theme="light"] body:not(.login-mode) #app :is(.focus-screen,.focus-ready,.focus-setup) :is(h1,h2,h3,p,small,b,span,label) {color:#1d2b3b!important;-webkit-text-fill-color:#1d2b3b!important;}
+html[data-theme="light"] body:not(.login-mode) #app :is(.focus-orb,.focus-water,.focus-art,.intel-focus-art) {color:#fff!important;-webkit-text-fill-color:#fff!important;}
+html[data-theme="light"] body:not(.login-mode) #app :is(.intel-event,.intel-event *) {color:#243448!important;-webkit-text-fill-color:#243448!important;}
+html[data-theme="light"] body:not(.login-mode) #app :is(.task-priority,.cnt,.badge,.tag,.pill) {color:#174f86!important;-webkit-text-fill-color:#174f86!important;}
+html[data-theme="light"] body:not(.login-mode) #app :is(.task-progress,.progress-track,.progress-bar) {background-color:#e5ebf2!important;}
+html[data-theme="light"] body:not(.login-mode) #app :is(.task-progress>i,.progress-track>i,.progress-bar>i) {background-color:#4389c5!important;}
+html[data-theme="light"] body:not(.login-mode) #app :is(.intel-empty,.empty) {color:#5b6b7e!important;}
+html[data-theme="light"] body:not(.login-mode) #app :is(.intel-empty,.empty) :is(b,small,p,span) {color:#5b6b7e!important;-webkit-text-fill-color:#5b6b7e!important;}
+html[data-theme="light"] body:not(.login-mode) #app :is(button.p,.intel-empty button) {background:#2867a5!important;color:#fff!important;-webkit-text-fill-color:#fff!important;}
+html[data-theme="light"] body:not(.login-mode) #app :is(.today-theme-switch button.active) {background:#e4eef9!important;color:#174f86!important;-webkit-text-fill-color:#174f86!important;}
+@media(max-width:600px){html[data-theme="light"] body:not(.login-mode) #app :is(.task-card,.note-card,.uni-row,.uni-result) {max-width:100%!important;white-space:normal!important;}}
