@@ -192,3 +192,34 @@ html[data-theme="dark"] #dfroot .fld{
 }
 html[data-theme="dark"] #dfroot .fld b{color:#edf4fc!important;-webkit-text-fill-color:#edf4fc!important}
 html[data-theme="dark"] #dfroot .fld small{color:#b2c0d0!important;-webkit-text-fill-color:#b2c0d0!important}
+
+
+/* Midnight Glass is the single fixed application appearance. */
+:root[data-theme="midnight"]{
+ color-scheme:dark!important;
+ --bg:#080d16!important;--sf:#111b2a!important;--tx:#edf4fc!important;--mu:#a5b4c8!important;
+ --ac:#83b8e8!important;--ac2:rgba(112,164,214,.16)!important;--bd:rgba(177,202,231,.20)!important;
+}
+:root[data-theme="midnight"] body:not(.login-mode){background-color:#080d16!important;color:#edf4fc!important}
+
+/* Notebook toolbar collapsed by default; expand only from the compact chevron. */
+#dfroot .df-tools{display:none!important}
+#dfroot .df-tools.open{display:block!important}
+#dfroot .df-tools-toggle{flex:0 0 42px!important;width:42px!important;height:42px!important;padding:0!important;border-radius:13px!important}
+#dfroot .df-topline{display:flex!important;align-items:center!important;gap:10px!important;min-height:58px!important;padding:8px 12px!important;border-radius:20px!important}
+#dfroot .df-topline h3{flex:1!important;min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;margin:0!important}
+#dfroot .df-topline>button{flex:0 0 44px!important;min-width:44px!important;height:44px!important}
+#dfroot .df-tools.open{padding:8px!important;margin:6px 0!important;border-radius:16px!important;background:rgba(18,30,47,.97)!important;border:1px solid #35465c!important;box-shadow:0 8px 24px #0003!important}
+#dfroot .df-tools .dtb{display:flex!important;flex-wrap:wrap!important;gap:6px!important;align-items:center!important}
+#dfroot .df-tools .dtb button,#dfroot .df-tools .dtb .ph2{font-size:12px!important;padding:6px 9px!important}
+#dfroot .df-tools select{max-width:130px!important;font-size:12px!important}
+#dfroot .df-tools-toggle{background:#26364b!important;color:#edf4fc!important;border:1px solid #465a73!important}
+@media(max-width:700px){
+ #dfroot .df-topline{position:sticky!important;top:env(safe-area-inset-top,0px)!important;z-index:20!important}
+ #dfroot .df-tools.open{max-height:34vh!important;overflow-y:auto!important;overscroll-behavior:contain!important}
+ #dfroot .df-tools.open .dtb{gap:5px!important}
+ #dfroot .df-tools.open .dtb button,#dfroot .df-tools.open .dtb .ph2{min-height:34px!important;padding:5px 8px!important}
+ #dfroot .pgc{min-height:460px!important}
+ #dfroot>.row{position:sticky!important;bottom:calc(8px + env(safe-area-inset-bottom))!important;z-index:15!important;display:flex!important;justify-content:center!important;gap:8px!important;padding:7px!important;margin:8px auto!important;width:max-content!important;max-width:calc(100% - 16px)!important;border-radius:18px!important;background:rgba(25,39,58,.96)!important;box-shadow:0 8px 26px #0005!important}
+ #dfroot>.bar{position:sticky!important;bottom:calc(68px + env(safe-area-inset-bottom))!important;z-index:14!important;width:max-content!important;max-width:calc(100% - 16px)!important;margin:8px auto!important;padding:7px 10px!important;border-radius:18px!important;background:rgba(25,39,58,.96)!important}
+}
