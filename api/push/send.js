@@ -1,8 +1,8 @@
 import webpush from 'web-push';
 const PROJECT='calisma-alani-34ba7';
 const API_KEY='AIzaSyBQ3I3HgnLqrmfnPJCPiAfBj67CeifoxCI';
-const VAPID_PUBLIC_KEY='BGw8rJ8J3cezaV6dyXUIdD128S2gV2huDljsuzz5df0WrIyx7IaZSM9C2zodN2OYMQp5oWm_l0xMF8V7C5GfA5U';
-const SERVER_REVISION='push-runtime-diagnostic-20261114-01';
+const VAPID_PUBLIC_KEY='BK-0Z26P6-lQmXI8MKkRmCKlPvPQKS5bfqz9MZz_vjmzxwAKEM5JzzyBrFv5lsb8q9gxVdKPfh1at_cVjpdyusA';
+const SERVER_REVISION='push-vapid-rotation-20261115-01';
 export default async function handler(req,res){
  res.setHeader('Cache-Control','no-store, no-cache, must-revalidate');
  res.setHeader('X-Push-Server-Revision',SERVER_REVISION);
