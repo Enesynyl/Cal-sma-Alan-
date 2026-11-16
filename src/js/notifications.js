@@ -218,7 +218,13 @@
    // then attach this browser's persistent push subscription to the new user.
    authTransition=authTransition.then(async()=>{
     if(previous)await logout(previous);
-    if(nextUid&&FB?.auth?.currentUser?.uid===nextUid){await syncSession(u);await attachExistingPush(u)}
+    if(nextUid&&FB?.auth?.currentUser?.uid===nextUid){
+     await syncSession(u);await attachExistingPush(u);
+     if(FB?.auth?.currentUser?.uid===nextUid){
+      sessionUid=nextUid;clearInterval(sessionTimer);
+      sessionTimer=setInterval(()=>{if(FB?.auth?.currentUser?.uid===nextUid)syncSession(u)},45000);
+     }
+    }
    }).catch(e=>console.warn('Hesap-bildirim geçişi tamamlanamadı:',e.message));
   }
   if(!u){
@@ -226,7 +232,6 @@
    clearInterval(scanTimer);clearInterval(sessionTimer);sessionTimer=null;sessionUid=null;
    $id('ca-push-optin')?.remove();return;
   }
-  if(sessionUid!==u.uid){clearInterval(sessionTimer);sessionUid=u.uid;sessionTimer=setInterval(()=>{if(FB?.auth?.currentUser?.uid===u.uid)syncSession(u)},45000)}
   listen();
   if(promptUid!==u.uid){promptUid=u.uid;setTimeout(()=>showEnablePrompt(u),1800)}
  }
