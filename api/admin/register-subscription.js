@@ -22,9 +22,17 @@ export default async function handler(req,res){
   }
   const deviceId=String(req.body?.deviceId||'');
   if(!/^[A-Za-z0-9_-]{8,80}$/.test(deviceId)||!sub.keys?.p256dh||!sub.keys?.auth)return json(res,400,{error:'Geçersiz cihaz aboneliği veya cihaz kimliği'});
-  const doc={fields:{endpoint:{stringValue:sub.endpoint},p256dh:{stringValue:sub.keys.p256dh},auth:{stringValue:sub.keys.auth},deviceId:{stringValue:deviceId},updatedAt:{timestampValue:new Date().toISOString()}}};
-  const wr=await fetch(url,{method:'PATCH',headers,body:JSON.stringify(doc)});
-  const wd=await wr.json();if(!wr.ok)throw new Error(wd.error?.message||'SUBSCRIPTION_SAVE_FAILED');
+  const updatedAt=new Date().toISOString();
+  const doc={fields:{endpoint:{stringValue:sub.endpoint},p256dh:{stringValue:sub.keys.p256dh},auth:{stringValue:sub.keys.auth},deviceId:{stringValue:deviceId},updatedAt:{timestampValue:updatedAt}}};
+  const ownerUrl='https://firestore.googleapis.com/v1/projects/'+PROJECT+'/databases/(default)/documents/pushSubscriptionOwners/'+id;
+  // A browser push endpoint is unique to this browser profile. Keep one
+  // authoritative owner so old account copies can never receive its pushes.
+  const [wr,ownerWrite]=await Promise.all([
+   fetch(url,{method:'PATCH',headers,body:JSON.stringify(doc)}),
+   fetch(ownerUrl,{method:'PATCH',headers,body:JSON.stringify({fields:{uid:{stringValue:user.uid},updatedAt:{timestampValue:updatedAt}}})})
+  ]);
+  const [wd,od]=await Promise.all([wr.json().catch(()=>({})),ownerWrite.json().catch(()=>({}))]);
+  if(!wr.ok||!ownerWrite.ok)throw new Error(wd.error?.message||od.error?.message||'SUBSCRIPTION_SAVE_FAILED');
   return json(res,200,{saved:true});
  }catch(e){console.error('push subscription update failed',e);return json(res,500,{error:String(e.message||e)})}
 }
