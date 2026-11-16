@@ -35,26 +35,34 @@
   const panel=document.createElement('div');panel.className='ca-notif-backdrop';panel.id='ca-notif-backdrop';
   const isAdmin=String(FB?.auth?.currentUser?.email||'').toLowerCase()==='ebsyonyol48@gmail.com';
   let activeTab='notifications';
-  panel.innerHTML='<section class="ca-notif-panel" role="dialog" aria-modal="true" aria-labelledby="ca-notif-title"><header><div><small>BİLDİRİM MERKEZİ</small><h2 id="ca-notif-title">Bildirimlerin</h2></div><button class="ca-notif-close" aria-label="Kapat">×</button></header><nav class="ca-notif-tabs" role="tablist"><button type="button" role="tab" data-tab="notifications" aria-selected="true">Bildirimler</button><button type="button" role="tab" data-tab="for-you" aria-selected="false">Senin için</button></nav><div class="ca-notif-actions"><button data-action="enable">🔔 Bildirimleri etkinleştir</button>'+(isAdmin?'<button data-action="test">Test bildirimi gönder</button>':'')+'<button data-action="clear">Okundu işaretle</button></div><div class="ca-notif-list" id="ca-notif-content"></div><footer id="ca-notif-status">Bildirim tercihlerin burada.</footer></section>';
+  panel.innerHTML='<section class="ca-notif-panel" role="dialog" aria-modal="true" aria-labelledby="ca-notif-title"><header><div><small>BİLDİRİM MERKEZİ</small><h2 id="ca-notif-title">Bildirimlerin</h2></div><button class="ca-notif-close" aria-label="Kapat">×</button></header><nav class="ca-notif-tabs" role="tablist"><button type="button" role="tab" data-tab="notifications" aria-selected="true">Bildirimler</button><button type="button" role="tab" data-tab="for-you" aria-selected="false">Senin için</button></nav><div class="ca-notif-actions"><button data-action="enable">🔔 Bildirimleri etkinleştir</button>'+(isAdmin?'<button data-action="test">Test bildirimi gönder</button>':'')+'<button data-action="clear">Okundu işaretle</button><button data-action="clear-admin" hidden>Senin için: Toplu sil</button></div><div class="ca-notif-list" id="ca-notif-content"></div><footer id="ca-notif-status">Bildirim tercihlerin burada.</footer></section>';
   document.body.appendChild(panel);
   const poll=setInterval(()=>{if(panel.isConnected)refreshAdminItems().then(()=>{if(activeTab==='for-you')renderTab()}).catch(()=>{})},10000);
   const close=()=>{clearInterval(poll);panel.remove()};panel.querySelector('.ca-notif-close').onclick=close;panel.addEventListener('click',e=>{if(e.target===panel)close()});
   const renderTab=()=>{
    const isForYou=activeTab==='for-you',list=isForYou?adminItems():localItems();
-   panel.querySelectorAll('[data-tab]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===activeTab)));panel.querySelector('[data-action="clear"]').hidden=isForYou;
-   panel.querySelector('#ca-notif-content').innerHTML=list.length?list.map(x=>'<article class="'+(x.read?'read':'')+'"><span>'+(isForYou?'✦':'◈')+'</span><div class="ca-notif-item-body"><b>'+esc(x.title)+'</b><p>'+esc(x.body)+'</p>'+(x.imageUrl?'<img class="ca-notif-image" src="'+esc(x.imageUrl)+'" alt="">':'')+(x.linkUrl?'<a class="ca-notif-link" href="'+esc(x.linkUrl)+'" target="_blank" rel="noopener noreferrer">Detayları görüntüle ↗</a>':'')+'<small>'+new Date(x.at).toLocaleString('tr-TR')+'</small></div>'+(isForYou?'':'<button type="button" class="ca-notif-delete" data-delete="'+esc(x.id)+'" aria-label="Bildirimi sil" title="Bildirimi sil">×</button>')+'</article>').join(''):'<div class="ca-notif-empty">'+(isForYou?'Senin için henüz yeni bir içerik yok.':'Henüz bildirimin yok.')+'<small>'+(isForYou?'Sana özel bildirimler burada görünecek.':'Hatırlatmalar ve hesap etkinlikleri burada görünecek.')+'</small></div>';
+   panel.querySelectorAll('[data-tab]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===activeTab)));panel.querySelector('[data-action="clear"]').hidden=isForYou;panel.querySelector('[data-action="clear-admin"]').hidden=!isForYou;
+   panel.querySelector('#ca-notif-content').innerHTML=list.length?list.map(x=>'<article class="'+(x.read?'read':'')+'"><span>'+(isForYou?'✦':'◈')+'</span><div class="ca-notif-item-body"><b>'+esc(x.title)+'</b><p>'+esc(x.body)+'</p>'+(x.imageUrl?'<img class="ca-notif-image" src="'+esc(x.imageUrl)+'" alt="">':'')+(x.linkUrl?'<a class="ca-notif-link" href="'+esc(x.linkUrl)+'" target="_blank" rel="noopener noreferrer">Detayları görüntüle ↗</a>':'')+'<small>'+new Date(x.at).toLocaleString('tr-TR')+'</small></div>'+(isForYou?'<button type="button" class="ca-notif-delete" data-delete-admin="'+esc(x.id)+'" aria-label="Duyuruyu sil" title="Duyuruyu sil">×</button>':'<button type="button" class="ca-notif-delete" data-delete="'+esc(x.id)+'" aria-label="Bildirimi sil" title="Bildirimi sil">×</button>')+'</article>').join(''):'<div class="ca-notif-empty">'+(isForYou?'Senin için henüz yeni bir içerik yok.':'Henüz bildirimin yok.')+'<small>'+(isForYou?'Sana özel bildirimler burada görünecek.':'Hatırlatmalar ve hesap etkinlikleri burada görünecek.')+'</small></div>';
   };
   panel.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{activeTab=b.dataset.tab;renderTab();if(activeTab==='for-you')refreshAdminItems().then(renderTab).catch(err=>status(err.message))});
-  panel.querySelector('#ca-notif-content').addEventListener('click',e=>{const b=e.target.closest('[data-delete]');if(!b||activeTab==='for-you')return;deleteLocalItem(b.dataset.delete);renderTab()});
+  panel.querySelector('#ca-notif-content').addEventListener('click',async e=>{const adminButton=e.target.closest('[data-delete-admin]');if(adminButton&&activeTab==='for-you'){if(!confirm('Bu duyuru Senin için listesinden silinsin mi?'))return;adminButton.disabled=true;try{await deleteAdminItems({id:adminButton.dataset.deleteAdmin});await refreshAdminItems();renderTab();status('Duyuru silindi.')}catch(err){status(err.message);adminButton.disabled=false}return}const b=e.target.closest('[data-delete]');if(!b||activeTab==='for-you')return;deleteLocalItem(b.dataset.delete);renderTab()});
   panel.__renderTab=renderTab;
   renderTab();
   refreshAdminItems().then(()=>{if(panel.isConnected&&activeTab==='for-you')renderTab()}).catch(err=>{console.warn('Yönetici duyuruları yenilenemedi:',err);status('Duyurular şu anda yüklenemedi. Bağlantını kontrol edip tekrar aç.')});
   panel.querySelector('[data-action="enable"]').onclick=async()=>{try{await enablePush();status('Bildirimler etkinleştirildi. Bu cihaz bildirim alabilir.')}catch(e){status(e.message)}};
   const testButton=panel.querySelector('[data-action="test"]');if(testButton)testButton.onclick=async()=>{try{await sendPush('Çalışma Alanım hazır!','Canlı bildirim bağlantın çalışıyor.');status('Test bildirimi gönderildi.')}catch(e){status(e.message)}};
   panel.querySelector('[data-action="clear"]').textContent='Toplu sil';panel.querySelector('[data-action="clear"]').onclick=()=>{if(activeTab==='for-you')return;if(!confirm('Bildirimler sekmesindeki tüm bildirimler silinsin mi?'))return;saveItems([]);renderTab()};
+  panel.querySelector('[data-action="clear-admin"]').onclick=async e=>{if(activeTab!=='for-you')return;if(!adminItems().length){status('Silinecek duyuru yok.');return}if(!confirm('Senin için sekmesindeki tüm yönetici duyuruları kalıcı olarak silinsin mi?'))return;const b=e.currentTarget;b.disabled=true;b.textContent='Siliniyor…';try{const result=await deleteAdminItems({all:true});await refreshAdminItems();renderTab();status((result.deleted||0)+' duyuru silindi.')}catch(err){status(err.message)}finally{b.disabled=false;b.textContent='Senin için: Toplu sil'}};
   function status(t){const el=$id('ca-notif-status');if(el)el.textContent=t}
  }
 
+ async function deleteAdminItems(payload){
+  const {u}=await getUser(),token=await u.getIdToken();
+  const response=await fetch('/api/notifications/delete',{method:'POST',cache:'no-store',headers:{'content-type':'application/json',authorization:'Bearer '+token},body:JSON.stringify(payload)});
+  const data=await response.json().catch(()=>({}));
+  if(!response.ok||!data.ok)throw new Error(data.error||'Duyuru silinemedi. Tekrar dene.');
+  return data;
+ }
  async function refreshAdminItems(){
   const f=await fbLoad(),u=f.auth.currentUser;if(!u)return;
   const token=await u.getIdToken();
@@ -62,12 +70,8 @@
   const data=await response.json().catch(()=>({}));
   if(!response.ok||!data.ok)throw new Error(data.error||'Bildirimler sunucudan alınamadı.');
   const current=adminItems(),byId=new Map(current.map(x=>[x.id,x]));
-  for(const d of data.notifications||[]){
-   if(d.source!=='admin'&&d.type!=='Duyuru')continue;
-   const old=byId.get(d.id);
-   byId.set(d.id,{id:d.id,title:d.title||'Yönetici duyurusu',body:d.body||'',imageUrl:d.imageUrl||'',linkUrl:d.linkUrl||'',type:'Duyuru',at:Number(d.createdAt)||Date.now(),read:old?.read||false});
-  }
-  saveAdminItems([...byId.values()].sort((a,b)=>b.at-a.at));
+  const fresh=(data.notifications||[]).filter(d=>d.source==='admin'||d.type==='Duyuru').map(d=>{const old=byId.get(d.id);return {id:d.id,title:d.title||'Yönetici duyurusu',body:d.body||'',imageUrl:d.imageUrl||'',linkUrl:d.linkUrl||'',type:'Duyuru',at:Number(d.createdAt)||Date.now(),read:old?.read||false}});
+  saveAdminItems(fresh.sort((a,b)=>b.at-a.at));
  }
  async function getUser(){const f=await fbLoad();const u=f.auth.currentUser;if(!u)throw new Error('Push bildirimleri için hesabına giriş yapmalısın.');return {f,u}}
  async function enablePush(){
