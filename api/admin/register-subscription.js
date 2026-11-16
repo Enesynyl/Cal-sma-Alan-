@@ -1,19 +1,20 @@
 import crypto from 'node:crypto';
-import {json} from './_lib.js';
-const PROJECT='calisma-alani-34ba7',API_KEY='AIzaSyBQ3I3HgnLqrmfnPJCPiAfBj67CeifoxCI';
+import {requireUser,googleToken,json} from './_lib.js';
+
+const PROJECT='calisma-alani-34ba7';
 export default async function handler(req,res){
  res.setHeader('Cache-Control','no-store, private');
  if(!['POST','DELETE'].includes(req.method))return json(res,405,{error:'Method not allowed'});
  try{
-  const token=String(req.headers.authorization||'').replace(/^Bearer\s+/i,'');if(!token)return json(res,401,{error:'Oturum gerekli'});
-  const vr=await fetch('https://identitytoolkit.googleapis.com/v1/accounts:lookup?key='+API_KEY,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({idToken:token})});
-  const vd=await vr.json(),u=vd.users?.[0];if(!vr.ok||!u)return json(res,401,{error:'Oturum doğrulanamadı'});
-  // User-scoped Firestore writes use the verified Firebase ID token and Firestore security rules.
+  // Verify the signed-in Firebase user first; service credentials are used only
+  // on the server to write inside that verified user's own document path.
+  const user=await requireUser(req,res);if(!user)return;
   const sub=req.body?.subscription;
   if(!sub?.endpoint)return json(res,400,{error:'Cihaz aboneliği bulunamadı'});
   const id=crypto.createHash('sha256').update(sub.endpoint).digest('hex').slice(0,40);
-  const url='https://firestore.googleapis.com/v1/projects/'+PROJECT+'/databases/(default)/documents/users/'+u.localId+'/pushSubscriptions/'+id;
-  const headers={authorization:'Bearer '+token,'content-type':'application/json'};
+  const url='https://firestore.googleapis.com/v1/projects/'+PROJECT+'/databases/(default)/documents/users/'+user.uid+'/pushSubscriptions/'+id;
+  const serviceToken=await googleToken();
+  const headers={authorization:'Bearer '+serviceToken,'content-type':'application/json'};
   if(req.method==='DELETE'){
    const wr=await fetch(url,{method:'DELETE',headers});
    if(!wr.ok&&wr.status!==404){const wd=await wr.json().catch(()=>({}));throw new Error(wd.error?.message||'SUBSCRIPTION_DELETE_FAILED')}
