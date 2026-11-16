@@ -15,7 +15,7 @@ export default async function handler(req,res){
   const admin=await requireAdmin(req,res);if(!admin)return;
   const body=req.body||{},id=String(body.id||'').trim();
   if(req.method==='POST'){
-   const imageData=String(body.imageData||'').trim(),linkUrl=String(body.linkUrl||'').trim(),description=String(body.description||'').trim().slice(0,500);
+   const imageData=String(body.imageData||'').trim(),linkUrl=String(body.linkUrl||'').trim(),description=String(body.description||'').trim();
    const startAt=body.startAt?Date.parse(body.startAt):0,endAt=body.endAt?Date.parse(body.endAt):0;
    if(!imageData||!/^data:image\/(jpeg|webp|png);base64,[A-Za-z0-9+/=]+$/.test(imageData)||imageData.length>550000)return json(res,400,{error:'Geçerli bir görsel seç (en fazla 380 KB).'});
    if(linkUrl&&!/^https:\/\//i.test(linkUrl))return json(res,400,{error:'Bağlantı https:// ile başlamalı.'});
@@ -33,7 +33,7 @@ export default async function handler(req,res){
    if(!r.ok)return json(res,404,{error:'Kampanya bulunamadı.'});
    const old=fieldsToObject((await r.json()).fields||{}),fields={};
    for(const [k,v] of Object.entries(old)){fields[k]=typeof v==='number'?{integerValue:String(v)}:{stringValue:String(v??'')}}
-   if(body.status)fields.status={stringValue:body.status==='published'?'published':'paused'};
+   if(body.status)fields.status={stringValue:body.status==='draft'?'draft':body.status==='published'?'published':'paused'};if(body.description!==undefined)fields.description={stringValue:String(body.description||'').trim()};if(body.linkUrl!==undefined){const link=String(body.linkUrl||'').trim();if(link&&!/^https:\/\//i.test(link))return json(res,400,{error:'Bağlantı https:// ile başlamalı.'});fields.linkUrl={stringValue:link}}if(body.imageData!==undefined){const image=String(body.imageData||'').trim();if(!/^data:image\/(jpeg|webp|png);base64,[A-Za-z0-9+/=]+$/.test(image)||image.length>550000)return json(res,400,{error:'Geçerli bir görsel seç (en fazla 380 KB).'});fields.imageData={stringValue:image}}if(body.startAt!==undefined){const t=body.startAt?Date.parse(body.startAt):0;if(body.startAt&&(!t||t<Date.now()-60000))return json(res,400,{error:'Başlangıç zamanı geçmişte olamaz.'});fields.startAt={integerValue:String(t)}}
    if(body.endAt!==undefined){const t=body.endAt?Date.parse(body.endAt):0;if(body.endAt&&(!t||t<=Date.now()))return json(res,400,{error:'Bitiş zamanı gelecekte olmalı.'});fields.endAt={integerValue:String(t)}}
    fields.updatedAt={integerValue:String(Date.now())};
    const w=await fetch(ROOT+'/adminCampaigns/'+id,{method:'PATCH',headers:{authorization:'Bearer '+admin.token,'content-type':'application/json'},body:JSON.stringify({fields})});
