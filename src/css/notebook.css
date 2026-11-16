@@ -261,3 +261,37 @@ html[data-theme="dark"] #dfroot .fld small{color:#b2c0d0!important;-webkit-text-
  #dfroot .df-bottom-dock.open{max-width:calc(100% - 10px)!important}
  #dfroot .df-bottom-content .row,#dfroot .df-bottom-content .bar{flex-wrap:wrap!important}
 }
+
+
+/* Notebook toolbar panel: theme-independent dark surface (works both in modal and fullscreen). */
+#dfroot .df-tools.open{
+ display:block!important;
+ background:#101d30!important;
+ background-color:#101d30!important;
+ color:#f1f6fd!important;
+ border:1px solid #526985!important;
+ border-radius:18px!important;
+ box-shadow:0 16px 42px rgba(0,0,0,.38)!important;
+ opacity:1!important;
+}
+#dfroot .df-tools.open .dtb,
+#dfroot .df-tools.open .dtb>*,
+#dfroot .df-tools.open b,
+#dfroot .df-tools.open span,
+#dfroot .df-tools.open label,
+#dfroot .df-tools.open .df-color-label{
+ color:#edf4fc!important;
+ -webkit-text-fill-color:#edf4fc!important;
+}
+#dfroot .df-tools.open button,
+#dfroot .df-tools.open .ph2,
+#dfroot .df-tools.open select{
+ background:#263b55!important;
+ background-color:#263b55!important;
+ color:#f4f8ff!important;
+ -webkit-text-fill-color:#f4f8ff!important;
+ border:1px solid #607b9c!important;
+}
+#dfroot .df-tools.open button.p{background:#3677c8!important;color:#fff!important;-webkit-text-fill-color:#fff!important}
+#dfroot .df-tools.open input[type="color"]{background:#263b55!important;border:1px solid #607b9c!important}
+#dfroot .df-tools.open .m{color:#bdcce0!important;-webkit-text-fill-color:#bdcce0!important}
