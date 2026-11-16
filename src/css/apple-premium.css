@@ -1816,3 +1816,60 @@ html body:not(.login-mode) #app :is(.home-stats,.home-metrics,.summary-grid,.hom
  html body:not(.login-mode) #app :is(.home-stats,.home-metrics,.summary-grid,.home-summary-grid,.focus-stats,.stat-grid){gap:8px!important}
  html body:not(.login-mode) #app :is(.home-stats,.home-metrics,.summary-grid,.home-summary-grid,.focus-stats,.stat-grid)>*{padding-left:10px!important;padding-right:10px!important}
 }
+
+
+/* FINAL, LAST-CASCADE NOTEBOOK TOOLBAR FIX.
+   The previous white surface rule is defined in this same file. Override it
+   after every legacy/premium rule, for both modal and device-fullscreen modes. */
+#app #dfroot .df-tools,
+#app #dfroot .df-tools.open,
+body.dffs #app #dfroot .df-tools,
+body.dffs #app #dfroot .df-tools.open {
+  display:block!important;
+  background:#101d30!important;
+  background-color:#101d30!important;
+  background-image:none!important;
+  color:#edf4fc!important;
+  border:1px solid #526985!important;
+  border-radius:18px!important;
+  box-shadow:0 16px 42px rgba(0,0,0,.46)!important;
+  opacity:1!important;
+}
+#app #dfroot .df-tools .dtb,
+#app #dfroot .df-tools .dtb>*,
+#app #dfroot .df-tools b,
+#app #dfroot .df-tools span,
+#app #dfroot .df-tools label,
+#app #dfroot .df-tools .df-color-label,
+body.dffs #app #dfroot .df-tools .dtb,
+body.dffs #app #dfroot .df-tools .dtb>* {
+  color:#edf4fc!important;
+  -webkit-text-fill-color:#edf4fc!important;
+}
+#app #dfroot .df-tools button,
+#app #dfroot .df-tools .ph2,
+#app #dfroot .df-tools select,
+#app #dfroot .df-tools input[type="color"],
+body.dffs #app #dfroot .df-tools button,
+body.dffs #app #dfroot .df-tools .ph2,
+body.dffs #app #dfroot .df-tools select {
+  background:#263b55!important;
+  background-color:#263b55!important;
+  background-image:none!important;
+  color:#f4f8ff!important;
+  -webkit-text-fill-color:#f4f8ff!important;
+  border:1px solid #607b9c!important;
+  box-shadow:none!important;
+}
+#app #dfroot .df-tools button.p,
+body.dffs #app #dfroot .df-tools button.p {
+  background:#3677c8!important;
+  background-color:#3677c8!important;
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+}
+#app #dfroot .df-tools .m,
+body.dffs #app #dfroot .df-tools .m {
+  color:#bdcce0!important;
+  -webkit-text-fill-color:#bdcce0!important;
+}
