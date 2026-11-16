@@ -27,6 +27,11 @@ function fbUpd(){if(FB&&!FB.user&&lsg('fbLoggedOut')==='1'){fbLoginPage();return
 async function fbVerify(){try{const f=await fbLoad(),u=f.auth.currentUser;if(!u)throw new Error('Önce giriş yap');await f.au.sendEmailVerification(u);toast('Doğrulama bağlantısı e-posta adresine gönderildi ✅');fbSay('Doğrulama e-postası yeniden gönderildi.')}catch(x){fbSay('Doğrulama e-postası gönderilemedi: '+fbErr(x))}}
 function fbUi(){const u=FB&&FB.user,t=+lsg('fbTs');
  if(u){document.body.dataset.authRequired="0";return dlg(`<div id="fbx" data-u="${u.uid}"><h3>☁️ Hesabın</h3><p style="margin:0 0 6px"><b>✅ ${e(u.displayName||'Giriş yapıldı')}</b><br><span class="m">${e(u.email||'')}</span></p><p class="m">Verilerin Firebase ile otomatik eşitlenir. Yeni cihazda aynı hesapla giriş yapınca en güncel verilerin yüklenir.</p>${!u.emailVerified&&u.providerData.some(p=>p.providerId==='password')?'<div class="fb-verify-note">E-posta adresin henüz doğrulanmamış.</div><button onclick="fbVerify()">Doğrulama e-postasını yeniden gönder</button>':''}<p class="m" id="fbm">${t?'Son eşitleme: '+new Date(t).toLocaleString('tr-TR'):'Eşitleme hazırlanıyor…'}</p><div class="row"><button onclick="fbAct('out')">Çıkış yap</button><button onclick="dlg()">Kapat</button></div></div>`)}
+ // Oturumu kapalı kullanıcılar için eski, küçük modal giriş formunu
+ // tekrar oluşturma. Tek giriş yüzeyi fbLoginPage() olsun.
+ dlg();
+ fbLoginPage();
+ return;
  FBM=lsg('fbHas')?1:2;
   dlg(`<div id="fbx" data-u=""><h3>☁️ Hesap</h3><p class="m">Hesap oluşturunca verilerin Firebase’e kaydedilir ve her cihazda girişle geri gelir.</p><div class="row" style="justify-content:flex-start"><button id="fbt1" class="${FBM===1?'p':''}" onclick="fbTab(1)">Giriş yap</button><button id="fbt2" class="${FBM===2?'p':''}" onclick="fbTab(2)">Hesap oluştur</button></div>${fbFields()}<div class="row" style="justify-content:flex-start;flex-wrap:wrap"><button class="p" id="fbGo" onclick="fbEmail()">${FBM===2?'Hesap oluştur':'Giriş yap'}</button><button onclick="fbAct('in')">Google ile devam et</button></div><p class="m" id="fbm"></p><div class="row"><button onclick="fbReset()">Şifremi unuttum</button><button onclick="dlg()">Kapat</button></div></div>`)}
  fbLoad().catch(x=>{const m=$('fbm');if(m)m.textContent=fbErr(x)})
