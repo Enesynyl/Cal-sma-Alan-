@@ -14,3 +14,11 @@
 
 .admin-tabs{display:flex;gap:9px;flex-wrap:wrap;padding:6px;border:1px solid var(--bd);border-radius:15px;background:var(--sf)}.admin-tabs button{padding:10px 16px;border:1px solid transparent;border-radius:11px;background:transparent;color:var(--mu);font-weight:750}.admin-tabs button.active{background:linear-gradient(135deg,#3978df,#2456b8);color:#fff;box-shadow:0 5px 16px #2456b833}.admin-page[data-tab="main"] .admin-grid>.admin-card:nth-child(3),.admin-page[data-tab="campaigns"] .admin-grid>.admin-card:not(:nth-child(3)){display:none}.admin-page[data-tab="main"] .admin-grid,.admin-page[data-tab="campaigns"] .admin-grid{grid-template-columns:minmax(0,1fr)}.admin-page[data-tab="main"] .admin-grid>.admin-card:nth-child(1),.admin-page[data-tab="main"] .admin-grid>.admin-card:nth-child(2){width:100%;}.admin-page[data-tab="campaigns"] .admin-grid>.admin-card{max-width:900px;width:100%;margin:0 auto}.admin-page[data-tab="campaigns"] .admin-campaign-dates{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-page input,.admin-page textarea,.admin-page select{box-sizing:border-box;max-width:100%;min-width:0}.admin-page input[type="datetime-local"]{width:100%;display:block}
 @media(max-width:560px){.admin-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}.admin-tabs button{padding:11px 6px;font-size:12px}.admin-page[data-tab="campaigns"] .admin-campaign-dates{grid-template-columns:1fr}}
+
+
+/* Keep date/time controls within the campaign card on mobile. */
+.admin-campaign-manager,.admin-campaign-dates,.admin-campaign-dates label{min-width:0!important;max-width:100%;width:100%;box-sizing:border-box}
+.admin-campaign-dates{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.admin-campaign-dates input[type="datetime-local"]{display:block;width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important;padding-left:10px!important;padding-right:10px!important;font-size:clamp(12px,3.4vw,16px)!important}
+.admin-campaign-manager input,.admin-campaign-manager textarea{max-width:100%;min-width:0;box-sizing:border-box}
+@media(max-width:600px){.admin-campaign-dates{grid-template-columns:minmax(0,1fr)!important}.admin-campaign-dates input[type="datetime-local"]{font-size:13px!important}}
