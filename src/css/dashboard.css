@@ -568,3 +568,22 @@ html[data-theme="light"] body:not(.login-mode) .intel-profile small{color:#63789
 .intel-ad-cta{display:inline-flex;align-items:center;min-height:34px;margin:0 0 2px;padding:7px 13px;border:1px solid rgba(119,174,238,.32);border-radius:10px;background:rgba(59,112,190,.18);color:#9dccff;text-decoration:none;font-size:12px;font-weight:750}
 .intel-ad .intel-ad-prev,.intel-ad .intel-ad-next{top:calc(clamp(150px,21vw,245px)/2)}
 @media(max-width:700px){.intel-ad-image img{height:clamp(125px,34vw,190px)}.intel-ad .intel-ad-prev,.intel-ad .intel-ad-next{top:calc(clamp(125px,34vw,190px)/2)}.intel-ad-caption-row{padding:8px 10px}.intel-ad-details{padding:0 12px 12px}}
+
+
+/* In-app campaign detail page */
+.intel-ad-caption-toggle{min-height:36px;padding:7px 15px;border:1px solid rgba(145,184,229,.28)!important;border-radius:10px!important;background:rgba(255,255,255,.055)!important;color:#dcecff!important;font-size:12px;font-weight:750}
+.intel-ad-detail-view{position:fixed;inset:0;z-index:10050;overflow-y:auto;background:#0b1422;color:#edf5ff;padding:0 0 env(safe-area-inset-bottom);overscroll-behavior:contain}
+.intel-ad-detail-view[hidden]{display:none!important}
+.intel-ad-detail-page{min-height:100%;background:linear-gradient(180deg,#14243a 0%,#0b1422 50%)}
+.intel-ad-detail-back{position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:8px;width:100%;min-height:58px;padding:calc(9px + env(safe-area-inset-top)) 18px 9px;border:0;border-bottom:1px solid rgba(180,210,245,.14);background:rgba(9,19,33,.88);backdrop-filter:blur(18px);color:#eaf4ff;font-size:17px;font-weight:750;text-align:left}
+.intel-ad-detail-hero{display:block;width:100%;height:clamp(230px,48vh,520px);object-fit:cover;border-radius:0 0 18px 18px}
+.intel-ad-detail-content{max-width:920px;margin:0 auto;padding:24px clamp(18px,4vw,36px) 48px}
+.intel-ad-detail-content p{margin:0 0 22px;color:#edf5ff;font-size:clamp(16px,2vw,20px);line-height:1.7;white-space:pre-wrap;overflow-wrap:anywhere}
+.intel-ad-detail-content .intel-ad-cta{min-height:42px;padding:10px 16px;font-size:14px}
+body.intel-ad-detail-open{overflow:hidden!important}
+@media(max-width:700px){.intel-ad-detail-hero{height:38vh;min-height:230px;max-height:380px}.intel-ad-detail-content{padding:22px 20px 40px}.intel-ad-detail-back{min-height:58px}}
+/* Prevent date/time fields from overflowing the campaign form card. */
+.admin-campaign-dates,.admin-campaign-dates label{min-width:0!important;width:100%;box-sizing:border-box}
+.admin-campaign-dates input[type="datetime-local"]{display:block;width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important;padding-left:10px!important;padding-right:10px!important;font-size:clamp(12px,3.4vw,16px)!important}
+.admin-campaign-manager input,.admin-campaign-manager textarea{max-width:100%;min-width:0;box-sizing:border-box}
+@media(max-width:600px){.admin-campaign-dates{grid-template-columns:minmax(0,1fr)!important}.admin-campaign-dates input[type="datetime-local"]{font-size:13px!important}}
