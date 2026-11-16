@@ -1,4 +1,4 @@
-import {requireUser,json} from '../admin/_lib.js';
+import {requireUser,googleToken,json} from '../admin/_lib.js';
 const PROJECT='calisma-alani-34ba7';
 function validId(v){return /^[A-Za-z0-9_-]{8,80}$/.test(String(v||''))}
 export default async function handler(req,res){
@@ -9,7 +9,7 @@ export default async function handler(req,res){
   const deviceId=String(req.body?.deviceId||'');
   if(!validId(deviceId))return json(res,400,{error:'Geçersiz cihaz kimliği.'});
   const url='https://firestore.googleapis.com/v1/projects/'+PROJECT+'/databases/(default)/documents/users/'+user.uid+'/activeDevices/'+deviceId;
-  const headers={authorization:'Bearer '+user.token,'content-type':'application/json'};
+  const headers={authorization:'Bearer '+await googleToken(),'content-type':'application/json'};
   if(req.method==='DELETE'){
    const r=await fetch(url,{method:'DELETE',headers});
    if(!r.ok&&r.status!==404){const d=await r.json().catch(()=>({}));throw new Error(d.error?.message||'SESSION_DELETE_FAILED')}
