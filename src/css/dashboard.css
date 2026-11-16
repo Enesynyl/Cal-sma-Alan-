@@ -587,3 +587,23 @@ body.intel-ad-detail-open{overflow:hidden!important}
 .admin-campaign-dates input[type="datetime-local"]{display:block;width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important;padding-left:10px!important;padding-right:10px!important;font-size:clamp(12px,3.4vw,16px)!important}
 .admin-campaign-manager input,.admin-campaign-manager textarea{max-width:100%;min-width:0;box-sizing:border-box}
 @media(max-width:600px){.admin-campaign-dates{grid-template-columns:minmax(0,1fr)!important}.admin-campaign-dates input[type="datetime-local"]{font-size:13px!important}}
+
+
+/* Refined campaign carousel pagination and smooth directional transitions. */
+.intel-ad{isolation:isolate}
+.intel-ad-image{overflow:hidden}
+.intel-ad-image img{will-change:transform,opacity}
+.intel-ad.ad-slide-next .intel-ad-image img{animation:intelAdEnterFromRight .72s cubic-bezier(.22,.75,.22,1) both}
+.intel-ad.ad-slide-prev .intel-ad-image img{animation:intelAdEnterFromLeft .72s cubic-bezier(.22,.75,.22,1) both}
+@keyframes intelAdEnterFromRight{from{transform:translateX(13%);opacity:.45}to{transform:translateX(0);opacity:1}}
+@keyframes intelAdEnterFromLeft{from{transform:translateX(-13%);opacity:.45}to{transform:translateX(0);opacity:1}}
+.intel-ad-pagination{position:absolute;left:50%;bottom:13px;transform:translateX(-50%);z-index:3;display:flex;align-items:center;gap:9px;min-width:92px;padding:7px 11px;border:1px solid rgba(255,255,255,.2);border-radius:999px;background:rgba(8,17,30,.68);backdrop-filter:blur(14px);box-shadow:0 4px 16px #0003;color:#fff;font-size:10px;font-weight:800;letter-spacing:.08em}
+.intel-ad-page-track{display:flex;align-items:center;gap:4px}
+.intel-ad-page-segment{display:block;width:13px;height:3px;border-radius:9px;background:rgba(255,255,255,.34);transition:width .35s ease,background .35s ease}
+.intel-ad-page-segment.active{width:23px;background:#fff}
+.intel-ad-page-total{opacity:.65}
+.intel-ad-prev,.intel-ad-next{z-index:4;transition:background .2s ease,transform .2s ease}
+.intel-ad-prev:active{transform:translateY(-50%) scale(.92)}
+.intel-ad-next:active{transform:translateY(-50%) scale(.92)}
+@media(prefers-reduced-motion:reduce){.intel-ad.ad-slide-next .intel-ad-image img,.intel-ad.ad-slide-prev .intel-ad-image img{animation:none}}
+@media(max-width:700px){.intel-ad-pagination{bottom:10px;padding:6px 9px;gap:7px}.intel-ad-page-segment{width:10px}.intel-ad-page-segment.active{width:18px}}
