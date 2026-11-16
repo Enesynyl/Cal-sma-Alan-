@@ -142,3 +142,16 @@ body.dffs #dfroot #dfc{z-index:5!important}
 body.dffs #dfroot #dfc.on{pointer-events:auto!important;touch-action:none!important}
 body.dffs #dfroot #dfc:not(.on){pointer-events:none!important}
 @media(max-width:700px){body.dffs #dfroot>.df-tools.open{max-height:58dvh!important}body.dffs #dfroot .pgc .dftxt{bottom:calc(72px + env(safe-area-inset-bottom,0px))!important}}
+
+/* Final cascade fix: override the earlier ID-based toolbar styles. */
+body.dffs #dfroot .df-tools.open{display:block!important;background:#101d30!important;background-color:#101d30!important;color:#f1f6fd!important;border:1px solid #526985!important;box-shadow:0 16px 42px rgba(0,0,0,.48)!important}
+body.dffs #dfroot .df-tools.open .dtb,
+body.dffs #dfroot .df-tools.open .dtb>*,
+body.dffs #dfroot .df-tools.open b,
+body.dffs #dfroot .df-tools.open span,
+body.dffs #dfroot .df-tools.open label{color:#edf4fc!important;-webkit-text-fill-color:#edf4fc!important}
+body.dffs #dfroot .df-tools.open button,
+body.dffs #dfroot .df-tools.open .ph2,
+body.dffs #dfroot .df-tools.open select{background:#263b55!important;background-color:#263b55!important;color:#f4f8ff!important;-webkit-text-fill-color:#f4f8ff!important;border:1px solid #607b9c!important}
+body.dffs #dfroot .df-tools.open input[type="color"]{background:#263b55!important;border:1px solid #607b9c!important}
+body.dffs #dfroot .df-tools.open .m{color:#bdcce0!important;-webkit-text-fill-color:#bdcce0!important}
