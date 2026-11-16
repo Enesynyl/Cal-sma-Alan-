@@ -28,10 +28,10 @@ export default async function handler(req,res){
     const live=new Map((sessions.documents||[]).map(doc=>({id:doc.name.split('/').pop(),...fieldsToObject(doc.fields||{})})).filter(x=>x.deviceId&&now-Number(x.updatedAt||0)<=120000&&now>=Number(x.updatedAt||0)).map(x=>[x.deviceId,x]));
     if(live.size)active.push({uid,devices:live.size});
     // Store one durable inbox item on the account, even when no device is online.
-    // Push delivery below remains restricted to currently active devices.
+    // Push delivery uses every saved subscription, even if the user is not currently in the app.
     const id='admin_'+now+'_'+Math.random().toString(36).slice(2,8);
     writes.push({update:{name:'projects/'+PROJECT+'/databases/(default)/documents/users/'+uid+'/notifications/'+id,fields:{title:{stringValue:title},body:{stringValue:body},type:{stringValue:'Duyuru'},source:{stringValue:'admin'},createdAt:{integerValue:String(now)},...(imageUrl?{imageUrl:{stringValue:imageUrl}}:{}),...(announcementId?{announcementId:{stringValue:announcementId}}:{}),...(linkUrl?{linkUrl:{stringValue:linkUrl}}:{})}}});
-    for(const doc of pushes.documents||[]){const s=fieldsToObject(doc.fields||{});if(s.deviceId&&live.has(s.deviceId)&&s.endpoint&&s.p256dh&&s.auth)subs.push({uid,deviceId:s.deviceId,subscription:{endpoint:s.endpoint,keys:{p256dh:s.p256dh,auth:s.auth}}})}
+    for(const doc of pushes.documents||[]){const s=fieldsToObject(doc.fields||{});if(s.endpoint&&s.p256dh&&s.auth)subs.push({uid,deviceId:s.deviceId||'',subscription:{endpoint:s.endpoint,keys:{p256dh:s.p256dh,auth:s.auth}},documentId:doc.name.split('/').pop()})}
    }catch(e){console.warn('active device lookup failed',uid,e.message)}
   }
   let inAppSaved=0;
@@ -45,7 +45,16 @@ export default async function handler(req,res){
    const payload=JSON.stringify({title,body,url:linkUrl||'/',image:imageUrl||undefined,tag:'admin-'+now});
    const results=await Promise.allSettled(subs.map(x=>webpush.sendNotification(x.subscription,payload)));
    sent=results.filter(x=>x.status==='fulfilled').length;failed=results.length-sent;
+   // Expired or revoked browser subscriptions cannot receive future pushes; remove them.
+   const expired=[];
+   results.forEach((result,index)=>{if(result.status==='rejected'&&[404,410].includes(Number(result.reason?.statusCode)))expired.push(subs[index])});
+   await Promise.allSettled(expired.map(async x=>{
+    const endpointId=x.documentId;
+    if(!endpointId)return;
+    const url=ROOT+'/users/'+x.uid+'/pushSubscriptions/'+endpointId;
+    await fetch(url,{method:'DELETE',headers:{authorization:'Bearer '+admin.token}});
+   }));
   }else if(!key)pushWarning='Web Push anahtarı yapılandırılmamış; uygulama içi duyuru kaydedildi.';
-  return json(res,200,{ok:true,users:users.length,activeDevices:active.reduce((n,x)=>n+x.devices,0),devices:subs.length,sent,failed,inAppSaved,pushWarning,note:'Duyuru hesap bildirim geçmişine bir kez kaydedildi; Web Push yalnızca son 2 dakika içinde oturumu açık cihazlara gönderildi.'});
+  return json(res,200,{ok:true,users:users.length,activeDevices:active.reduce((n,x)=>n+x.devices,0),devices:subs.length,sent,failed,inAppSaved,pushWarning,note:'Duyuru hesap bildirim geçmişine kaydedildi; Web Push tüm kayıtlı ve geçerli cihaz aboneliklerine gönderildi. Aktif oturum bilgisi yalnızca raporlama içindir.'});
  }catch(e){console.error('admin notification error',e);return json(res,500,{error:String(e.message||e)})}
 }
