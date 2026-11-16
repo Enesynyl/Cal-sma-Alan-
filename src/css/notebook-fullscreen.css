@@ -114,3 +114,31 @@ body.dffs #sedge::after{left:3px;width:4px;opacity:.32}
   body:not(.dffs) .side .wsb .lb{display:inline!important}
   body:not(.dffs) .side .wsb{justify-content:flex-start;gap:10px}
 }
+
+
+/* Full-screen notebook: fill the visible device and keep the toolbar readable. */
+html,body.dffs{height:100%;min-height:100%;overscroll-behavior:none}
+body.dffs{position:fixed!important;inset:0!important;width:100%!important;height:100%!important;overflow:hidden!important}
+body.dffs .wrap,body.dffs .shell,body.dffs .main{width:100%!important;height:100%!important;min-height:0!important;max-width:none!important;margin:0!important;padding:0!important;overflow:visible!important}
+body.dffs #dfroot{position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;height:100dvh!important;min-height:0!important;margin:0!important;padding:0!important;overflow:hidden!important}
+body.dffs #dfroot>.dnb{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-height:0!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;overflow:hidden!important;background:#fff!important}
+body.dffs #dfroot .dnb>.pgc{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-height:0!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;overflow:hidden!important;box-sizing:border-box!important}
+body.dffs #dfroot .pgc .dti{top:calc(62px + env(safe-area-inset-top,0px))!important;left:0!important;right:0!important;width:100%!important}
+body.dffs #dfroot .pgc .dftxt{top:calc(118px + env(safe-area-inset-top,0px))!important;bottom:calc(76px + env(safe-area-inset-bottom,0px))!important;left:0!important;right:0!important;width:100%!important;height:auto!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior:contain!important}
+body.dffs #dfroot>.df-topline{top:calc(8px + env(safe-area-inset-top,0px))!important;left:12px!important;right:12px!important;width:auto!important;max-width:620px!important;min-height:48px!important;margin:0 auto!important;background:rgba(16,29,47,.97)!important;border:1px solid rgba(156,190,226,.34)!important;color:#f2f7ff!important;box-shadow:0 8px 28px rgba(0,0,0,.28)!important}
+body.dffs #dfroot>.df-topline h3{color:#f2f7ff!important;opacity:1!important}
+body.dffs #dfroot>.df-topline button{background:#263d59!important;color:#f2f7ff!important;border-color:#526a87!important}
+body.dffs #dfroot>.df-tools{position:fixed!important;top:calc(62px + env(safe-area-inset-top,0px))!important;left:50%!important;z-index:70!important;width:min(760px,calc(100vw - 20px))!important;max-height:0!important;overflow:hidden!important;opacity:0!important;visibility:hidden!important;transform:translate(-50%,-10px)!important;padding:0 12px!important;margin:0!important;background:#0f1b2c!important;color:#edf4fc!important;border:1px solid rgba(151,185,222,.34)!important;border-radius:20px!important;box-shadow:0 16px 42px rgba(0,0,0,.42)!important;backdrop-filter:blur(22px)!important;transition:max-height .25s ease,opacity .2s ease,transform .25s ease,padding .25s ease!important}
+body.dffs #dfroot>.df-tools.open{max-height:min(68dvh,540px)!important;overflow-y:auto!important;visibility:visible!important;opacity:1!important;transform:translate(-50%,0)!important;padding:12px!important}
+body.dffs #dfroot>.df-tools .dtb{display:flex!important;flex-wrap:wrap!important;align-items:center!important;gap:7px!important}
+body.dffs #dfroot>.df-tools button,body.dffs #dfroot>.df-tools .ph2,body.dffs #dfroot>.df-tools select,body.dffs #dfroot>.df-tools label,body.dffs #dfroot>.df-tools span,body.dffs #dfroot>.df-tools b{color:#edf4fc!important;-webkit-text-fill-color:#edf4fc!important}
+body.dffs #dfroot>.df-tools button,body.dffs #dfroot>.df-tools .ph2,body.dffs #dfroot>.df-tools select{background:#22364f!important;border:1px solid #526a87!important;border-radius:11px!important;min-height:38px!important;padding:7px 11px!important}
+body.dffs #dfroot>.df-tools button.p{background:#3677c8!important;border-color:#75b7ff!important;color:#fff!important}
+body.dffs #dfroot>.df-tools input[type=color]{width:38px!important;height:36px!important}
+body.dffs #dfroot>.df-tools .m{color:#b7c8dc!important;-webkit-text-fill-color:#b7c8dc!important}
+body.dffs #dfroot>.df-bottom-dock{position:fixed!important;left:50%!important;bottom:calc(8px + env(safe-area-inset-bottom,0px))!important;transform:translateX(-50%)!important;z-index:65!important;margin:0!important;background:rgba(18,32,50,.97)!important;border:1px solid #526a87!important;box-shadow:0 10px 30px rgba(0,0,0,.38)!important}
+body.dffs #dfroot #dfs{position:fixed!important;left:50%!important;bottom:calc(58px + env(safe-area-inset-bottom,0px))!important;transform:translateX(-50%)!important;z-index:66!important}
+body.dffs #dfroot #dfc{z-index:5!important}
+body.dffs #dfroot #dfc.on{pointer-events:auto!important;touch-action:none!important}
+body.dffs #dfroot #dfc:not(.on){pointer-events:none!important}
+@media(max-width:700px){body.dffs #dfroot>.df-tools.open{max-height:58dvh!important}body.dffs #dfroot .pgc .dftxt{bottom:calc(72px + env(safe-area-inset-bottom,0px))!important}}
