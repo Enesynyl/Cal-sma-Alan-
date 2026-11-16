@@ -31,7 +31,18 @@ export default async function handler(req,res){
     // Push delivery uses every saved subscription, even if the user is not currently in the app.
     const id='admin_'+now+'_'+Math.random().toString(36).slice(2,8);
     writes.push({update:{name:'projects/'+PROJECT+'/databases/(default)/documents/users/'+uid+'/notifications/'+id,fields:{title:{stringValue:title},body:{stringValue:body},type:{stringValue:'Duyuru'},source:{stringValue:'admin'},createdAt:{integerValue:String(now)},...(imageUrl?{imageUrl:{stringValue:imageUrl}}:{}),...(announcementId?{announcementId:{stringValue:announcementId}}:{}),...(linkUrl?{linkUrl:{stringValue:linkUrl}}:{})}}});
-    for(const doc of pushes.documents||[]){const s=fieldsToObject(doc.fields||{});if(s.endpoint&&s.p256dh&&s.auth)subs.push({uid,deviceId:s.deviceId||'',subscription:{endpoint:s.endpoint,keys:{p256dh:s.p256dh,auth:s.auth}},documentId:doc.name.split('/').pop()})}
+    for(const doc of pushes.documents||[]){
+     const s=fieldsToObject(doc.fields||{}),endpointId=doc.name.split('/').pop();
+     if(!s.endpoint||!s.p256dh||!s.auth)continue;
+     // Ignore legacy copies belonging to a previous account. Only the account
+     // recorded as the endpoint's current owner is allowed to receive a push.
+     const ownerResponse=await fetch(ROOT+'/pushSubscriptionOwners/'+endpointId,{headers:{authorization:'Bearer '+admin.token}});
+     if(!ownerResponse.ok)continue;
+     const ownerData=await ownerResponse.json().catch(()=>({}));
+     const owner=fieldsToObject(ownerData.fields||{});
+     if(owner.uid!==uid)continue;
+     subs.push({uid,deviceId:s.deviceId||'',subscription:{endpoint:s.endpoint,keys:{p256dh:s.p256dh,auth:s.auth}},documentId:endpointId});
+    }
    }catch(e){console.warn('active device lookup failed',uid,e.message)}
   }
   let inAppSaved=0;
@@ -55,6 +66,6 @@ export default async function handler(req,res){
     await fetch(url,{method:'DELETE',headers:{authorization:'Bearer '+admin.token}});
    }));
   }else if(!key)pushWarning='Web Push anahtarı yapılandırılmamış; uygulama içi duyuru kaydedildi.';
-  return json(res,200,{ok:true,users:users.length,activeDevices:active.reduce((n,x)=>n+x.devices,0),devices:subs.length,sent,failed,inAppSaved,pushWarning,note:'Duyuru hesap bildirim geçmişine kaydedildi; Web Push tüm kayıtlı ve geçerli cihaz aboneliklerine gönderildi. Aktif oturum bilgisi yalnızca raporlama içindir.'});
+  return json(res,200,{ok:true,users:users.length,activeDevices:active.reduce((n,x)=>n+x.devices,0),devices:subs.length,sent,failed,inAppSaved,pushWarning,note:'Duyuru hesap bildirim geçmişine kaydedildi; Web Push yalnızca ilgili hesabın güncel sahibi olduğu cihaz aboneliklerine gönderildi. Aktif oturum bilgisi yalnızca raporlama içindir.'});
  }catch(e){console.error('admin notification error',e);return json(res,500,{error:String(e.message||e)})}
 }
