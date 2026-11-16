@@ -37,10 +37,18 @@ export default async function handler(req,res){
      // Ignore legacy copies belonging to a previous account. Only the account
      // recorded as the endpoint's current owner is allowed to receive a push.
      const ownerResponse=await fetch(ROOT+'/pushSubscriptionOwners/'+endpointId,{headers:{authorization:'Bearer '+admin.token}});
-     if(!ownerResponse.ok)continue;
-     const ownerData=await ownerResponse.json().catch(()=>({}));
-     const owner=fieldsToObject(ownerData.fields||{});
-     if(owner.uid!==uid)continue;
+     if(ownerResponse.ok){
+      const ownerData=await ownerResponse.json().catch(()=>({}));
+      const owner=fieldsToObject(ownerData.fields||{});
+      if(owner.uid!==uid)continue;
+     }else if(ownerResponse.status===404){
+      // Backward compatibility for subscriptions created before owner tracking.
+      // A legacy subscription is eligible only while this exact account has a
+      // fresh active session for the same device; never fan it out to old accounts.
+      if(!s.deviceId||!live.has(s.deviceId))continue;
+      const ownerWrite=await fetch(ROOT+'/pushSubscriptionOwners/'+endpointId,{method:'PATCH',headers:{authorization:'Bearer '+admin.token,'content-type':'application/json'},body:JSON.stringify({fields:{uid:{stringValue:uid},updatedAt:{timestampValue:new Date().toISOString()}}})});
+      if(!ownerWrite.ok)continue;
+     }else continue;
      subs.push({uid,deviceId:s.deviceId||'',subscription:{endpoint:s.endpoint,keys:{p256dh:s.p256dh,auth:s.auth}},documentId:endpointId});
     }
    }catch(e){console.warn('active device lookup failed',uid,e.message)}
