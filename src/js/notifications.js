@@ -6,7 +6,20 @@
  const deviceId=()=>{let id=localStorage.getItem('ca_device_id');if(!id){id=crypto.randomUUID?crypto.randomUUID():'dev_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,14);localStorage.setItem('ca_device_id',id)}return id};
  const apiCall=async(path,user,method,body={})=>{const token=await user.getIdToken();const r=await fetch(path,{method,cache:'no-store',headers:{'content-type':'application/json',authorization:'Bearer '+token},body:method==='GET'?undefined:JSON.stringify(body)});const d=await r.json().catch(()=>({}));if(!r.ok||d.ok===false)throw new Error(d.error||'Sunucu isteği başarısız.');return d};
  async function syncSession(user){try{await apiCall('/api/notifications/session',user,'POST',{deviceId:deviceId()})}catch(e){console.warn('Aktif cihaz oturumu kaydedilemedi:',e.message)}}
- async function attachExistingPush(user){try{if(typeof Notification==='undefined'||Notification.permission!=='granted'||!('serviceWorker'in navigator))return;const registration=await navigator.serviceWorker.getRegistration('/')||await navigator.serviceWorker.ready;const sub=await registration?.pushManager?.getSubscription();if(!sub)return;await apiCall('/api/admin/register-subscription',user,'POST',{subscription:sub.toJSON(),deviceId:deviceId()});localStorage.setItem('ca_push_enabled_'+user.uid,'1')}catch(e){console.warn('Bu cihazın push aboneliği hesaba bağlanamadı:',e.message)}}
+ async function attachExistingPush(user){
+  try{
+   if(typeof Notification==='undefined'||Notification.permission!=='granted'||!('serviceWorker'in navigator))return false;
+   const registration=await navigator.serviceWorker.register('/sw.js');reg=registration;
+   let sub=await registration.pushManager.getSubscription();
+   if(!sub){
+    const cfgResponse=await fetch('/api/push/config',{cache:'no-store'}),cfg=await cfgResponse.json().catch(()=>({}));
+    if(!cfgResponse.ok||!cfg.publicKey)throw new Error(cfg.error||'Push anahtarı alınamadı.');
+    sub=await registration.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:decodeKey(cfg.publicKey)});
+   }
+   await apiCall('/api/admin/register-subscription',user,'POST',{subscription:sub.toJSON(),deviceId:deviceId()});
+   localStorage.setItem('ca_push_enabled_'+user.uid,'1');return true;
+  }catch(e){console.warn('Bu cihazın push aboneliği hesaba bağlanamadı:',e.message);return false}
+ }
  async function logout(user){if(!user)return;clearInterval(sessionTimer);sessionTimer=null;sessionUid=null;const d=deviceId();try{await apiCall('/api/notifications/session',user,'DELETE',{deviceId:d})}catch(e){console.warn('Oturum kapatma kaydı silinemedi:',e.message)}try{const registration=await navigator.serviceWorker?.getRegistration('/');const sub=await registration?.pushManager?.getSubscription();if(sub)await apiCall('/api/admin/register-subscription',user,'DELETE',{subscription:sub.toJSON()})}catch(e){console.warn('Push cihaz kaydı kaldırılamadı:',e.message)}try{localStorage.removeItem('ca_push_enabled_'+user.uid)}catch{}}
  const storeKey=()=> 'ca_notifications_'+uid;
  const adminStoreKey=()=> 'ca_admin_notifications_'+uid;
@@ -127,7 +140,7 @@
    throw new Error('Bildirim testi başarısız ('+stage+'): '+(e?.message||String(e))+' ['+trace+']');
   }
  }
- let promptUid=null,lastAuthUser=null;
+ let promptUid=null,lastAuthUser=null,authTransition=Promise.resolve();
  function showEnablePrompt(user){
   if(!user||user.uid!==uid||!('Notification'in window)||Notification.permission!=='default'||localStorage.getItem('ca_push_enabled_'+user.uid)==='1')return;
   if(sessionStorage.getItem('ca_push_prompt_'+user.uid)||$id('ca-push-optin'))return;
@@ -198,25 +211,30 @@
   scan();scanTimer=setInterval(scan,30000);
  }
  function authChanged(u){
-  const previous=lastAuthUser;
-  const changed=(previous?.uid||null)!==(u?.uid||null);
+  const previous=lastAuthUser,nextUid=u?.uid||null,changed=(previous?.uid||null)!==nextUid;
   if(changed){
    lastAuthUser=u||null;
-   // A browser push subscription belongs to the browser, not to the account.
-   // Remove its association from the previous account whenever the user signs
-   // out or switches accounts, so that account's announcements cannot reach
-   // the next signed-in user's device.
-   if(previous)logout(previous).catch(e=>console.warn('Önceki hesabın push aboneliği temizlenemedi:',e.message));
+   // Serialize account handoff: remove the previous server-side link first,
+   // then attach this browser's persistent push subscription to the new user.
+   authTransition=authTransition.then(async()=>{
+    if(previous)await logout(previous);
+    if(nextUid&&FB?.auth?.currentUser?.uid===nextUid){await syncSession(u);await attachExistingPush(u)}
+   }).catch(e=>console.warn('Hesap-bildirim geçişi tamamlanamadı:',e.message));
   }
-  if(!u){if(stopLive)stopLive();stopLive=null;uid=null;promptUid=null;clearInterval(scanTimer);clearInterval(sessionTimer);sessionTimer=null;sessionUid=null;$id('ca-push-optin')?.remove();return}
-  if(sessionUid!==u.uid){clearInterval(sessionTimer);sessionUid=u.uid;syncSession(u);attachExistingPush(u);sessionTimer=setInterval(()=>{if(FB?.auth?.currentUser?.uid===u.uid)syncSession(u)},45000)}
+  if(!u){
+   if(stopLive)stopLive();stopLive=null;uid=null;promptUid=null;
+   clearInterval(scanTimer);clearInterval(sessionTimer);sessionTimer=null;sessionUid=null;
+   $id('ca-push-optin')?.remove();return;
+  }
+  if(sessionUid!==u.uid){clearInterval(sessionTimer);sessionUid=u.uid;sessionTimer=setInterval(()=>{if(FB?.auth?.currentUser?.uid===u.uid)syncSession(u)},45000)}
   listen();
   if(promptUid!==u.uid){promptUid=u.uid;setTimeout(()=>showEnablePrompt(u),1800)}
  }
  function boot(){
   ensureButton();
   if('serviceWorker'in navigator)navigator.serviceWorker.register('/sw.js').then(x=>reg=x).catch(e=>console.warn('Service worker:',e));
-  setInterval(()=>{ensureButton();if(FB?.auth?.currentUser)authChanged(FB.auth.currentUser)},1500);
+  // Observe signed-out state as well as signed-in users.
+  setInterval(()=>{ensureButton();if(FB?.auth)authChanged(FB.auth.currentUser)},500);
   document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&FB?.auth?.currentUser)scheduleReminders()});
  }
  window.CANotifications={add,notify,enablePush,sendPush,openCenter,logout};
