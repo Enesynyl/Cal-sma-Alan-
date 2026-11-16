@@ -127,7 +127,7 @@
    throw new Error('Bildirim testi başarısız ('+stage+'): '+(e?.message||String(e))+' ['+trace+']');
   }
  }
- let promptUid=null;
+ let promptUid=null,lastAuthUser=null;
  function showEnablePrompt(user){
   if(!user||user.uid!==uid||!('Notification'in window)||Notification.permission!=='default'||localStorage.getItem('ca_push_enabled_'+user.uid)==='1')return;
   if(sessionStorage.getItem('ca_push_prompt_'+user.uid)||$id('ca-push-optin'))return;
@@ -198,6 +198,16 @@
   scan();scanTimer=setInterval(scan,30000);
  }
  function authChanged(u){
+  const previous=lastAuthUser;
+  const changed=(previous?.uid||null)!==(u?.uid||null);
+  if(changed){
+   lastAuthUser=u||null;
+   // A browser push subscription belongs to the browser, not to the account.
+   // Remove its association from the previous account whenever the user signs
+   // out or switches accounts, so that account's announcements cannot reach
+   // the next signed-in user's device.
+   if(previous)logout(previous).catch(e=>console.warn('Önceki hesabın push aboneliği temizlenemedi:',e.message));
+  }
   if(!u){if(stopLive)stopLive();stopLive=null;uid=null;promptUid=null;clearInterval(scanTimer);clearInterval(sessionTimer);sessionTimer=null;sessionUid=null;$id('ca-push-optin')?.remove();return}
   if(sessionUid!==u.uid){clearInterval(sessionTimer);sessionUid=u.uid;syncSession(u);attachExistingPush(u);sessionTimer=setInterval(()=>{if(FB?.auth?.currentUser?.uid===u.uid)syncSession(u)},45000)}
   listen();
