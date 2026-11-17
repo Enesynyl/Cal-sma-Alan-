@@ -27,3 +27,54 @@
 .adm-campaign-row>div b{font-size:13px;line-height:1.35;overflow-wrap:anywhere}
 #adm-campaign-editor label{display:grid;gap:7px;margin:13px 0}
 #adm-campaign-name{width:100%;box-sizing:border-box}
+
+
+/* Compact featured-ad controls on the dashboard (especially mobile). */
+body:not(.login-mode) .intel-ad-heading{
+  min-height:46px!important;
+  height:auto!important;
+  padding:7px 12px!important;
+  gap:10px!important;
+}
+body:not(.login-mode) .intel-ad-heading>span{
+  font-size:9px!important;
+  line-height:1.2!important;
+  letter-spacing:.13em!important;
+}
+body:not(.login-mode) .intel-ad-heading>button{
+  flex:0 0 auto!important;
+  width:auto!important;
+  min-width:0!important;
+  min-height:30px!important;
+  height:30px!important;
+  padding:5px 10px!important;
+  border-radius:9px!important;
+  font-size:11px!important;
+  line-height:1!important;
+  white-space:nowrap!important;
+}
+body:not(.login-mode) .intel-ad .intel-ad-prev,
+body:not(.login-mode) .intel-ad .intel-ad-next{
+  display:grid!important;
+  place-items:center!important;
+  width:30px!important;
+  height:30px!important;
+  min-width:30px!important;
+  min-height:30px!important;
+  padding:0!important;
+  border-radius:50%!important;
+  font-size:18px!important;
+  line-height:1!important;
+  opacity:.82!important;
+  background:rgba(7,17,32,.62)!important;
+  box-shadow:0 2px 8px rgba(0,0,0,.2)!important;
+}
+@media(max-width:700px){
+  body:not(.login-mode) .intel-ad-heading{min-height:42px!important;padding:6px 10px!important}
+  body:not(.login-mode) .intel-ad-heading>span{font-size:8px!important}
+  body:not(.login-mode) .intel-ad-heading>button{min-height:28px!important;height:28px!important;padding:4px 8px!important;font-size:10px!important}
+  body:not(.login-mode) .intel-ad .intel-ad-prev,
+  body:not(.login-mode) .intel-ad .intel-ad-next{
+    width:27px!important;height:27px!important;min-width:27px!important;min-height:27px!important;font-size:16px!important
+  }
+}
