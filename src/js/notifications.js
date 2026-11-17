@@ -5,14 +5,14 @@
  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const deviceId=()=>{let id=localStorage.getItem('ca_device_id');if(!id){id=crypto.randomUUID?crypto.randomUUID():'dev_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,14);localStorage.setItem('ca_device_id',id)}return id};
  const apiCall=async(path,user,method,body={})=>{const token=await user.getIdToken();const r=await fetch(path,{method,cache:'no-store',headers:{'content-type':'application/json',authorization:'Bearer '+token},body:method==='GET'?undefined:JSON.stringify(body)});const d=await r.json().catch(()=>({}));if(!r.ok||d.ok===false)throw new Error(d.error||'Sunucu isteği başarısız.');return d};
- async function syncSession(user){try{await apiCall('/api/notifications/session',user,'POST',{deviceId:deviceId()})}catch(e){console.warn('Aktif cihaz oturumu kaydedilemedi:',e.message)}}
+ async function syncSession(user){try{await apiCall('/api/admin/register-subscription',user,'POST',{deviceId:deviceId()})}catch(e){console.warn('Aktif cihaz oturumu kaydedilemedi:',e.message)}}
  async function attachExistingPush(user){
   try{
    if(typeof Notification==='undefined'||Notification.permission!=='granted'||!('serviceWorker'in navigator))return false;
    const registration=await navigator.serviceWorker.register('/sw.js');reg=registration;
    let sub=await registration.pushManager.getSubscription();
    if(!sub){
-    const cfgResponse=await fetch('/api/push/config',{cache:'no-store'}),cfg=await cfgResponse.json().catch(()=>({}));
+    const cfgResponse=await fetch('/api/push/send',{cache:'no-store'}),cfg=await cfgResponse.json().catch(()=>({}));
     if(!cfgResponse.ok||!cfg.publicKey)throw new Error(cfg.error||'Push anahtarı alınamadı.');
     sub=await registration.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:decodeKey(cfg.publicKey)});
    }
@@ -20,7 +20,7 @@
    localStorage.setItem('ca_push_enabled_'+user.uid,'1');return true;
   }catch(e){console.warn('Bu cihazın push aboneliği hesaba bağlanamadı:',e.message);return false}
  }
- async function logout(user){if(!user)return;clearInterval(sessionTimer);sessionTimer=null;sessionUid=null;const d=deviceId();try{await apiCall('/api/notifications/session',user,'DELETE',{deviceId:d})}catch(e){console.warn('Oturum kapatma kaydı silinemedi:',e.message)}try{const registration=await navigator.serviceWorker?.getRegistration('/');const sub=await registration?.pushManager?.getSubscription();if(sub)await apiCall('/api/admin/register-subscription',user,'DELETE',{subscription:sub.toJSON()})}catch(e){console.warn('Push cihaz kaydı kaldırılamadı:',e.message)}try{localStorage.removeItem('ca_push_enabled_'+user.uid)}catch{}}
+ async function logout(user){if(!user)return;clearInterval(sessionTimer);sessionTimer=null;sessionUid=null;const d=deviceId();try{await apiCall('/api/admin/register-subscription',user,'DELETE',{deviceId:d})}catch(e){console.warn('Oturum kapatma kaydı silinemedi:',e.message)}try{const registration=await navigator.serviceWorker?.getRegistration('/');const sub=await registration?.pushManager?.getSubscription();if(sub)await apiCall('/api/admin/register-subscription',user,'DELETE',{subscription:sub.toJSON()})}catch(e){console.warn('Push cihaz kaydı kaldırılamadı:',e.message)}try{localStorage.removeItem('ca_push_enabled_'+user.uid)}catch{}}
  const storeKey=()=> 'ca_notifications_'+uid;
  const adminStoreKey=()=> 'ca_admin_notifications_'+uid;
  const adminItems=()=>{try{return JSON.parse(localStorage.getItem(adminStoreKey())||'[]')}catch{return []}};
@@ -96,7 +96,7 @@
   const {f,u}=await getUser();
   const permission=await Notification.requestPermission();if(permission!=='granted')throw new Error('Bildirim izni verilmedi. Tarayıcı ayarlarından izin verebilirsin.');
   reg=reg||await navigator.serviceWorker.register('/sw.js');
-  const cfgResponse=await fetch('/api/push/config',{cache:'no-store'});const cfg=await cfgResponse.json().catch(()=>({}));if(!cfgResponse.ok||!cfg.publicKey)throw new Error(cfg.error||'Push anahtarı sunucudan alınamadı. Sayfayı yenileyip tekrar dene.');
+  const cfgResponse=await fetch('/api/push/send',{cache:'no-store'});const cfg=await cfgResponse.json().catch(()=>({}));if(!cfgResponse.ok||!cfg.publicKey)throw new Error(cfg.error||'Push anahtarı sunucudan alınamadı. Sayfayı yenileyip tekrar dene.');
   const expectedKey=decodeKey(cfg.publicKey);
   let sub=await reg.pushManager.getSubscription();
   if(sub){
