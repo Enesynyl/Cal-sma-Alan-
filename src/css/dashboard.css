@@ -667,3 +667,13 @@ body.intel-ad-detail-open{overflow:hidden!important}
 @media(max-width:720px){.hw-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.hw-stats>div:last-child{grid-column:span 2}.hw-heading{align-items:flex-start}.hw-heading>.p{white-space:nowrap;padding:9px 11px;font-size:11px}.hw-list-tools{flex-direction:column}.hw-list-tools select{width:100%}.hw-form-grid{grid-template-columns:1fr}.hw-card-footer{align-items:flex-start}.hw-actions{width:100%}.hw-actions button{flex:1}.hw-cal-day{min-height:46px}}
 
 .hw-existing-files{padding:8px 10px;border:1px solid rgba(131,184,232,.22);border-radius:10px;color:#9bcfff;font-size:11px}
+
+.hw-reminder-editor{display:block!important;padding:12px;border:1px solid rgba(131,184,232,.22);border-radius:13px;background:rgba(28,48,72,.48)}
+.hw-reminder-add{display:grid;grid-template-columns:minmax(65px,.65fr) minmax(120px,1.2fr) auto;gap:7px;margin:10px 0;align-items:center}
+.hw-reminder-add input,.hw-reminder-add select{min-width:0;width:100%;margin:0}
+.hw-reminder-add button{white-space:nowrap;padding:9px 11px}
+.hw-reminder-chips{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0}
+.hw-reminder-chip{display:inline-flex;align-items:center;gap:7px;padding:6px 9px;border:1px solid rgba(131,184,232,.3);border-radius:99px;background:rgba(52,91,132,.35);color:#d9ebff;font-size:11px}
+.hw-reminder-chip button{width:19px;height:19px;padding:0;border:0;border-radius:50%;background:rgba(255,255,255,.12);color:#fff;line-height:1}
+.hw-reminder-editor>small{color:#9fb2c9;font-size:10px}
+@media(max-width:420px){.hw-reminder-add{grid-template-columns:72px minmax(0,1fr)}.hw-reminder-add button{grid-column:1/-1;width:100%}}
