@@ -45,7 +45,7 @@
   const memberHtml=members.map(x=>{
    const role=roleForMember(x),avatar=x.photoURL?'<img src="'+esc(x.photoURL)+'" alt="">':esc((x.displayName||'Ö').slice(0,1));
    const meta=[x.university,x.department,x.classYear].filter(Boolean).map(esc).join(' · ')||'Öğrenci bilgisi eklenmemiş';
-   const isProtected=x.uid===g.createdBy||x.uid===current||(!groupLive.isOwner&&role.canManageMembers);
+   const isProtected=x.uid===g.createdBy||x.uid===current||(!groupLive.isOwner&&(role.canManageMembers||role.canManageMessages));
    const options=groupLive.roles.filter(r=>groupLive.isOwner||!r.canManageMembers).map(r=>'<option value="'+esc(r.key)+'" '+(r.key===x.role?'selected':'')+'>'+esc(r.name)+'</option>').join('');
    const roleControl=groupLive.canManage&&x.uid!==g.createdBy&&x.uid!==current?'<label class="community-role-select-label">Rol<select onchange="communitySetRole(\''+esc(x.uid)+'\',this.value)">'+options+'</select></label>':'';
    const actions=groupLive.canManage&&x.uid!==g.createdBy&&x.uid!==current?'<div class="community-member-actions">'+(groupLive.canManageMessages?(x.mutedUntil===-1||x.mutedUntil>Date.now()?'<button type="button" onclick="communityMuteMember(\''+esc(x.uid)+'\',0)">Susturmayı kaldır</button>':'<button type="button" onclick="communityMuteMember(\''+esc(x.uid)+'\',1)">Sustur</button>'):'')+(!isProtected?'<button type="button" class="community-remove-member" onclick="communityRemoveMember(\''+esc(x.uid)+'\')">Gruptan çıkar</button>':'')+'</div>':'';
