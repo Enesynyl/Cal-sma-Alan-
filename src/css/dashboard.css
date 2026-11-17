@@ -763,3 +763,28 @@ body.intel-ad-detail-open{overflow:hidden!important}
     box-shadow:0 2px 6px rgba(0,0,0,.22)!important;
   }
 }
+
+
+/* Ad detail: show the complete original banner, never crop its sides. */
+.intel-ad-detail-view .intel-ad-detail-hero{
+  display:block!important;
+  width:100%!important;
+  height:auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  aspect-ratio:3 / 1!important;
+  object-fit:contain!important;
+  object-position:center center!important;
+  border-radius:0 0 18px 18px!important;
+  background:#081426!important;
+}
+@media(max-width:700px){
+  .intel-ad-detail-view .intel-ad-detail-hero{
+    width:100%!important;
+    height:auto!important;
+    min-height:0!important;
+    max-height:none!important;
+    aspect-ratio:3 / 1!important;
+    object-fit:contain!important;
+  }
+}
