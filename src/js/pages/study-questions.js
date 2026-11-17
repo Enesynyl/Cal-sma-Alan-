@@ -122,7 +122,7 @@ async function intelligenceHome(){
  const days=Array.from({length:7},(_,i)=>{const d=new Date(weekStart);d.setDate(weekStart.getDate()+i);return d});
  const eventsByDay=new Map();
  const pushDayEvent=(key,item)=>{if(!key)return;const bucket=eventsByDay.get(key)||[];bucket.push(item);eventsByDay.set(key,bucket)};
- lessons.forEach(r=>meets(r).forEach(m=>{const dayIndex=intelDayNames.indexOf(m.gun);if(dayIndex<0)return;const date=new Date(weekStart);date.setDate(weekStart.getDate()+dayIndex);pushDayEvent(iso(date),{time:m.s||'09:00',title:r.ad||'Ders',kind:'Ders',go:"intelGo('ders','program')"})}));
+ lessons.forEach(r=>meets(r).forEach(m=>{const rawDayIndex=intelDayNames.indexOf(m.gun);if(rawDayIndex<0)return;const dayIndex=(rawDayIndex+6)%7;const date=new Date(weekStart);date.setDate(weekStart.getDate()+dayIndex);pushDayEvent(iso(date),{time:m.s||'09:00',title:r.ad||'Ders',kind:'Ders',go:"intelGo('ders','program')"})}));
  rows.forEach(r=>{
   if((r.type==='gorev'||r.type==='odev')&&intelOpen(r))pushDayEvent(r.son,{time:r.saat||'—',title:r.ad||'Görev',kind:'Görev',go:"intelGo('gorev')"});
   else if(r.type==='sinav')pushDayEvent(r.tarih,{time:r.saat||'—',title:r.ad||'Sınav',kind:'Sınav',go:"intelGo('sinav')"});
