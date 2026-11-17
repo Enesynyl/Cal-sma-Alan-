@@ -10,7 +10,24 @@ export default async function handler(req,res){
   // on the server to write inside that verified user's own document path.
   const user=await requireUser(req,res);if(!user)return;
   const sub=req.body?.subscription;
-  if(!sub?.endpoint)return json(res,400,{error:'Cihaz aboneliği bulunamadı'});
+  // Aktif oturum kaydı da aynı doğrulanmış kullanıcı endpoint'i üzerinden yönetilir.
+  // Böylece ayrı bir Serverless Function'a ihtiyaç kalmaz.
+  if(!sub?.endpoint){
+   const deviceId=String(req.body?.deviceId||'');
+   if(!/^[A-Za-z0-9_-]{8,80}$/.test(deviceId))return json(res,400,{error:'Geçersiz cihaz kimliği.'});
+   const sessionUrl='https://firestore.googleapis.com/v1/projects/'+PROJECT+'/databases/(default)/documents/users/'+user.uid+'/activeDevices/'+deviceId;
+   const sessionHeaders={authorization:'Bearer '+await googleToken(),'content-type':'application/json'};
+   if(req.method==='DELETE'){
+    const removed=await fetch(sessionUrl,{method:'DELETE',headers:sessionHeaders});
+    if(!removed.ok&&removed.status!==404){const detail=await removed.json().catch(()=>({}));throw new Error(detail.error?.message||'SESSION_DELETE_FAILED')}
+    return json(res,200,{ok:true,active:false});
+   }
+   const now=Date.now();
+   const saved=await fetch(sessionUrl,{method:'PATCH',headers:sessionHeaders,body:JSON.stringify({fields:{deviceId:{stringValue:deviceId},updatedAt:{integerValue:String(now)}}})});
+   const detail=await saved.json().catch(()=>({}));
+   if(!saved.ok)throw new Error(detail.error?.message||'SESSION_REGISTER_FAILED');
+   return json(res,200,{ok:true,active:true,updatedAt:now});
+  }
   const id=crypto.createHash('sha256').update(sub.endpoint).digest('hex').slice(0,40);
   const url='https://firestore.googleapis.com/v1/projects/'+PROJECT+'/databases/(default)/documents/users/'+user.uid+'/pushSubscriptions/'+id;
   const serviceToken=await googleToken();
