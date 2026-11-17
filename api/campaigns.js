@@ -10,20 +10,21 @@ export default async function handler(req,res){
    const rows=[];let page='',count=0;
    do{const d=await firestoreList(token,'adminCampaigns',page);for(const doc of d.documents||[])rows.push({id:doc.name.split('/').pop(),...fieldsToObject(doc.fields||{})});page=d.nextPageToken||'';count++}while(page&&count<5);
    rows.sort((a,b)=>Number(b.createdAt||0)-Number(a.createdAt||0));
-   return json(res,200,{campaigns:adminMode?rows:rows.filter(active)});
+   return json(res,200,{campaigns:adminMode?rows:rows.filter(active).map(({name,...publicCampaign})=>publicCampaign)});
   }
   const admin=await requireAdmin(req,res);if(!admin)return;
   const body=req.body||{},id=String(body.id||'').trim();
   if(req.method==='POST'){
-   const imageData=String(body.imageData||'').trim(),linkUrl=String(body.linkUrl||'').trim(),description=String(body.description||'').trim();
+   const name=String(body.name||'').trim(),imageData=String(body.imageData||'').trim(),linkUrl=String(body.linkUrl||'').trim(),description=String(body.description||'').trim();
    const startAt=body.startAt?Date.parse(body.startAt):0,endAt=body.endAt?Date.parse(body.endAt):0;
+   if(!name||name.length>70)return json(res,400,{error:'Reklam adı 1-70 karakter olmalı.'});
    if(!imageData||!/^data:image\/(jpeg|webp|png);base64,[A-Za-z0-9+/=]+$/.test(imageData)||imageData.length>550000)return json(res,400,{error:'Geçerli bir görsel seç (en fazla 380 KB).'});
    if(linkUrl&&!/^https:\/\//i.test(linkUrl))return json(res,400,{error:'Bağlantı https:// ile başlamalı.'});
    if(body.endAt&&(!endAt||endAt<=Date.now()))return json(res,400,{error:'Bitiş zamanı gelecekte olmalı.'});
    if(body.startAt&&(!startAt||startAt<Date.now()-60000))return json(res,400,{error:'Başlangıç zamanı geçmişte olamaz.'});
    if(startAt&&endAt&&endAt<=startAt)return json(res,400,{error:'Bitiş zamanı başlangıçtan sonra olmalı.'});
    const newId='cmp_'+Date.now()+'_'+Math.random().toString(36).slice(2,8),now=Date.now();
-   const fields={imageData:{stringValue:imageData},description:{stringValue:description},linkUrl:{stringValue:linkUrl},status:{stringValue:body.status==='draft'?'draft':'published'},startAt:{integerValue:String(startAt)},endAt:{integerValue:String(endAt)},createdAt:{integerValue:String(now)},updatedAt:{integerValue:String(now)}};
+   const fields={name:{stringValue:name},imageData:{stringValue:imageData},description:{stringValue:description},linkUrl:{stringValue:linkUrl},status:{stringValue:body.status==='draft'?'draft':'published'},startAt:{integerValue:String(startAt)},endAt:{integerValue:String(endAt)},createdAt:{integerValue:String(now)},updatedAt:{integerValue:String(now)}};
    const r=await fetch(ROOT+'/adminCampaigns/'+newId,{method:'PATCH',headers:{authorization:'Bearer '+admin.token,'content-type':'application/json'},body:JSON.stringify({fields})});
    if(!r.ok)throw new Error((await r.text()).slice(0,400));return json(res,200,{ok:true,id:newId});
   }
@@ -33,7 +34,7 @@ export default async function handler(req,res){
    if(!r.ok)return json(res,404,{error:'Kampanya bulunamadı.'});
    const old=fieldsToObject((await r.json()).fields||{}),fields={};
    for(const [k,v] of Object.entries(old)){fields[k]=typeof v==='number'?{integerValue:String(v)}:{stringValue:String(v??'')}}
-   if(body.status)fields.status={stringValue:body.status==='draft'?'draft':body.status==='published'?'published':'paused'};if(body.description!==undefined)fields.description={stringValue:String(body.description||'').trim()};if(body.linkUrl!==undefined){const link=String(body.linkUrl||'').trim();if(link&&!/^https:\/\//i.test(link))return json(res,400,{error:'Bağlantı https:// ile başlamalı.'});fields.linkUrl={stringValue:link}}if(body.imageData!==undefined){const image=String(body.imageData||'').trim();if(!/^data:image\/(jpeg|webp|png);base64,[A-Za-z0-9+/=]+$/.test(image)||image.length>550000)return json(res,400,{error:'Geçerli bir görsel seç (en fazla 380 KB).'});fields.imageData={stringValue:image}}if(body.startAt!==undefined){const t=body.startAt?Date.parse(body.startAt):0;if(body.startAt&&(!t||t<Date.now()-60000))return json(res,400,{error:'Başlangıç zamanı geçmişte olamaz.'});fields.startAt={integerValue:String(t)}}
+   if(body.name!==undefined){const name=String(body.name||'').trim();if(!name||name.length>70)return json(res,400,{error:'Reklam adı 1-70 karakter olmalı.'});fields.name={stringValue:name}}if(body.status)fields.status={stringValue:body.status==='draft'?'draft':body.status==='published'?'published':'paused'};if(body.description!==undefined)fields.description={stringValue:String(body.description||'').trim()};if(body.linkUrl!==undefined){const link=String(body.linkUrl||'').trim();if(link&&!/^https:\/\//i.test(link))return json(res,400,{error:'Bağlantı https:// ile başlamalı.'});fields.linkUrl={stringValue:link}}if(body.imageData!==undefined){const image=String(body.imageData||'').trim();if(!/^data:image\/(jpeg|webp|png);base64,[A-Za-z0-9+/=]+$/.test(image)||image.length>550000)return json(res,400,{error:'Geçerli bir görsel seç (en fazla 380 KB).'});fields.imageData={stringValue:image}}if(body.startAt!==undefined){const t=body.startAt?Date.parse(body.startAt):0;if(body.startAt&&(!t||t<Date.now()-60000))return json(res,400,{error:'Başlangıç zamanı geçmişte olamaz.'});fields.startAt={integerValue:String(t)}}
    if(body.endAt!==undefined){const t=body.endAt?Date.parse(body.endAt):0;if(body.endAt&&(!t||t<=Date.now()))return json(res,400,{error:'Bitiş zamanı gelecekte olmalı.'});fields.endAt={integerValue:String(t)}}
    fields.updatedAt={integerValue:String(Date.now())};
    const w=await fetch(ROOT+'/adminCampaigns/'+id,{method:'PATCH',headers:{authorization:'Bearer '+admin.token,'content-type':'application/json'},body:JSON.stringify({fields})});
