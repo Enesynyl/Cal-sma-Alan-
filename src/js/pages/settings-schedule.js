@@ -202,3 +202,59 @@ async function hwToggleSub(id,i,done){const r=await P(tx('rec').get(id));if(!r)r
 async function hwTimer(id){const r=await P(tx('rec').get(id));if(!r)return;if(r.studyStartedAt){r.studySeconds=(Number(r.studySeconds)||0)+Math.max(0,Math.floor((Date.now()-r.studyStartedAt)/1000));delete r.studyStartedAt}else{r.studyStartedAt=Date.now();if(r.durum==='Bekliyor')r.durum='Devam ediyor'}await put('rec',r);render();toast(r.studyStartedAt?'Ödev çalışması başladı ⏱️':'Çalışma süresi kaydedildi')}
 async function hwArchive(id,on){const r=await P(tx('rec').get(id));if(!r)return;r.archived=!!on;await put('rec',r);render()}
 async function hwDelete(id){if(!confirm('Bu ödev kalıcı olarak silinsin mi?'))return;await del('rec',id);dlg();render();toast('Ödev silindi')}
+
+
+/* ---- Akademik Sınav Merkezi ---- */
+const exToday=()=>iso(new Date());
+const exDate=v=>v?new Date(v+'T12:00:00').toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'}):'Tarih belirlenmedi';
+const exDays=v=>Math.ceil((new Date(v+'T12:00:00')-new Date(exToday()+'T12:00:00'))/864e5);
+const exTopics=r=>Array.isArray(r.topics)?r.topics:[];
+const exPlan=r=>Array.isArray(r.studyPlan)?r.studyPlan:[];
+const exDone=r=>exPlan(r).filter(x=>x.done).length;
+function exBuildPlan(date,topics){
+ const start=new Date(exToday()+'T12:00:00'),end=new Date(date+'T12:00:00'),days=Math.max(0,Math.round((end-start)/864e5));
+ if(!topics.length||days<1)return [];
+ const prepDays=Math.max(1,days-1),out=[];
+ topics.forEach((topic,i)=>{const offset=Math.min(prepDays-1,Math.floor(i*prepDays/topics.length)),d=new Date(start);d.setDate(d.getDate()+offset);out.push({id:uid(),date:iso(d),title:topic,done:false})});
+ const last=new Date(end);last.setDate(last.getDate()-1);
+ out.push({id:uid(),date:iso(last),title:'Genel tekrar ve deneme çözümü',done:false,review:true});
+ return out.sort((a,b)=>a.date.localeCompare(b.date));
+}
+async function examCenter(){
+ const all=(await recs(W.id,'sinav')).sort((a,b)=>(a.tarih||'9999').localeCompare(b.tarih||'9999'));
+ const today=exToday(),active=all.filter(r=>r.tarih>=today&&!r.archived),past=all.filter(r=>r.tarih<today||r.archived),next=active[0];
+ const completed=all.filter(r=>r.score!==''&&r.score!=null),avg=completed.length?completed.reduce((n,r)=>n+(Number(r.score)||0),0)/completed.length:null;
+ const tabs=[['upcoming','Yaklaşan'],['all','Tüm sınavlar'],['results','Sonuçlar'],['past','Geçmiş']];
+ if(!cur.exTab)cur.exTab='upcoming';const tab=cur.exTab;
+ let rows=tab==='upcoming'?active:tab==='results'?completed:tab==='past'?past:all;
+ const cards=rows.map(r=>{
+  const days=exDays(r.tarih),plan=exPlan(r),pct=plan.length?Math.round(exDone(r)/plan.length*100):0,topics=exTopics(r);
+  const countdown=days<0?'Sınav geçti':days===0?'Bugün sınavın var!':days===1?'Yarın':days+' gün kaldı';
+  return '<article class="ex-card '+(days<0?'is-past':'')+'"><div class="ex-card-head"><span>'+e(r.ders||'Ders belirtilmedi')+'</span><span>'+e(r.examType||'Sınav')+'</span></div><div class="ex-card-title"><div><h3>'+e(r.ad)+'</h3><small>📅 '+e(exDate(r.tarih))+' '+e(r.saat||'')+(r.yer?' · 📍 '+e(r.yer):'')+'</small></div><b class="ex-countdown">'+e(countdown)+'</b></div>'+(r.target!==''&&r.target!=null?'<div class="ex-target">🎯 Hedef not: <b>'+e(r.target)+'</b>'+(r.score!==''&&r.score!=null?' · Alınan: <b>'+e(r.score)+'</b>':'')+'</div>':'')+(plan.length?'<div class="ex-progress"><div><b>Hazırlık planı</b><span>%'+pct+' · '+exDone(r)+'/'+plan.length+'</span></div><i><b style="width:'+pct+'%"></b></i></div>':'<p class="m ex-no-plan">'+topics.length+' konu kaydedildi. Hazırlık planı oluşturulmamış.</p>')+'<div class="ex-card-actions"><button onclick="examEdit(\''+r.id+'\')">Düzenle / Planı aç</button>'+(r.score==null||r.score===''?'<button onclick="examResult(\''+r.id+'\')">Not gir</button>':'<button onclick="examResult(\''+r.id+'\')">Sonucu düzenle</button>')+'</div></article>';
+ }).join('');
+ const upcomingCount=active.length,doneCount=all.filter(r=>exPlan(r).length&&exDone(r)===exPlan(r).length).length;
+ return '<section class="ex-center"><header class="ex-heading"><div><span class="hw-eyebrow">ACADEMIC EXAM PLANNER</span><h1>Sınav Merkezi</h1><p class="m">Sınavlarını planla, konularını tamamla ve akademik başarını takip et.</p></div><button class="p" onclick="examEdit()">＋ Sınav ekle</button></header><div class="ex-stats"><div><small>Yaklaşan sınav</small><b>'+upcomingCount+'</b></div><div><small>Planı tamamlanan</small><b>'+doneCount+'</b></div><div><small>Sonuç girilen</small><b>'+completed.length+'</b></div><div><small>Not ortalaması</small><b>'+(avg==null?'—':avg.toFixed(1))+'</b></div></div>'+(next?'<div class="ex-next"><small>EN YAKIN SINAV</small><b>'+e(next.ad)+'</b><span>'+(exDays(next.tarih)===0?'Bugün':exDays(next.tarih)+' gün kaldı')+' · '+e(exDate(next.tarih))+'</span></div>':'')+'<nav class="ex-tabs">'+tabs.map(([id,label])=>'<button class="'+(tab===id?'active':'')+'" onclick="cur.exTab=\''+id+'\';render()">'+label+'</button>').join('')+'</nav><div class="ex-list">'+(cards||'<div class="hw-empty"><span>🧪</span><b>Henüz sınav eklenmemiş.</b><small>İlk sınavını ekle; konularını günlere otomatik dağıtalım.</small><button class="p" onclick="examEdit()">＋ İlk sınavını ekle</button></div>')+'</div></section>';
+}
+async function examEdit(id){
+ const r=id?await P(tx('rec').get(id)):null;if(r&&r.type!=='sinav')return;
+ const x=r||{},courses=await recs(W.id,'ders'),topics=exTopics(x);
+ dlg('<div class="ex-form"><header><div><span class="hw-eyebrow">SINAV DETAYI</span><h2>'+(r?'Sınavı düzenle':'Yeni sınav oluştur')+'</h2></div><button onclick="dlg()">×</button></header><label>Sınav adı<input id="exName" maxlength="120" value="'+e(x.ad||'')+'" placeholder="Örn. Anatomi Final"></label><div class="ex-form-grid"><label>Ders<select id="exCourse"><option value="">Ders seç</option>'+courses.map(c=>'<option '+(x.ders===c.ad?'selected':'')+'>'+e(c.ad)+'</option>').join('')+'</select></label><label>Sınav türü<select id="exType">'+['Vize','Final','Bütünleme','Quiz','Sözlü','Diğer'].map(v=>'<option '+((x.examType||'Final')===v?'selected':'')+'>'+v+'</option>').join('')+'</select></label></div><div class="ex-form-grid"><label>Tarih<input id="exDate" type="date" value="'+e(x.tarih||'')+'"></label><label>Saat<input id="exTime" type="time" value="'+e(x.saat||'')+'"></label></div><div class="ex-form-grid"><label>Sınav yeri<input id="exPlace" value="'+e(x.yer||'')+'" placeholder="Sınıf / salon"></label><label>Hedef not<input id="exTarget" type="number" min="0" max="100" value="'+e(x.target??'')+'" placeholder="80"></label></div><label>Çalışılacak konular <small>(Her satıra bir konu yaz)</small><textarea id="exTopics" rows="5" placeholder="Hücre yapısı&#10;Doku çeşitleri&#10;Organ sistemleri">'+e(topics.join('\n'))+'</textarea></label><p class="m ex-plan-hint">Kaydettiğinde konular sınav tarihine kadar olan günlere otomatik dağıtılır. Son gün genel tekrar ayrılır. Planı daha sonra düzenleyebilirsin.</p><label>Açıklama<textarea id="exNote" rows="2">'+e(x.not||'')+'</textarea></label><div class="row"><button onclick="dlg()">Vazgeç</button><button class="p" onclick="examSave(\''+(x.id||'')+'\')">Kaydet ve planı oluştur</button></div>'+(r?'<div class="ex-delete"><button onclick="examDelete(\''+r.id+'\')">Sınavı sil</button></div>':'')+'</div>');
+}
+async function examSave(id){
+ const ad=$('exName').value.trim(),tarih=$('exDate').value;
+ if(!ad||!tarih){toast('Sınav adı ve tarihi gerekli');return}
+ const old=id?await P(tx('rec').get(id)):null,topics=$('exTopics').value.split('\n').map(x=>x.trim()).filter(Boolean);
+ const changed=!old||old.tarih!==tarih||JSON.stringify(exTopics(old))!==JSON.stringify(topics);
+ const plan=changed?exBuildPlan(tarih,topics):exPlan(old);
+ const r={...(old||{}),id:id||uid(),ws:W.id,type:'sinav',ad,ders:$('exCourse').value,tarih,saat:$('exTime').value,yer:$('exPlace').value.trim(),examType:$('exType').value,target:$('exTarget').value===''?null:Number($('exTarget').value),topics,studyPlan:plan,not:$('exNote').value.trim(),ts:old?.ts||Date.now()};
+ await put('rec',r);dlg();cur.exTab='all';render();toast(changed?'Sınav ve kişisel hazırlık planı kaydedildi':'Sınav güncellendi');
+}
+async function examToggle(id,i,done){
+ const r=await P(tx('rec').get(id));if(!r)return;const p=exPlan(r);if(!p[i])return;p[i].done=!!done;await put('rec',r);render();
+}
+async function examResult(id){
+ const r=await P(tx('rec').get(id));if(!r)return;
+ dlg('<div class="ex-form"><h2>📊 Sınav sonucu</h2><p>'+e(r.ad)+'</p><label>Alınan not<input id="exScore" type="number" min="0" max="100" value="'+e(r.score??'')+'" placeholder="85"></label><div class="row"><button onclick="dlg()">Vazgeç</button><button class="p" onclick="examResultSave(\''+id+'\')">Kaydet</button></div></div>');
+}
+async function examResultSave(id){const r=await P(tx('rec').get(id));if(!r)return;const v=$('exScore').value;if(v===''||+v<0||+v>100){toast('0 ile 100 arasında not gir');return}r.score=Number(v);await put('rec',r);dlg();cur.exTab='results';render();toast('Sınav sonucu kaydedildi')}
+async function examDelete(id){if(!confirm('Bu sınav ve hazırlık planı silinsin mi?'))return;await del('rec',id);dlg();render();toast('Sınav silindi')}
