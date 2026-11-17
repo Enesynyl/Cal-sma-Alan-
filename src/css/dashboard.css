@@ -677,3 +677,6 @@ body.intel-ad-detail-open{overflow:hidden!important}
 .hw-reminder-chip button{width:19px;height:19px;padding:0;border:0;border-radius:50%;background:rgba(255,255,255,.12);color:#fff;line-height:1}
 .hw-reminder-editor>small{color:#9fb2c9;font-size:10px}
 @media(max-width:420px){.hw-reminder-add{grid-template-columns:72px minmax(0,1fr)}.hw-reminder-add button{grid-column:1/-1;width:100%}}
+
+/* Exam preparation checklist details */
+.ex-plan-list{display:grid;gap:6px;margin:10px 0;padding:10px;border-radius:13px;background:rgba(255,255,255,.035)}.ex-plan-item{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:#d9e7f7}.ex-plan-item input{margin:2px 0 0;flex:none}.ex-plan-item small{display:block;color:#91a6bf;font-size:10px}.ex-plan-item.is-done span{text-decoration:line-through;opacity:.6}
