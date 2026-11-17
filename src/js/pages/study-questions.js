@@ -94,6 +94,10 @@ let intelCampaignCache=[],intelCampaignCacheAt=0,intelCampaignRequest=null;
 async function intelLoadCampaigns(){
  const now=Date.now();
  if(intelCampaignCacheAt&&now-intelCampaignCacheAt<45000)return intelCampaignCache;
+ if(intelCampaignCache.length){
+  if(!intelCampaignRequest)intelCampaignRequest=fetch('/api/campaigns',{cache:'default'}).then(r=>r.ok?r.json():{campaigns:[]}).then(d=>{intelCampaignCache=Array.isArray(d.campaigns)?d.campaigns:[];intelCampaignCacheAt=Date.now();return intelCampaignCache}).catch(()=>intelCampaignCache).finally(()=>{intelCampaignRequest=null});
+  return intelCampaignCache;
+ }
  if(intelCampaignRequest)return intelCampaignRequest;
  intelCampaignRequest=fetch('/api/campaigns',{cache:'default'}).then(r=>r.ok?r.json():{campaigns:[]}).then(d=>{
   intelCampaignCache=Array.isArray(d.campaigns)?d.campaigns:[];
