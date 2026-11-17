@@ -8,13 +8,13 @@ async function render(){
  const dd=bv?W.bg.dark:undefined,tc=dd===undefined?['','','','','']:dd?['#f4f4f1','#d3d3cc','#1c1d1c','#10110f','#ffffff22']:['#1d1d1b','#55544e','#ffffff','#f6f5f1','#00000018'];
  document.documentElement.dataset.workspaceTone=dd===true?'dark':dd===false?'light':'auto';
  ['--tx','--mu','--sf','--bg','--bd'].forEach((k,i)=>rs.setProperty(k,tc[i]));rs.setProperty('color-scheme',dd?'dark':dd===false?'light':'');
- if(!cur.m||(cur.m!=='ayar'&&cur.m!=='bugun'&&!ms.includes(cur.m)))cur.m='bugun';
+ if(!cur.m||(cur.m!=='ayar'&&cur.m!=='bugun'&&cur.m!=='topluluk'&&!ms.includes(cur.m)))cur.m='bugun';
  const tabs=M[cur.m]?.[2]||[cur.m];if(!tabs.includes(cur.t))cur.t=tabs[0];
  if(cur.m==='odak'&&PT.stage==='fullscreen'){clearInterval(DCI);document.body.classList.add('focus-active');$('app').innerHTML=focusScreen();ensureSpotifyUI();return}
  document.body.classList.remove('focus-active');
- let body=cur.m==='bugun'?await intelligenceHome():cur.m==='gorev'?await taskCenter():cur.m==='odev'?await homeworkCenter():cur.m==='sinav'?await examCenter():cur.m==='uni'?await uniPage():cur.m==='ayar'?await ayar(L):cur.t==='ay'?await ay():cur.t==='program'?await program():cur.t==='odak'?await odak():cur.t==='calis'?await calis():cur.t==='not'?await defter():cur.t==='hesap'?await hesap():await list(cur.t);
+ let body=cur.m==='topluluk'?await communityPage():cur.m==='bugun'?await intelligenceHome():cur.m==='gorev'?await taskCenter():cur.m==='odev'?await homeworkCenter():cur.m==='sinav'?await examCenter():cur.m==='uni'?await uniPage():cur.m==='ayar'?await ayar(L):cur.t==='ay'?await ay():cur.t==='program'?await program():cur.t==='odak'?await odak():cur.t==='calis'?await calis():cur.t==='not'?await defter():cur.t==='hesap'?await hesap():await list(cur.t);
  $('app').innerHTML=`<div class="shell"><aside class="side"><div class="wsb" title="${e(W.name)}">${W.icon?`<i class="ib">${e(W.icon)}</i>`:'<img class="brandmark" src="/logo.svg" alt="Çalışma Alanım">'}<span class="lb">${e(W.name)}</span></div>
- <div class="nav"><button title="Bugün" class="${cur.m==='bugun'?'on':''}" onclick="cur.m='bugun';render()"><i class="ib">🏠</i><span class="lb">Bugün</span></button>${ms.map(k=>`<button title="${e(mn(k))}" class="${cur.m===k?'on':''}" onclick="cur.m='${k}';cur.t=null;cur.q='';cur.d='';render()"><i class="ib">${mi(k)}</i><span class="lb">${mn(k)}</span></button>`).join('')}</div>
+ <div class="nav"><button title="Bugün" class="${cur.m==='bugun'?'on':''}" onclick="cur.m='bugun';render()"><i class="ib">🏠</i><span class="lb">Bugün</span></button>${ms.map(k=>`<button title="${e(mn(k))}" class="${cur.m===k?'on':''}" onclick="cur.m='${k}';cur.t=null;cur.q='';cur.d='';render()"><i class="ib">${mi(k)}</i><span class="lb">${mn(k)}</span></button>`).join('')}<button title="Topluluklar" class="${cur.m==='topluluk'?'on':''}" onclick="cur.m='topluluk';cur.t=null;render()"><i class="ib">👥</i><span class="lb">Topluluklar</span></button></div>
  </aside>
  <main class="main page-${cur.m}">${cur.m==='bugun'?'':''}${tabs.length>1&&cur.m!=='ayar'?`<div class="tabs">${tabs.map(t=>`<button class="${cur.t===t?'on':''}" onclick="cur.t='${t}';cur.q='';cur.d='';render()">${TL[t]}</button>`).join('')}</div>`:''}${body}</main></div>`;ensureSpotifyUI();if(cur.m==='bugun')initIntelScrollReveal();else initPageScrollReveal();
 }
