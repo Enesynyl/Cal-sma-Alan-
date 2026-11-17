@@ -187,13 +187,14 @@
    if(!uid||!FB?.auth?.currentUser||!W?.id)return;
    const now=Date.now();if(now-lastScan<20000)return;lastScan=now;
    try{
-    const rows=await recs(W.id);const thresholds=[['24s',86400000,'1 gün'],['1s',3600000,'1 saat'],['15d',900000,'15 dakika'],['now',0,'şimdi']];
+    const rows=await recs(W.id);
     for(const r of rows){
      if(!['gorev','odev','sinav','takvim'].includes(r.type))continue;
      const date=r.son||r.tarih;if(!date)continue;
      if(['gorev','odev'].includes(r.type)&&['Tamamlandı','İptal edildi'].includes(r.durum))continue;
      const at=new Date(date+'T'+(r.saat||'23:59')+':00').getTime(),diff=at-now;
      const name=r.ad||r.on||'Etkinlik',label=r.type==='sinav'?'Sınav':r.type==='odev'?'Ödev':r.type==='takvim'?'Etkinlik':'Görev';
+     const thresholds=r.type==='odev'?[['24s',86400000,'1 gün','1d'],['3h',10800000,'3 saat','3h'],['1s',3600000,'1 saat','1h'],['15d',900000,'15 dakika','15m'],['now',0,'şimdi','now']].filter(x=>x[3]==='now'||(Array.isArray(r.reminders)?r.reminders:['1d','3h']).includes(x[3])):[['24s',86400000,'1 gün'],['1s',3600000,'1 saat'],['15d',900000,'15 dakika'],['now',0,'şimdi']];
      for(const [code,ms,txt] of thresholds){
       const crossed=code==='now'?diff<=0&&diff>-60000:diff<=ms&&diff>ms-60000;
       if(crossed)notify(label+' hatırlatması',name+(code==='now'?' için zamanı geldi.':' için '+txt+' kaldı.'),'Hatırlatma',{key:r.id+'_'+date+'_'+code,url:'/'});
