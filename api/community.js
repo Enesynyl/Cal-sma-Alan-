@@ -49,10 +49,7 @@ const handler = (function buildCommunityApi(){
    return {...row,dedupeKey:key};
   });
   const unique=new Map();
-  for(const row of rows.filter(Boolean)){
-   const key=row.dedupeKey;
-   if(!unique.has(key))unique.set(key,row);
-  }
+  for(const row of rows.filter(Boolean))if(!unique.has(row.uid))unique.set(row.uid,row);
   studentDirectoryCache={at:Date.now(),rows:[...unique.values()]};
   return studentDirectoryCache.rows;
  }
