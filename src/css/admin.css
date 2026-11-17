@@ -90,3 +90,21 @@ body:not(.login-mode) .intel-ad .intel-ad-next{
  .intel-ad-heading>button{height:30px!important;min-height:30px!important;font-size:11px!important}
  .intel-ad .intel-ad-prev,.intel-ad .intel-ad-next{width:30px!important;height:30px!important;min-width:30px!important;min-height:30px!important}
 }
+
+
+/* Mobile: make the featured-ad "Devamını oku" overlay compact. */
+@media(max-width:700px){
+  .intel-ad-image .intel-ad-caption-toggle{
+    right:8px!important;
+    bottom:8px!important;
+    min-height:26px!important;
+    height:26px!important;
+    padding:4px 8px!important;
+    border-radius:8px!important;
+    font-size:10px!important;
+    font-weight:700!important;
+    line-height:1!important;
+    letter-spacing:0!important;
+    box-shadow:0 2px 8px #0003!important;
+  }
+}
