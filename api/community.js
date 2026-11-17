@@ -1,3 +1,4 @@
+import {requireUser,googleToken,firestoreGet,firestoreList,fieldsToObject,json} from './admin/_lib.js';
 const handler = (function buildCommunityApi(){
  const R='https://firestore.googleapis.com/v1/projects/calisma-alani-34ba7/databases/(default)/documents/';
  const norm=s=>String(s||'').toLocaleLowerCase('tr').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/ı/g,'i').replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();
