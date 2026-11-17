@@ -59,3 +59,23 @@
 .community-muted-badge{justify-self:start;color:#e8bd75;font-size:10px}
 .community-role-select-label{flex:0 0 auto}
 @media(max-width:560px){.community-group-head-actions{width:100%;margin-left:0;justify-content:flex-start}.community-group-head-actions button{flex:1}.community-member-actions{justify-content:flex-start}.community-role-select-label{margin-left:auto}}
+
+/* PDF library: department folders, course folders and personal uploads */
+.community-pdf-department,.community-pdf-course{border:1px solid var(--bd);border-radius:16px;background:var(--sf);overflow:hidden}
+.community-pdf-department{margin:0 0 12px}
+.community-pdf-department>summary,.community-pdf-course>summary{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px 16px;cursor:pointer;list-style:none;font-weight:750}
+.community-pdf-department>summary::-webkit-details-marker,.community-pdf-course>summary::-webkit-details-marker{display:none}
+.community-pdf-department>summary:after,.community-pdf-course>summary:after{content:"⌄";color:var(--mu);font-size:17px}
+.community-pdf-department[open]>summary:after,.community-pdf-course[open]>summary:after{content:"⌃"}
+.community-pdf-department>summary span{font-size:15px}
+.community-pdf-department>summary small,.community-pdf-course>summary small{color:var(--mu);font-size:11px;font-weight:500;margin-left:auto}
+.community-pdf-courses{display:grid;gap:8px;padding:0 10px 10px}
+.community-pdf-course{background:rgba(255,255,255,.025)}
+.community-pdf-course>summary{padding:12px 14px;font-size:13px}
+.community-pdf-files{display:grid;gap:7px;padding:0 8px 8px}
+.community-resource-actions{display:flex;align-items:center;justify-content:flex-end;gap:6px;flex-wrap:wrap;flex:0 0 100%}
+.community-resource-actions button,.community-resource-actions a{font-size:11px;min-height:32px;padding:6px 9px;text-decoration:none}
+.community-resource-actions .community-remove-member{color:#e88f8f!important}
+.community-resource{flex-wrap:wrap}
+.community-resource-info{min-width:0}
+@media(max-width:600px){.community-pdf-department>summary,.community-pdf-course>summary{padding:13px 11px}.community-resource-actions{justify-content:flex-start}.community-resource-actions button,.community-resource-actions a{flex:1 1 auto}.community-pdf-department>summary small{font-size:10px}}
