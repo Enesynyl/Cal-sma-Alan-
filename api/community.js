@@ -8,12 +8,32 @@ const handler = (function buildCommunityApi(){
  async function get(t,p){const x=await firestoreGet(t,p);return x.ok?fieldsToObject(x.data.fields||{}):null}
  async function list(t,p){let page='',out=[],n=0;do{const d=await firestoreList(t,p,page);out.push(...(d.documents||[]).map(x=>({id:x.name.split('/').pop(),...fieldsToObject(x.fields||{})})));page=d.nextPageToken||'';n++}while(page&&n<10&&out.length<1000);return out}
  const safe=(id,p)=>({uid:id,displayName:p.displayName||p.ad||'Öğrenci',university:p.university||p.universite||'',department:p.department||p.bolum||'',classYear:p.classYear||p.sinif||''});
+ let authDirectoryCache={at:0,users:[]};
+ async function listAuthUsers(token){
+  if(authDirectoryCache.at>Date.now()-60000&&authDirectoryCache.users.length)return authDirectoryCache.users;
+  const all=[];let page='',pages=0;
+  do{
+   const url=new URL('https://identitytoolkit.googleapis.com/v1/projects/calisma-alani-34ba7/accounts:batchGet');
+   url.searchParams.set('maxResults','1000');if(page)url.searchParams.set('nextPageToken',page);
+   const r=await fetch(url,{headers:{authorization:'Bearer '+token}});
+   const d=await r.json();
+   if(!r.ok)throw new Error(d.error?.message||'FIREBASE_AUTH_DIRECTORY_UNAVAILABLE');
+   all.push(...(d.users||[]));page=d.nextPageToken||'';pages++;
+  }while(page&&pages<20);
+  authDirectoryCache={at:Date.now(),users:all};return all;
+ }
+ async function mapLimit(items,limit,fn){
+  const out=new Array(items.length);let cursor=0;
+  await Promise.all(Array.from({length:Math.min(limit,items.length)},async()=>{while(true){const i=cursor++;if(i>=items.length)return;out[i]=await fn(items[i],i)}}));
+  return out;
+ }
+
  return async function(req,res){
   res.setHeader('Cache-Control','no-store, private');if(req.method!=='POST')return json(res,405,{ok:false,error:'Method not allowed'});
   try{
    const u=await requireUser(req,res);if(!u)return;const t=await googleToken(),b=req.body||{},a=String(b.action||''),me=await get(t,'users/'+u.uid+'/profile')||await get(t,'users/'+u.uid+'/sync/profile')||{},myName=String(me.ad||me.displayName||'Öğrenci').trim().slice(0,80)||'Öğrenci';
-   if(a==='indexMe'){const p=safe(u.uid,me);if(p.displayName==='Öğrenci')return json(res,400,{ok:false,error:'Profilinde ad soyad bulunamadı.'});await put(t,'communityProfiles/'+u.uid,{...p,nameKey:norm(p.displayName),updatedAt:Date.now(),discoverable:true});return json(res,200,{ok:true})}
-   if(a==='searchPeople'){const q=norm(b.query);if(q.length<2)return json(res,200,{ok:true,people:[]});const rows=await list(t,'communityProfiles');return json(res,200,{ok:true,people:rows.filter(x=>x.id!==u.uid&&x.discoverable!==false&&(x.nameKey||norm(x.displayName)).includes(q)).slice(0,20).map(x=>safe(x.id,x))})}
+   if(a==='indexMe'){const p=safe(u.uid,me);if(p.displayName==='Öğrenci')return json(res,400,{ok:false,error:'Profilinde ad soyad bulunamadı.'});await put(t,'communityProfiles/'+u.uid,{...p,nameKey:norm(p.displayName),updatedAt:Date.now(),discoverable:true});authDirectoryCache.at=0;return json(res,200,{ok:true})}
+   if(a==='searchPeople'){const q=norm(b.query);if(q.length<2)return json(res,200,{ok:true,people:[]});const accounts=await listAuthUsers(t);const candidates=await mapLimit(accounts,30,async account=>{const uid=account.localId;if(!uid||uid===u.uid||account.disabled)return null;let profile=null;try{const doc=await firestoreGet(t,'users/'+uid+'/sync/profile');if(doc.ok)profile=fieldsToObject(doc.data.fields||{});else{const legacy=await firestoreGet(t,'users/'+uid+'/profile');if(legacy.ok)profile=fieldsToObject(legacy.data.fields||{})}}catch(err){console.warn('Student profile lookup failed',uid,err.message)}const displayName=String(profile?.ad||profile?.displayName||account.displayName||account.providerUserInfo?.[0]?.displayName||'').trim();if(!displayName||profile?.discoverable===false)return null;const education=String(profile?.universite||profile?.university||'');if(education==='Mezun'||education==='Üniversite okumuyorum')return null;const row={uid,displayName,university:profile?.universite||profile?.university||'',department:profile?.bolum||profile?.department||'',classYear:profile?.sinif||profile?.classYear||''};return norm(displayName).includes(q)?row:null});const people=candidates.filter(Boolean).slice(0,20);return json(res,200,{ok:true,people})}
    if(a==='sendRequest'){const to=String(b.uid||'');if(!to||to===u.uid)return json(res,400,{ok:false,error:'Kendine istek gönderemezsin.'});const target=await get(t,'communityProfiles/'+to);if(!target||target.discoverable===false)return json(res,404,{ok:false,error:'Öğrenci bulunamadı.'});if(await get(t,'users/'+u.uid+'/friends/'+to))return json(res,409,{ok:false,error:'Bu öğrenci zaten arkadaşlarında.'});if(await get(t,'users/'+to+'/friendRequests/'+u.uid))return json(res,409,{ok:false,error:'İstek zaten gönderilmiş.'});const row={uid:u.uid,displayName:myName,createdAt:Date.now(),status:'pending'};await put(t,'users/'+to+'/friendRequests/'+u.uid,row);await put(t,'users/'+u.uid+'/sentFriendRequests/'+to,{uid:to,displayName:target.displayName||'Öğrenci',createdAt:row.createdAt,status:'pending'});return json(res,200,{ok:true,message:'Arkadaşlık isteği gönderildi.'})}
    if(a==='incoming'){const rows=await list(t,'users/'+u.uid+'/friendRequests');return json(res,200,{ok:true,requests:rows.map(x=>({uid:x.id,displayName:x.displayName||'Öğrenci',createdAt:x.createdAt||0}))})}
    if(a==='acceptRequest'||a==='rejectRequest'){const from=String(b.uid||'');if(!await get(t,'users/'+u.uid+'/friendRequests/'+from))return json(res,404,{ok:false,error:'Bekleyen istek bulunamadı.'});if(a==='acceptRequest'){await put(t,'users/'+u.uid+'/friends/'+from,{uid:from,createdAt:Date.now()});await put(t,'users/'+from+'/friends/'+u.uid,{uid:u.uid,createdAt:Date.now()})}await del(t,'users/'+u.uid+'/friendRequests/'+from);await del(t,'users/'+from+'/sentFriendRequests/'+u.uid);return json(res,200,{ok:true})}
