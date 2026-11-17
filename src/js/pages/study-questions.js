@@ -90,12 +90,25 @@ async function intelNotifications(){
  const rows=await recs(W.id),today=iso(new Date()),upcoming=rows.filter(r=>(r.type==='sinav'&&r.tarih>=today)||(r.type==='gorev'&&intelOpen(r)&&r.son>=today)).sort((a,b)=>(a.tarih||a.son||'').localeCompare(b.tarih||b.son||'')).slice(0,8);
  dlg(`<h3>Bildirim merkezi</h3><p class="m">Yaklaşan sınavların ve görevlerin.</p>${upcoming.length?upcoming.map(r=>`<div class="intel-notice"><b>${e(r.ad||'İsimsiz kayıt')}</b><small>${e(r.type==='sinav'?'Sınav':'Görev')} · ${e(intelDate(r.tarih||r.son))} ${e(r.saat||'')}</small></div>`).join(''):'<div class="empty">Şimdilik yeni bildirimin yok.</div>'}<div class="row"><button onclick="dlg()">Kapat</button></div>`);
 }
+let intelCampaignCache=[],intelCampaignCacheAt=0,intelCampaignRequest=null;
+async function intelLoadCampaigns(){
+ const now=Date.now();
+ if(intelCampaignCacheAt&&now-intelCampaignCacheAt<45000)return intelCampaignCache;
+ if(intelCampaignRequest)return intelCampaignRequest;
+ intelCampaignRequest=fetch('/api/campaigns',{cache:'default'}).then(r=>r.ok?r.json():{campaigns:[]}).then(d=>{
+  intelCampaignCache=Array.isArray(d.campaigns)?d.campaigns:[];
+  intelCampaignCacheAt=Date.now();
+  return intelCampaignCache;
+ }).catch(()=>intelCampaignCache).finally(()=>{intelCampaignRequest=null});
+ return intelCampaignRequest;
+}
 async function intelligenceHome(){
- const campaignResponse=await fetch('/api/campaigns',{cache:'no-store'}).then(r=>r.ok?r.json():{campaigns:[]}).catch(()=>({campaigns:[]})),campaigns=campaignResponse.campaigns||[];window.__intelAds=campaigns;window.__intelAdIndex=Math.min(window.__intelAdIndex||0,Math.max(0,campaigns.length-1));
+ const [campaigns,rows]=await Promise.all([intelLoadCampaigns(),recs(W.id)]);
+ window.__intelAds=campaigns;window.__intelAdIndex=Math.min(window.__intelAdIndex||0,Math.max(0,campaigns.length-1));
  window.intelAdGo=(i,forcedDirection)=>{const a=window.__intelAds||[];if(!a.length)return;const next=(i+a.length)%a.length;if(next===window.__intelAdIndex)return;const direction=forcedDirection||(next>window.__intelAdIndex?'next':'prev');window.__intelAdIndex=next;const section=document.querySelector('.intel-ad'),img=section?.querySelector('.intel-ad-image img');if(!section||!img)return;section.classList.remove('ad-slide-next','ad-slide-prev');void section.offsetWidth;section.classList.add(direction==='next'?'ad-slide-next':'ad-slide-prev');img.src=a[next].imageData;const current=section.querySelector('.intel-ad-page-current');if(current)current.textContent=String(next+1).padStart(2,'0');section.querySelectorAll('.intel-ad-page-segment').forEach((x,j)=>x.classList.toggle('active',j===next));};
  window.intelAdNext=()=>window.intelAdGo((window.__intelAdIndex||0)+1,'next');window.intelAdPrev=()=>window.intelAdGo((window.__intelAdIndex||0)-1,'prev');
  if(window.__intelAdAutoTimer)clearInterval(window.__intelAdAutoTimer);window.__intelAdAutoTimer=campaigns.length>1?setInterval(()=>{if(cur.m==='bugun'&&!document.hidden&&!document.body.classList.contains('intel-ad-detail-open'))window.intelAdNext()},5000):null;
- const rows=await recs(W.id),today=iso(new Date()),now=new Date(),weekStart=new Date(now);weekStart.setDate(now.getDate()-((now.getDay()+6)%7));weekStart.setHours(0,0,0,0);
+ const today=iso(new Date()),now=new Date(),weekStart=new Date(now);weekStart.setDate(now.getDate()-((now.getDay()+6)%7));weekStart.setHours(0,0,0,0);
  const weekEnd=new Date(weekStart);weekEnd.setDate(weekStart.getDate()+6);
  const tasks=rows.filter(r=>r.type==='gorev'||r.type==='odev'),active=tasks.filter(intelOpen),completed=tasks.filter(r=>r.durum==='Tamamlandı');
  const overdue=active.filter(r=>r.son&&r.son<today),exams=rows.filter(r=>r.type==='sinav'&&r.tarih>=today).sort((a,b)=>a.tarih.localeCompare(b.tarih)),lessons=rows.filter(r=>r.type==='ders');
@@ -107,14 +120,15 @@ async function intelligenceHome(){
  const pct=Math.max(4,Math.min(100,completion||0)),circ=2*Math.PI*42;
  const initials=(W.name||'Ç').split(/\s+/).slice(0,2).map(x=>x[0]).join('').toLocaleUpperCase('tr');
  const days=Array.from({length:7},(_,i)=>{const d=new Date(weekStart);d.setDate(weekStart.getDate()+i);return d});
- const dayEvents=d=>{
-  const key=iso(d),name=intelDayNames[d.getDay()],items=[];
-  lessons.forEach(r=>meets(r).filter(m=>m.gun===name).forEach(m=>items.push({time:m.s||'09:00',title:r.ad||'Ders',kind:'Ders',go:"intelGo('ders','program')"})));
-  rows.filter(r=>(r.type==='gorev'||r.type==='odev')&&intelOpen(r)&&r.son===key).forEach(r=>items.push({time:r.saat||'—',title:r.ad||'Görev',kind:'Görev',go:"intelGo('gorev')"}));
-  rows.filter(r=>r.type==='sinav'&&r.tarih===key).forEach(r=>items.push({time:r.saat||'—',title:r.ad||'Sınav',kind:'Sınav',go:"intelGo('sinav')"}));
-  rows.filter(r=>r.type==='takvim'&&r.tarih===key).forEach(r=>items.push({time:r.saat||'—',title:r.ad||'Etkinlik',kind:'Etkinlik',go:"intelGo('takvim','takvim')"}));
-  return items.sort((a,b)=>a.time.localeCompare(b.time)).slice(0,3);
- };
+ const eventsByDay=new Map();
+ const pushDayEvent=(key,item)=>{if(!key)return;const bucket=eventsByDay.get(key)||[];bucket.push(item);eventsByDay.set(key,bucket)};
+ lessons.forEach(r=>meets(r).forEach(m=>{const dayIndex=intelDayNames.indexOf(m.gun);if(dayIndex<0)return;const date=new Date(weekStart);date.setDate(weekStart.getDate()+dayIndex);pushDayEvent(iso(date),{time:m.s||'09:00',title:r.ad||'Ders',kind:'Ders',go:"intelGo('ders','program')"})}));
+ rows.forEach(r=>{
+  if((r.type==='gorev'||r.type==='odev')&&intelOpen(r))pushDayEvent(r.son,{time:r.saat||'—',title:r.ad||'Görev',kind:'Görev',go:"intelGo('gorev')"});
+  else if(r.type==='sinav')pushDayEvent(r.tarih,{time:r.saat||'—',title:r.ad||'Sınav',kind:'Sınav',go:"intelGo('sinav')"});
+  else if(r.type==='takvim')pushDayEvent(r.tarih,{time:r.saat||'—',title:r.ad||'Etkinlik',kind:'Etkinlik',go:"intelGo('takvim','takvim')"});
+ });
+ const dayEvents=d=>(eventsByDay.get(iso(d))||[]).sort((a,b)=>a.time.localeCompare(b.time)).slice(0,3);
  const dayCards=days.map(d=>{const list=dayEvents(d),key=iso(d),isToday=key===today;return `<div class="intel-day ${isToday?'is-today':''}"><button class="intel-day-head" onclick="cur.m='takvim';cur.t='ay';cur.mo=new Date('${key}T00:00');render()"><small>${['PZT','SAL','ÇAR','PER','CUM','CMT','PAZ'][((d.getDay()+6)%7)]}</small><b>${d.getDate()}</b></button><div class="intel-day-events">${list.length?list.map(x=>`<button class="intel-event ${x.kind.toLowerCase()}" onclick="${x.go}"><small>${e(x.time)}</small><b>${e(x.title)}</b></button>`).join(''):'<span class="intel-no-event">—</span>'}</div></div>`}).join('');
  const nextExam=exams[0],examDays=nextExam?Math.max(0,Math.round((new Date(nextExam.tarih+'T12:00:00')-new Date(today+'T12:00:00'))/864e5)):null;
  const focusBars=[{name:'Dersler',value:lessons.length,sub:'kayıtlı ders',go:"intelGo('ders','ders')",width:Math.min(100,lessons.length*12)},{name:'Görevler',value:active.length,sub:'aktif görev',go:"intelGo('gorev')",width:Math.min(100,active.length*14)},{name:'Odak',value:Math.round(weekFocus),sub:'bu hafta · dk',go:"intelGo('odak')",width:Math.min(100,weekFocus/300*100)}];
