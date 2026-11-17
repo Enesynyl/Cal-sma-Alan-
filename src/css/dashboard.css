@@ -789,3 +789,8 @@ body.intel-ad-detail-open{overflow:hidden!important}
     object-fit:contain!important;
   }
 }
+
+/* Reliable touch interaction for full-screen campaign overlays on iOS */
+.intel-ad-all-view,.intel-ad-detail-view{pointer-events:auto;touch-action:pan-y;-webkit-overflow-scrolling:touch}
+.intel-ad-all-back,.intel-ad-detail-back{position:relative;z-index:10;touch-action:manipulation;-webkit-tap-highlight-color:transparent;cursor:pointer;pointer-events:auto}
+.intel-ad-all-header{pointer-events:auto}
