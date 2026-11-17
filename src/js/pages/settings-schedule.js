@@ -111,3 +111,87 @@ async function taskSnooze(id,mode){
  r.durum='Bekliyor';await put('rec',r);render();toast(mode==='tomorrow'?'Görev yarına ertelendi':'Görev ertelendi');
 }
 async function taskDelete(id){if(!confirm('Bu görev kalıcı olarak silinsin mi?'))return;await del('rec',id);dlg();render();toast('Görev silindi')}
+
+
+/* ---- Akademik Ödev Merkezi ---- */
+const hwToday=()=>iso(new Date());
+const hwOpen=r=>!['Tamamlandı','İptal edildi'].includes(r.durum)&&!r.archived;
+const hwDateLabel=v=>{if(!v)return 'Tarih belirlenmedi';const d=new Date(v+'T12:00:00');return d.toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'})};
+const hwPriority=r=>r.oncelik||'Orta';
+const hwChecklist=r=>Array.isArray(r.checklist)?r.checklist:[];
+const hwPct=r=>{const a=hwChecklist(r);return a.length?Math.round(a.filter(x=>x.done).length/a.length*100):0};
+const hwLinks=r=>Array.isArray(r.links)?r.links:[];
+let hwTicker=null;
+async function homeworkCenter(){
+ const all=(await recs(W.id,'odev')).sort((a,b)=>((a.son||'9999')+(a.saat||'')).localeCompare((b.son||'9999')+(b.saat||'')));
+ const today=hwToday(),active=all.filter(hwOpen),completed=all.filter(r=>r.durum==='Tamamlandı'&&!r.archived),archived=all.filter(r=>r.archived),overdue=active.filter(r=>r.son&&r.son<today),dueToday=active.filter(r=>r.son===today),upcoming=active.filter(r=>r.son>today),weekEnd=iso(new Date(Date.now()+7*864e5)),week=active.filter(r=>r.son&&r.son>=today&&r.son<=weekEnd);
+ const total=all.filter(r=>!r.archived),done=total.filter(r=>r.durum==='Tamamlandı'),pct=total.length?Math.round(done.length/total.length*100):0;
+ const tabs=[['overview','Genel bakış'],['all','Tüm ödevler'],['calendar','Takvim'],['completed','Tamamlanan'],['archive','Arşiv']];
+ if(!cur.hwTab)cur.hwTab='overview';const tab=cur.hwTab;
+ const search=(cur.hwSearch||'').toLocaleLowerCase('tr'),sort=cur.hwSort||'date';
+ let rows=tab==='all'?active:tab==='completed'?completed:tab==='archive'?archived:tab==='overview'?[...overdue,...dueToday,...week.filter(x=>!dueToday.includes(x)&&!overdue.includes(x))]:[];
+ rows=rows.filter(r=>!search||[r.ad,r.ders,r.aciklama].join(' ').toLocaleLowerCase('tr').includes(search));
+ rows.sort((a,b)=>sort==='priority'?({'Yüksek':0,'Orta':1,'Düşük':2}[hwPriority(a)]-({'Yüksek':0,'Orta':1,'Düşük':2}[hwPriority(b)])):((a.son||'9999')+(a.saat||'')).localeCompare((b.son||'9999')+(b.saat||'')));
+ const cards=rows.map(r=>{
+  const late=hwOpen(r)&&r.son&&r.son<today,subs=hwChecklist(r),progress=hwPct(r),links=hwLinks(r),secs=Number(r.studySeconds)||0;
+  const elapsed=secs+(r.studyStartedAt?Math.max(0,Math.floor((Date.now()-r.studyStartedAt)/1000)):0);
+  const time=String(Math.floor(elapsed/3600)).padStart(2,'0')+':'+String(Math.floor(elapsed%3600/60)).padStart(2,'0')+':'+String(elapsed%60).padStart(2,'0');
+  return `<article class="hw-card ${late?'is-late':''} ${r.durum==='Tamamlandı'?'is-done':''}">
+   <div class="hw-card-top"><span class="hw-subject">${e(r.ders||'Ders belirtilmedi')}</span><span class="hw-priority p-${hwPriority(r)==='Yüksek'?'high':hwPriority(r)==='Düşük'?'low':'medium'}">${e(hwPriority(r))}</span></div>
+   <div class="hw-card-title"><button class="hw-check ${r.durum==='Tamamlandı'?'checked':''}" onclick="hwComplete('${r.id}')">${r.durum==='Tamamlandı'?'✓':''}</button><div><h3>${e(r.ad)}</h3><small>${r.son?'📅 '+e(hwDateLabel(r.son)):'Tarih belirlenmedi'} ${r.saat?'· '+e(r.saat):''} ${late?'· Süresi geçti':''}</small></div><button class="hw-edit" onclick="hwEdit('${r.id}')">Düzenle</button></div>
+   ${r.aciklama?'<p class="hw-desc">'+e(r.aciklama)+'</p>':''}
+   ${subs.length?`<div class="hw-subtasks"><div class="hw-subtask-head"><b>Alt görevler</b><small>%${progress}</small></div><div class="hw-progress"><i style="width:${progress}%"></i></div>${subs.map((x,i)=>`<label class="hw-subtask"><input type="checkbox" ${x.done?'checked':''} onchange="hwToggleSub('${r.id}',${i},this.checked)"><span class="${x.done?'is-checked':''}">${e(x.text)}</span></label>`).join('')}</div>`:''}
+   ${links.length?'<div class="hw-links">'+links.map((x,i)=>'<a href="'+e(x.url)+'" target="_blank" rel="noopener noreferrer">↗ '+e(x.name||('Ek '+(i+1)))+'</a>').join('')+'</div>':''}
+   <div class="hw-card-footer"><div class="hw-timer"><b data-hw-time="${r.id}">${time}</b><small>Çalışma süresi</small></div><div class="hw-actions">${r.durum==='Tamamlandı'?'<button onclick="hwReopen(\''+r.id+'\')">Yeniden aç</button>':`<button class="${r.studyStartedAt?'is-running':''}" onclick="hwTimer('${r.id}')">${r.studyStartedAt?'⏸ Durdur':'▶ Çalış'}</button>`}<button onclick="hwEdit('${r.id}')">Detay</button>${r.archived?'<button onclick="hwArchive(\''+r.id+'\',false)">Arşivden çıkar</button>':'<button onclick="hwArchive(\''+r.id+'\',true)">Arşivle</button>'}</div></div>
+  </article>`;
+ }).join('');
+ let body='';
+ if(tab==='calendar'){
+  const month=cur.hwMonth?new Date(cur.hwMonth):new Date(new Date().getFullYear(),new Date().getMonth(),1),first=new Date(month.getFullYear(),month.getMonth(),1),start=new Date(first);start.setDate(first.getDate()-((first.getDay()+6)%7));
+  const days=Array.from({length:42},(_,i)=>{const d=new Date(start);d.setDate(start.getDate()+i);const key=iso(d),items=active.filter(r=>r.son===key);return `<button class="hw-cal-day ${d.getMonth()!==month.getMonth()?'outside':''} ${key===today?'today':''} ${items.length?'has-items':''}" onclick="cur.hwSelected='${key}';render()"><b>${d.getDate()}</b><small>${items.length?items.length+' ödev':''}</small></button>`}).join('');
+  const selected=cur.hwSelected||today,sel=active.filter(r=>r.son===selected);
+  body=`<div class="hw-calendar"><div class="hw-cal-head"><button onclick="hwMonth(-1)">‹</button><b>${month.toLocaleDateString('tr-TR',{month:'long',year:'numeric'})}</b><button onclick="hwMonth(1)">›</button></div><div class="hw-weekdays">${['Pzt','Sal','Çar','Per','Cum','Cmt','Paz'].map(x=>'<span>'+x+'</span>').join('')}</div><div class="hw-cal-grid">${days}</div><h3>${hwDateLabel(selected)} · ${sel.length} ödev</h3>${sel.length?sel.map(r=>'<div class="hw-mini-row"><b>'+e(r.ad)+'</b><small>'+e(r.saat||'')+' · '+e(r.ders||'')+'</small><button onclick="hwEdit(\''+r.id+'\')">Aç</button></div>').join(''):'<p class="m">Bu tarihte teslim edilecek ödev yok.</p>'}</div>`;
+ }else if(tab==='overview'){
+  const groups=[['Geciken',overdue],['Bugün teslim',dueToday],['Önümüzdeki 7 gün',week.filter(x=>!overdue.includes(x))]];
+  body=groups.map(([title,items])=>`<section class="hw-group"><header><b>${title}</b><span>${items.length}</span></header>${items.length?items.slice(0,5).map(r=>'<button class="hw-overview-row" onclick="hwEdit(\''+r.id+'\')"><span>'+e(r.ad)+'</span><small>'+e(r.son||'')+' '+e(r.saat||'')+'</small></button>').join(''):'<p class="m">Bu bölümde ödev yok.</p>'}</section>`).join('')+`<section class="hw-group"><header><b>Son tamamlananlar</b><span>${completed.length}</span></header>${completed.slice(-3).reverse().map(r=>'<div class="hw-overview-row"><span>✓ '+e(r.ad)+'</span><small>'+e(r.ders||'')+'</small></div>').join('')||'<p class="m">Henüz tamamlanan ödev yok.</p>'}</section>`;
+ }else body=`<div class="hw-list-tools"><input aria-label="Ödev ara" placeholder="Ödev veya ders ara…" value="${e(cur.hwSearch||'')}" oninput="cur.hwSearch=this.value;hwRefreshList()"><select aria-label="Sıralama" onchange="cur.hwSort=this.value;render()"><option value="date" ${sort==='date'?'selected':''}>Teslim tarihine göre</option><option value="priority" ${sort==='priority'?'selected':''}>Önceliğe göre</option></select></div>${cards||'<div class="hw-empty"><span>📚</span><b>Burada henüz ödev yok.</b><small>İlk ödevini ekleyerek başlayabilirsin.</small><button class="p" onclick="hwEdit()">＋ İlk ödevini ekle</button></div>'}`;
+ clearInterval(hwTicker);if(active.some(r=>r.studyStartedAt)){hwTicker=setInterval(()=>{document.querySelectorAll('[data-hw-time]').forEach(el=>{const r=all.find(x=>x.id===el.dataset.hwTime);if(!r)return;const n=(Number(r.studySeconds)||0)+Math.max(0,Math.floor((Date.now()-r.studyStartedAt)/1000));el.textContent=String(Math.floor(n/3600)).padStart(2,'0')+':'+String(Math.floor(n%3600/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0')})},1000)}
+ return `<section class="hw-center"><header class="hw-heading"><div><span class="hw-eyebrow">ACADEMIC PLANNER</span><h1>Ödev Merkezi</h1><p class="m">Teslim tarihlerini, çalışma adımlarını ve ilerlemeni tek yerden yönet.</p></div><button class="p" onclick="hwEdit()">＋ Ödev ekle</button></header>
+ <div class="hw-stats"><div><small>Toplam ödev</small><b>${total.length}</b></div><div><small>Bekleyen</small><b>${active.filter(r=>r.durum==='Bekliyor'||!r.durum).length}</b></div><div><small>Devam eden</small><b>${active.filter(r=>r.durum==='Devam ediyor').length}</b></div><div><small>Tamamlanan</small><b>${done.length}</b></div><div class="late"><small>Süresi geçen</small><b>${overdue.length}</b></div></div>
+ <div class="hw-overall"><div><span>Genel tamamlanma</span><b>%${pct}</b></div><div class="hw-progress"><i style="width:${pct}%"></i></div></div>
+ <nav class="hw-tabs">${tabs.map(([id,label])=>'<button class="'+(tab===id?'active':'')+'" onclick="cur.hwTab=\''+id+'\';render()">'+label+(id==='all'?' · '+active.length:id==='completed'?' · '+completed.length:id==='archive'?' · '+archived.length:'')+'</button>').join('')}</nav>
+ ${body}</section>`;
+}
+function hwRefreshList(){const old=cur.hwTab;homeworkCenter().then(html=>{const root=document.querySelector('.hw-center');if(root)root.outerHTML=html})}
+function hwMonth(n){const m=cur.hwMonth?new Date(cur.hwMonth):new Date();cur.hwMonth=new Date(m.getFullYear(),m.getMonth()+n,1);render()}
+async function hwEdit(id){
+ const r=id?await P(tx('rec').get(id)):null;if(r&&r.type!=='odev')return;
+ const courses=await recs(W.id,'ders'),x=r||{},subs=hwChecklist(x),links=hwLinks(x);
+ dlg(`<div class="hw-form"><header><div><span class="hw-eyebrow">ÖDEV DETAYI</span><h2>${r?'Ödevi düzenle':'Yeni ödev oluştur'}</h2></div><button onclick="dlg()">×</button></header>
+ <label>Ödev başlığı<input id="hwName" maxlength="140" value="${e(x.ad||'')}" placeholder="Örn. Biyoloji araştırma ödevi"></label>
+ <div class="hw-form-grid"><label>Ders<select id="hwCourse"><option value="">Ders seç (isteğe bağlı)</option>${courses.map(c=>'<option '+(x.ders===c.ad?'selected':'')+'>'+e(c.ad)+'</option>').join('')}</select></label><label>Öncelik<select id="hwPriority">${['Düşük','Orta','Yüksek'].map(v=>'<option '+(hwPriority(x)===v?'selected':'')+'>'+v+'</option>').join('')}</select></label></div>
+ <div class="hw-form-grid"><label>Son teslim tarihi<input id="hwDate" type="date" value="${e(x.son||'')}"></label><label>Saat<input id="hwTime" type="time" value="${e(x.saat||'23:59')}"></label></div>
+ <div class="hw-form-grid"><label>Tahmini süre (dakika)<input id="hwEstimate" type="number" min="0" max="10000" value="${e(x.estimate||'')}" placeholder="Örn. 90"></label><label>Durum<select id="hwStatus">${['Bekliyor','Devam ediyor','Tamamlandı','İptal edildi'].map(v=>'<option '+((x.durum||'Bekliyor')===v?'selected':'')+'>'+v+'</option>').join('')}</select></label></div>
+ <label>Açıklama<textarea id="hwDesc" rows="3" maxlength="3000" placeholder="Ödevin kapsamı ve notların…">${e(x.aciklama||'')}</textarea></label>
+ <label>Alt görevler <small>(Her satıra bir adım yaz)</small><textarea id="hwSubtasks" rows="4" placeholder="Konuyu araştır\nKaynakları bul\nTaslağı hazırla\nSon kontrolü yap">${e(subs.map(s=>s.text).join('\n'))}</textarea></label>
+ <label>Dosya / bağlantı adresleri <small>(Her satıra bir https:// bağlantısı yaz)</small><textarea id="hwLinks" rows="2" placeholder="https://…">${e(links.map(l=>l.url).join('\n'))}</textarea></label>
+ <div class="hw-reminders"><b>🔔 Hatırlatmalar</b><label><input type="checkbox" id="hwRem1" ${(x.reminders||['1d','3h']).includes('1d')?'checked':''}> 1 gün önce</label><label><input type="checkbox" id="hwRem3" ${(x.reminders||['1d','3h']).includes('3h')?'checked':''}> 3 saat önce</label></div>
+ <div class="row"><button onclick="dlg()">Vazgeç</button><button class="p" onclick="hwSave('${x.id||''}')">Kaydet</button></div>${r?'<div class="hw-delete"><button onclick="hwDelete(\''+r.id+'\')">Ödevi sil</button></div>':''}</div>`);
+}
+async function hwSave(id){
+ const ad=$('hwName')?.value.trim();if(!ad){toast('Ödev başlığını yazmalısın');$('hwName')?.focus();return}
+ const old=id?await P(tx('rec').get(id)):null,reminders=[];if($('hwRem1').checked)reminders.push('1d');if($('hwRem3').checked)reminders.push('3h');
+ const checklist=$('hwSubtasks').value.split('\n').map(s=>s.trim()).filter(Boolean).map(text=>({id:uid(),text,done:false}));
+ const prev=hwChecklist(old||{});checklist.forEach(s=>{const p=prev.find(x=>x.text===s.text);if(p)s.done=!!p.done});
+ const links=$('hwLinks').value.split('\n').map(s=>s.trim()).filter(Boolean).map((url,i)=>({url,name:'Ek '+(i+1)}));
+ for(const l of links){try{const u=new URL(l.url);if(!['http:','https:'].includes(u.protocol))throw 0}catch{toast('Bağlantılardan biri geçersiz. https:// ile başlayan adres kullan.');return}}
+ const r={...(old||{}),id:id||uid(),ws:W.id,type:'odev',ad,ders:$('hwCourse').value,son:$('hwDate').value,saat:$('hwTime').value,oncelik:$('hwPriority').value,estimate:Math.max(0,Math.min(10000,+$('hwEstimate').value||0)),durum:$('hwStatus').value,aciklama:$('hwDesc').value.trim(),checklist,links,reminders,studySeconds:Number(old?.studySeconds)||0,ts:old?.ts||Date.now()};
+ if(old?.studyStartedAt)r.studyStartedAt=old.studyStartedAt;
+ await put('rec',r);dlg();cur.hwTab='all';render();toast(id?'Ödev güncellendi':'Ödev eklendi');
+}
+async function hwComplete(id){const r=await P(tx('rec').get(id));if(!r)return;r.durum=r.durum==='Tamamlandı'?'Bekliyor':'Tamamlandı';if(r.durum==='Tamamlandı'){r.completedAt=hwToday();r.completedTime=new Date().toISOString();if(r.studyStartedAt){r.studySeconds=(Number(r.studySeconds)||0)+Math.max(0,Math.floor((Date.now()-r.studyStartedAt)/1000));delete r.studyStartedAt}}else{delete r.completedAt;delete r.completedTime}await put('rec',r);render();toast(r.durum==='Tamamlandı'?'Ödev tamamlandı 🎉':'Ödev yeniden açıldı')}
+async function hwReopen(id){return hwComplete(id)}
+async function hwToggleSub(id,i,done){const r=await P(tx('rec').get(id));if(!r)return;const a=hwChecklist(r);if(a[i])a[i].done=!!done;r.checklist=a;if(a.length&&a.every(x=>x.done))r.durum='Devam ediyor';await put('rec',r);render()}
+async function hwTimer(id){const r=await P(tx('rec').get(id));if(!r)return;if(r.studyStartedAt){r.studySeconds=(Number(r.studySeconds)||0)+Math.max(0,Math.floor((Date.now()-r.studyStartedAt)/1000));delete r.studyStartedAt}else{r.studyStartedAt=Date.now();if(r.durum==='Bekliyor')r.durum='Devam ediyor'}await put('rec',r);render();toast(r.studyStartedAt?'Ödev çalışması başladı ⏱️':'Çalışma süresi kaydedildi')}
+async function hwArchive(id,on){const r=await P(tx('rec').get(id));if(!r)return;r.archived=!!on;await put('rec',r);render()}
+async function hwDelete(id){if(!confirm('Bu ödev kalıcı olarak silinsin mi?'))return;await del('rec',id);dlg();render();toast('Ödev silindi')}
