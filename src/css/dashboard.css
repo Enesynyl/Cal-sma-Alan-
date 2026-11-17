@@ -737,3 +737,29 @@ body.intel-ad-detail-open{overflow:hidden!important}
 .intel-ad-all-card-body button{min-height:36px;padding:8px 13px;border:1px solid rgba(119,174,238,.32)!important;border-radius:10px!important;background:rgba(59,112,190,.2)!important;color:#c4e0ff!important;font-size:12px;font-weight:800}
 .intel-ad-all-empty{padding:42px 18px;border:1px dashed rgba(145,184,229,.24);border-radius:16px;color:#a9bdd5;text-align:center}
 @media(max-width:700px){.intel-ad-heading{padding:9px 11px}.intel-ad-caption-toggle{right:10px;bottom:10px;min-height:32px;padding:6px 10px}.intel-ad-all-header{gap:10px;padding-left:12px;padding-right:12px}.intel-ad-all-list{gap:13px;padding:14px 12px 30px}.intel-ad-all-card{border-radius:14px}.intel-ad-all-card>img{aspect-ratio:16/9}.intel-ad-all-card-body{padding:13px 14px 15px}}
+
+
+/* FINAL OVERRIDE — compact the overlaid read-more CTA on phones. */
+@media screen and (max-width:700px){
+  .intel-ad .intel-ad-image > button.intel-ad-caption-toggle{
+    display:inline-flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    width:auto!important;
+    min-width:0!important;
+    max-width:max-content!important;
+    height:24px!important;
+    min-height:24px!important;
+    max-height:24px!important;
+    padding:0 7px!important;
+    margin:0!important;
+    font-size:9px!important;
+    line-height:1!important;
+    font-weight:650!important;
+    letter-spacing:0!important;
+    border-radius:7px!important;
+    right:7px!important;
+    bottom:7px!important;
+    box-shadow:0 2px 6px rgba(0,0,0,.22)!important;
+  }
+}
