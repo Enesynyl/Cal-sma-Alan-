@@ -79,6 +79,7 @@ body:not(.login-mode) .shell:has(.page-bugun)>.main{padding:0 2px 28px;min-width
 .intel-icon-btn i{position:absolute;right:-4px;top:-5px;min-width:14px;height:14px;padding:0 3px;border-radius:99px;background:#477cff;color:#fff;font-size:9px;font-style:normal}
 .intel-profile{display:flex;align-items:center;gap:8px;padding:4px 8px;border:1px solid rgba(149,180,220,.17);border-radius:12px;background:rgba(255,255,255,.045);color:#eaf2ff;font-size:11px}
 .intel-profile>span{display:grid;place-items:center;width:28px;height:28px;border-radius:9px;background:linear-gradient(145deg,#83c5fa,#3859bc);font-weight:800;color:#08172c}
+.intel-profile>img.ca-profile-avatar{display:block;width:32px;height:32px;flex:0 0 32px;border:1px solid rgba(255,255,255,.2);border-radius:50%;object-fit:cover;background:#355e9e}.intel-profile>span.ca-profile-avatar{display:grid;width:32px;height:32px;flex:0 0 32px;border-radius:50%;font-size:13px}
 .intel-profile small{color:#93a8c4}
 .intel-welcome{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin:0 2px 18px}
 .intel-kicker{display:block;font-size:9px;font-weight:800;letter-spacing:.2em;color:#78baff}
