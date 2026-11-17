@@ -680,3 +680,40 @@ body.intel-ad-detail-open{overflow:hidden!important}
 
 /* Exam preparation checklist details */
 .ex-plan-list{display:grid;gap:6px;margin:10px 0;padding:10px;border-radius:13px;background:rgba(255,255,255,.035)}.ex-plan-item{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:#d9e7f7}.ex-plan-item input{margin:2px 0 0;flex:none}.ex-plan-item small{display:block;color:#91a6bf;font-size:10px}.ex-plan-item.is-done span{text-decoration:line-through;opacity:.6}
+
+
+/* Campaign banners: preserve the complete 1200x400 artwork on desktop and mobile. */
+.intel-ad-link,
+.intel-ad-image{
+  display:block;
+  width:100%;
+  overflow:hidden;
+  background:rgba(8,17,30,.72);
+}
+.intel-ad-link img,
+.intel-ad-image img{
+  display:block;
+  width:100%!important;
+  height:auto!important;
+  max-height:none!important;
+  aspect-ratio:3 / 1;
+  object-fit:contain!important;
+  object-position:center center!important;
+}
+.intel-ad .intel-ad-prev,
+.intel-ad .intel-ad-next{
+  top:calc((100% - 58px) / 2);
+}
+@media(max-width:700px){
+  .intel-ad-link img,
+  .intel-ad-image img{
+    height:auto!important;
+    max-height:none!important;
+    aspect-ratio:3 / 1;
+    object-fit:contain!important;
+  }
+  .intel-ad .intel-ad-prev,
+  .intel-ad .intel-ad-next{
+    top:calc((100% - 52px) / 2);
+  }
+}
