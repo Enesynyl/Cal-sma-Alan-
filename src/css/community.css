@@ -47,3 +47,15 @@
 .community-viewer-note{padding:13px;border:1px solid var(--bd);border-radius:14px;color:var(--mu);font-size:13px;text-align:center}
 @media(max-width:850px){.community-group-layout{grid-template-columns:1fr}.community-members-panel{order:2}.community-members-list{max-height:260px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}}
 @media(max-width:560px){.community-modal{padding:16px;border-radius:19px}.community-form-two{grid-template-columns:1fr}.community-custom-role{align-items:flex-start}.community-role-line{flex-direction:column;gap:3px}.community-group-head{gap:9px}.community-group-layout{gap:10px}.community-chat{height:52vh;min-height:260px;padding:10px}.community-member-row{align-items:flex-start}.community-role-select-label select{max-width:95px}}
+
+/* Group roles, member moderation and personal notification controls */
+.community-group-head{flex-wrap:wrap}
+.community-group-head-actions{display:flex;align-items:center;justify-content:flex-end;gap:7px;flex-wrap:wrap;margin-left:auto}
+.community-group-head-actions button{min-height:36px;padding:7px 11px;font-size:11px}
+.community-member-row{flex-wrap:wrap}
+.community-member-actions{display:flex;gap:6px;flex:0 0 100%;justify-content:flex-end;flex-wrap:wrap}
+.community-member-actions button{min-height:30px;padding:5px 9px;font-size:10px}
+.community-member-actions .community-remove-member{border-color:rgba(230,95,95,.32)!important;color:#ffaaaa!important}
+.community-muted-badge{justify-self:start;color:#e8bd75;font-size:10px}
+.community-role-select-label{flex:0 0 auto}
+@media(max-width:560px){.community-group-head-actions{width:100%;margin-left:0;justify-content:flex-start}.community-group-head-actions button{flex:1}.community-member-actions{justify-content:flex-start}.community-role-select-label{margin-left:auto}}
