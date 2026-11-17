@@ -66,7 +66,7 @@ async function caProfileSave(ev){
   const d=await caProfileApi('saveProfile',{ad,universite,bolum,sinif,egitimDurumu,photoURL,pendingEmail});
   CA_PROFILE_CACHE=d.profile||{};CA_PROFILE_CACHE_AT=Date.now();status.textContent=pendingEmail?'Profil kaydedildi. E-posta değişikliği için doğrulama bağlantısı gönderdik.':'Profilin başarıyla kaydedildi.';
   toast(pendingEmail?'Profil kaydedildi. Yeni e-postanı doğrula.':'Profilin güncellendi.');setTimeout(()=>render(),650);
- }catch(x){status.textContent=x.message||'Kaydedilemedi.';toast(x.message||'Profil kaydedilemedi.')}
+ }catch(x){const raw=String(x?.message||'');const friendly=/Document name|FIRESTORE|Firestore|FirebaseError/i.test(raw)?'Profil kaydedilemedi. Bağlantını kontrol edip tekrar dene.':raw||'Profil bilgileri kaydedilemedi.';status.textContent=friendly;toast(friendly)}
  finally{if(btn)btn.disabled=false}
 }
 Object.assign(window,{profilePage,caProfileGet,caProfileAvatar,caProfilePhotoChanged,caProfileRemovePhoto,caProfileEducationChanged,caProfileCopyId,caProfileSave});
