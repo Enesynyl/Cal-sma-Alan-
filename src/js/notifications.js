@@ -180,6 +180,7 @@
    reg.showNotification(title,{body,icon:'/logo.svg',badge:'/logo.svg',tag:key,renotify:false,data:{url:opts.url||'/'}}).catch(()=>{});
   }
  }
+ const hwReminderLabelSafe=v=>v%10080===0?(v/10080)+' hafta':v%1440===0?(v/1440)+' gün':v%60===0?(v/60)+' saat':v+' dakika';
  const seenStates=new Map();
  function scheduleReminders(){
   clearInterval(scanTimer);
@@ -194,7 +195,7 @@
      if(['gorev','odev'].includes(r.type)&&['Tamamlandı','İptal edildi'].includes(r.durum))continue;
      const at=new Date(date+'T'+(r.saat||'23:59')+':00').getTime(),diff=at-now;
      const name=r.ad||r.on||'Etkinlik',label=r.type==='sinav'?'Sınav':r.type==='odev'?'Ödev':r.type==='takvim'?'Etkinlik':'Görev';
-     const thresholds=r.type==='odev'?[['24s',86400000,'1 gün','1d'],['3h',10800000,'3 saat','3h'],['1s',3600000,'1 saat','1h'],['15d',900000,'15 dakika','15m'],['now',0,'şimdi','now']].filter(x=>x[3]==='now'||(Array.isArray(r.reminders)?r.reminders:['1d','3h']).includes(x[3])):[['24s',86400000,'1 gün'],['1s',3600000,'1 saat'],['15d',900000,'15 dakika'],['now',0,'şimdi']];
+     const thresholds=r.type==='odev'?(Array.isArray(r.reminderOffsets)?r.reminderOffsets.map(Number).filter(v=>v>0&&Number.isFinite(v)).map(v=>[String(v)+'m',v*60000,hwReminderLabelSafe(v)]):[['24s',86400000,'1 gün'],['3h',10800000,'3 saat']]):[['24s',86400000,'1 gün'],['1s',3600000,'1 saat'],['15d',900000,'15 dakika'],['now',0,'şimdi']];
      for(const [code,ms,txt] of thresholds){
       const crossed=code==='now'?diff<=0&&diff>-60000:diff<=ms&&diff>ms-60000;
       if(crossed)notify(label+' hatırlatması',name+(code==='now'?' için zamanı geldi.':' için '+txt+' kaldı.'),'Hatırlatma',{key:r.id+'_'+date+'_'+code,url:'/'});
