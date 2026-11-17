@@ -6,6 +6,11 @@ const SERVER_REVISION='push-vapid-rotation-20261115-01';
 export default async function handler(req,res){
  res.setHeader('Cache-Control','no-store, no-cache, must-revalidate');
  res.setHeader('X-Push-Server-Revision',SERVER_REVISION);
+ if(req.method==='GET'){
+  const raw=process.env.PUSH_VAPID_PRIVATE_KEY||process.env.VAPID_PRIVATE_KEY||'';
+  const key=String(raw).trim();
+  return res.status(200).json({publicKey:VAPID_PUBLIC_KEY,diagnostics:{revision:SERVER_REVISION,privateKeyPresent:!!key,privateKeyLength:key.length,privateKeyFormat:/^[A-Za-z0-9_-]{43}$/.test(key)?'base64url-43':'unexpected'}});
+ }
  const trace=String(req.headers['x-push-trace']||req.query?.diag||'no-trace').slice(0,80);
  console.info('push-send:request',{trace,revision:SERVER_REVISION,method:req.method,hasAuthorization:!!req.headers.authorization,hasBody:!!req.body});
  if(req.method!=='POST')return res.status(405).json({error:'Method not allowed',revision:SERVER_REVISION});
