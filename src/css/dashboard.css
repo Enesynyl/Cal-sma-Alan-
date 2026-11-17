@@ -665,3 +665,5 @@ body.intel-ad-detail-open{overflow:hidden!important}
 .hw-form textarea{min-height:72px}.hw-reminders{display:flex;gap:15px;align-items:center;flex-wrap:wrap;margin:12px 0;color:#c1d1e3;font-size:12px}.hw-reminders b{width:100%}.hw-reminders label{display:flex;align-items:center;gap:6px;margin:0}.hw-reminders input{width:16px;height:16px;margin:0}
 .hw-delete{display:flex;justify-content:flex-end;margin-top:8px}.hw-delete button{color:#ffb4ba;border-color:#7e4650;background:#3a2631}
 @media(max-width:720px){.hw-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.hw-stats>div:last-child{grid-column:span 2}.hw-heading{align-items:flex-start}.hw-heading>.p{white-space:nowrap;padding:9px 11px;font-size:11px}.hw-list-tools{flex-direction:column}.hw-list-tools select{width:100%}.hw-form-grid{grid-template-columns:1fr}.hw-card-footer{align-items:flex-start}.hw-actions{width:100%}.hw-actions button{flex:1}.hw-cal-day{min-height:46px}}
+
+.hw-existing-files{padding:8px 10px;border:1px solid rgba(131,184,232,.22);border-radius:10px;color:#9bcfff;font-size:11px}
