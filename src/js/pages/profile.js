@@ -32,8 +32,9 @@ async function caProfileGet(force=false){
 }
 const caProfileEsc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function caProfileAvatar(p,size='large'){
- const photo=p?.photoURL;
- return photo?'<img class="ca-profile-avatar '+size+'" src="'+caProfileEsc(photo)+'" alt="Profil fotoğrafı">':'<span class="ca-profile-avatar '+size+'">'+caProfileEsc((p?.ad||p?.displayName||'Ö').trim().slice(0,1).toLocaleUpperCase('tr'))+'</span>';
+ const photo=String(p?.photoURL||'').trim();
+ const initial=caProfileEsc((p?.ad||p?.displayName||'Ö').trim().slice(0,1).toLocaleUpperCase('tr'));
+ return photo?'<img class="ca-profile-avatar '+size+'" src="'+caProfileEsc(photo)+'" alt="Profil fotoğrafı" data-fallback="'+initial+'" onerror="var node=document.createElement(\'span\');node.className=\'ca-profile-avatar '+size+'\';node.textContent=this.dataset.fallback||\'Ö\';this.replaceWith(node)">' :'<span class="ca-profile-avatar '+size+'">'+initial+'</span>';
 }
 async function profilePage(){
  let p;try{p=await caProfileGet(true)}catch(x){return '<section class="ca-profile-page"><div class="card"><h2>Profil</h2><p>'+caProfileEsc(x.message)+'</p><button onclick="render()">Yeniden dene</button></div></section>'}
