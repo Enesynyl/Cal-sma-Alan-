@@ -1,90 +1,67 @@
-/* ---- Ders defteri ---- */
-let DF={d:null,k:null,p:0,x:null,tools:false,range:null},dfT;
-const dfG=()=>(W.defter=W.defter||{}),dfSv=()=>put('ws',W),dfK=()=>(dfG()[DF.d]||[]).find(x=>x.id===DF.k);
-const dfIn=v=>{const k=dfK(),g=k&&k.p[DF.p];if(g){g.t=v;clearTimeout(dfT);dfT=setTimeout(dfSv,400)}};
-function dfToggleTools(){DF.tools=!DF.tools;dfDraw()}
-function dfSetPen(on){DF.pen=on?1:0;DF.sel=null;dfDraw()}
-function dfToggleBottom(){DF.bottomTools=!DF.bottomTools;dfDraw()}
-function dfLock(){const o=dfSel();if(!o)return;o.locked=!o.locked;dfSv();dfObjs();dfMark()}
-function dfRichIn(el){const g=dfCur();if(!g)return;g.html=el.innerHTML;g.t=el.innerText||'';clearTimeout(dfT);dfT=setTimeout(dfSv,350)}
-function dfSaveRange(){const s=getSelection();if(s?.rangeCount){const r=s.getRangeAt(0);if($('dft')?.contains(r.commonAncestorContainer))DF.range=r.cloneRange()}}
-function dfApplyTextColor(color){const el=$('dft');if(!el||!DF.range){toast('Önce rengini değiştirmek istediğin yazıyı seç.');return}el.focus();const s=getSelection();s.removeAllRanges();s.addRange(DF.range);document.execCommand('styleWithCSS',false,true);document.execCommand('foreColor',false,color);DF.range=null;dfRichIn(el)}
-function dfPaste(ev){ev.preventDefault();document.execCommand('insertText',false,ev.clipboardData?.getData('text/plain')||'');dfRichIn(ev.currentTarget)}
-function dfD(h){const r=$('dfroot');if(r){r.innerHTML=h;return}const d=$('dl');d.innerHTML=h;if(!d.open)d.showModal()}
-function dfAc(){DF={d:null,k:null,p:0,x:null};cur.m='not';cur.t=null;render()}
-function dfLandscape(){
- const root=$('dfroot');
- const lock=()=>{try{
-  if(screen.orientation&&typeof screen.orientation.lock==='function'){
-   const p=screen.orientation.lock('landscape');
-   if(p&&typeof p.catch==='function')p.catch(()=>toast('Otomatik yatay mod tarayıcı tarafından desteklenmiyor. Telefonu yan çevirip otomatik döndürmeyi aç. 📱'));
-  }else toast('Bu tarayıcı otomatik döndürmeyi desteklemiyor. Telefonu yan çevirip otomatik döndürmeyi aç. 📱');
- }catch(e){toast('Telefonu yan çevirip otomatik döndürmeyi aç. 📱')}};
- try{
-  if(root&&root.requestFullscreen&&!document.fullscreenElement){
-   const f=root.requestFullscreen();
-   if(f&&typeof f.then==='function'){f.then(lock).catch(lock);return}
-  }
- }catch(e){}
- lock();
+/* ---- Notlar: responsive three-pane workspace ---- */
+let NotesUI={view:'all',selected:null,query:'',tag:null,preview:false,menu:false,saveTimer:null,ready:false};
+const notesData=()=>{W.notes=Array.isArray(W.notes)?W.notes:[];return W.notes};
+const notesCurrent=()=>notesData().find(n=>n.id===NotesUI.selected);
+async function notesPrepare(){
+ if(NotesUI.ready)return;
+ // Reset only the legacy Notes/Defter module data; other workspace modules remain untouched.
+ if(!W.notesV2Reset){
+  delete W.defter;W.notes=[];
+  for(const r of await all('rec'))if(['not','dnot'].includes(r.type))await del('rec',r.id);
+  W.notesV2Reset=1;await put('ws',W);
+ }
+ notesData();NotesUI.ready=true;
 }
-function dfPortrait(){try{screen.orientation?.unlock?.()}catch(e){}}
-function dfOpen(c,k){DF={d:c,k,p:0,x:null};cur.m='not';cur.t=null;render()}
-async function defter(){await dfMig();setTimeout(dfDraw,20);return '<h1 style="margin:0 0 6px">📓 Notlar</h1><p class="m" style="margin:0 0 6px">Derslerin klasör gibi; içine konu, konunun içine defter sayfaları ekle.</p><div id="dfroot"></div>'}
-function dfArm(id,f){if(DF.x===id){DF.x=null;return f()}DF.x=id;toast('Silmek için tekrar dokun');setTimeout(()=>{DF.x=null},3000)}
-async function dfDraw(fl){const pgm=!!$('dfroot'),ds=[...(await recs(W.id,'ders')),{id:'genel',ad:'Genel notlar'}],X=pgm?'':'<button onclick="dlg()">✕</button>';
- if(!DF.d)return dfD(`${pgm?'':`<div class="bar"><h3 style="margin:0">📓 Ders defteri</h3>${X}</div>`}${ds.length?`<div class="fgrid">${ds.map(c=>{const n=dfG()[c.id]||[];return `<div class="fld" onclick="DF.d='${c.id}';dfDraw()"><b>${e(c.ad)}</b><small>${n.length} konu · ${n.reduce((s,x)=>s+x.p.length,0)} sayfa</small></div>`}).join('')}</div>`:'<div class="empty">Önce Dersler kısmına ders ekle.</div>'}`);
- const c=ds.find(x=>x.id===DF.d);if(!c){DF.d=null;return dfDraw()}
- if(!DF.k){const ks=dfG()[c.id]||[];return dfD(`<div class="bar"><button onclick="DF.d=null;dfDraw()">←</button><h3 style="margin:0">${e(c.ad)}</h3>${X}</div><div style="display:flex;gap:6px;margin-bottom:8px"><input id="dfn" placeholder="Yeni konu adı" onkeydown="if(event.key==='Enter')dfAdd()"><button class="p" onclick="dfAdd()" style="white-space:nowrap">＋ Konu</button></div>${ks.map(k=>`<div class="it" onclick="DF.k='${k.id}';DF.p=0;dfLandscape();dfDraw()"><div><b>📑 ${e(k.ad)}</b><small>${k.p.length} sayfa</small></div><button class="x" onclick="event.stopPropagation();dfArm('${k.id}',()=>dfDel('${k.id}'))">🗑️</button></div>`).join('')||'<div class="empty">Henüz konu yok. Yukarıdan ekle.</div>'}`)}
- const k=dfK();if(!k){DF.k=null;return dfDraw()}
- if(!k.p.length){k.p.push({id:uid(),t:''});dfSv()}
- DF.p=Math.max(0,Math.min(DF.p,k.p.length-1));const g=k.p[DF.p];
- g.o=g.o||[];const bg=g.bg||'cizgili',BGS={cizgili:'📏 Çizgili',kareli:'🔲 Kareli',noktali:'⚪ Noktalı',duz:'⬜ Düz',sari:'🟨 Sarı kâğıt',koyu:'🌙 Koyu'},CL=['#222222','#d33333','#1f6feb','#1a8f5a','#e8a317'],SK=['⭐','❤️','📌','✅','❗','💡','📚','🎯','🔥','😊','⚠️','📝','🌸','🏆'];
- dfD(`<div class="df-topline"><button onclick="dfPortrait();DF.k=null;DF.pen=0;dfDraw()" title="Konuya dön">←</button><h3>📑 ${e(k.ad)}</h3><button class="df-tools-toggle" title="Araçları aç veya kapat" onclick="dfToggleTools()">${DF.tools?'⌃':'⌄'}</button>${X}</div><div class="df-tools ${DF.tools?'open':''}"><div class="dtb"><label class="ph2">🖼️ Fotoğraf<input type="file" accept="image/*" hidden onchange="dfImg(this)"></label><button onclick="DF.stk=!DF.stk;dfDraw()">😊 Sticker</button><button class="${DF.pen?'p':''}" type="button" aria-pressed="${!!DF.pen}" onclick="dfSetPen(${DF.pen?0:1})">${DF.pen?"⌨️ Yazı moduna dön":"✏️ Kalem modu"}</button><select onchange="dfBg(this.value)">${Object.entries(BGS).map(([v,n])=>`<option value="${v}" ${v===bg?'selected':''}>${n}</option>`).join('')}</select></div>${DF.stk?`<div class="dtb">${SK.map(s=>`<button onclick="dfStk('${s}')">${s}</button>`).join('')}</div>`:''}${DF.pen?`<div class="dtb">${CL.map(c=>`<button onclick="DF.col='${c}';DF.er=0;dfDraw()" style="background:${c};width:30px;height:30px;padding:0;${DF.col===c&&!DF.er?'outline:3px solid var(--ac)':''}"></button>`).join('')}${[2,5,10].map(w=>`<button onclick="DF.wd=${w};dfDraw()" class="${(DF.wd||2)===w?'p':''}">${w===2?'ince':w===5?'orta':'kalın'}</button>`).join('')}<button class="${DF.er?'p':''}" onclick="DF.er=!DF.er;dfDraw()">🧽 Silgi</button><button onclick="dfUndo()">↩️</button><button onclick="dfArm('ink',dfClr)">🗑️ Çizimi sil</button></div>`:''}<div class="dtb"><b>Yazı rengi</b><label class="df-color-label">Özel renk<input type="color" value="${DF.textColor||'#222222'}" onpointerdown="dfSaveRange()" onmousedown="dfSaveRange()" onchange="DF.textColor=this.value;dfApplyTextColor(this.value)"></label>${CL.map(c=>`<button title="Seçili yazıya renk uygula" onmousedown="event.preventDefault();dfSaveRange()" onclick="dfApplyTextColor('${c}')" style="color:${c};font-weight:800">A</button>`).join('')}<span class="m">Yazıdan bir bölüm seçip renk seç.</span></div></div><div class="dtb" id="dfs" style="display:${DF.sel?'flex':'none'}"><span class="m">Seçili:</span><button onclick="dfSz(-1)">➖</button><button onclick="dfSz(1)">➕</button><button onclick="dfRs()" ${dfSel()?.locked?"disabled title=\"Önce kilidi aç\"":""}>↺ Düzelt</button><button onclick="dfLock()" title="Görseli sabitle">${dfSel()?.locked?"🔒 Kilidi aç":"🔓 Kilitle"}</button><button onclick="dfOd()">🗑️ Sil</button></div><div class="dnb"><div class="dspir"></div><div id="dfp" class="pgc ${bg} ${fl?'fl'+fl:''}"><input class="dti" placeholder="Başlık" value="${e(g.ti||'')}" oninput="dfTi(this.value)"><div id="dft" class="dftxt" contenteditable="${DF.pen?"false":"true"}" role="textbox" aria-multiline="true" data-placeholder="Notunu buraya yaz…" oninput="dfRichIn(this)" onpaste="dfPaste(event)" onfocus="if(DF.sel){DF.sel=null;dfMark()}">${g.html||e(g.t||'').replace(/\n/g,'<br>')}</div><div id="dfo" onpointerdown="dfDrag(event)"></div><canvas id="dfc" class="${DF.pen?'on':''}"></canvas></div></div><div class="df-bottom-dock ${DF.bottomTools?'open':''}"><button class="df-bottom-toggle" onclick="dfToggleBottom()" aria-label="Sayfa araçlarını aç veya kapat" title="Sayfa araçları">${DF.bottomTools?'⌄':'＋'}</button><div class="df-bottom-content"><div class="bar"><button onclick="dfGo(-1)" ${DF.p?'':'disabled'}>◀</button><span class="m">Sayfa ${DF.p+1} / ${k.p.length}</span><button onclick="dfGo(1)" ${DF.p<k.p.length-1?'':'disabled'}>▶</button></div><div class="row"><button onclick="dfPg()">＋ Yeni sayfa</button><button onclick="dfArm('p'+DF.p,dfPgDel)">🗑️ Sayfayı sil</button></div></div></div>`);setTimeout(dfInit,0)}
-const dfCur=()=>{const k=dfK();return k&&k.p[DF.p]},dfSel=()=>(dfCur().o||[]).find(z=>z.id===DF.sel);
-const dfTi=v=>{const g=dfCur();if(g){g.ti=v;clearTimeout(dfT);dfT=setTimeout(dfSv,400)}};
-function dfBg(v){const g=dfCur();if(!g)return;g.bg=v;const p=$('dfp');if(p){p.className='pgc '+v;p.dataset.paper=v;}dfSv();}
-function dfInit(){dfObjs();const c=$('dfc'),p=$('dfp');if(!c||!p)return;c.width=p.clientWidth;c.height=p.clientHeight;const g=dfCur(),x=c.getContext('2d');
- if(g.ink){const im=new Image();im.onload=()=>x.drawImage(im,0,0,c.width,c.height);im.src=g.ink}
- let dn=false,lx,ly;const pt=ev=>{const r=c.getBoundingClientRect();return[ev.clientX-r.left,ev.clientY-r.top]};
- c.onpointerdown=ev=>{if(!DF.pen)return;dn=true;c.setPointerCapture(ev.pointerId);[lx,ly]=pt(ev);(DF.undo=DF.undo||[]).push(c.toDataURL());if(DF.undo.length>10)DF.undo.shift()};
- c.onpointermove=ev=>{if(!dn)return;const[nx,ny]=pt(ev);x.globalCompositeOperation=DF.er?'destination-out':'source-over';x.strokeStyle=DF.col||'#222222';x.lineWidth=DF.er?(DF.wd||2)*4:(DF.wd||2);x.lineCap='round';x.lineJoin='round';x.beginPath();x.moveTo(lx,ly);x.lineTo(nx,ny);x.stroke();lx=nx;ly=ny};
- c.onpointerup=()=>{if(!dn)return;dn=false;g.ink=c.toDataURL('image/png');dfSv()}}
-function dfUndo(){const c=$('dfc'),u=(DF.undo||[]).pop();if(!u)return;const x=c.getContext('2d'),im=new Image();im.onload=()=>{x.globalCompositeOperation='source-over';x.clearRect(0,0,c.width,c.height);x.drawImage(im,0,0);dfCur().ink=c.toDataURL();dfSv()};im.src=u}
-function dfClr(){const c=$('dfc');c.getContext('2d').clearRect(0,0,c.width,c.height);dfCur().ink='';dfSv()}
-function dfImg(i){const f=i.files[0];i.value='';if(!f)return;const g=dfCur();if(!g)return toast('Önce bir sayfa aç');const fr=new FileReader();
- fr.onerror=()=>toast('Fotoğraf okunamadı ⚠️');
- fr.onload=()=>{const im=new Image();im.onerror=()=>toast('Bu fotoğraf biçimi desteklenmiyor (HEIC olabilir). JPG veya PNG dene ⚠️');
-  im.onload=()=>{try{const m=Math.min(1,800/Math.max(im.width,im.height)),cv=document.createElement('canvas');cv.width=Math.round(im.width*m);cv.height=Math.round(im.height*m);cv.getContext('2d').drawImage(im,0,0,cv.width,cv.height);
-   const o={id:uid(),k:'img',src:cv.toDataURL('image/jpeg',.8),x:.08,y:70,w:.4,hh:.4*cv.height/cv.width,r:0,kx:0,ky:0};(g.o=g.o||[]).push(o);DF.sel=o.id;dfSv();dfObjs();toast('Fotoğraf eklendi 🖼️')}catch(x){toast('Fotoğraf eklenemedi: '+x.message)}};
-  im.src=fr.result};fr.readAsDataURL(f)}
-function dfStk(s){const o={id:uid(),k:'stk',e:s,x:.4,y:120,s:48};dfCur().o.push(o);DF.sel=o.id;dfSv();dfObjs()}
-function dfOd(){const g=dfCur();g.o=g.o.filter(z=>z.id!==DF.sel);DF.sel=null;dfSv();dfObjs()}
-const dfCw=()=>$('dfp').clientWidth;
-function dfAp(el,o){const cw=dfCw();el.style.left=o.x*100+'%';el.style.top=o.y+'px';if(o.k==='img'){el.style.width=o.w*100+'%';el.style.height=o.hh?o.hh*cw+'px':'auto'}else el.style.fontSize=o.s+'px';el.style.transform=(o.r||o.kx||o.ky)?`rotate(${o.r||0}deg) skew(${o.kx||0}deg,${o.ky||0}deg)`:''}
-function dfObjs(){const g=dfCur(),b=$('dfo');if(!b||!g)return;b.innerHTML=g.o.map(o=>o.k==='img'?`<div class="ob" data-i="${o.id}" data-locked="${o.locked?'1':'0'}"><img src="${o.src}" draggable="false"></div>`:`<span class="ob" data-i="${o.id}" data-locked="${o.locked?'1':'0'}">${o.e}</span>`).join('');b.querySelectorAll('.ob').forEach(el=>dfAp(el,g.o.find(z=>z.id===el.dataset.i)));dfMark()}
-function dfMark(){document.querySelectorAll('#dfo .hnd').forEach(x=>x.remove());document.querySelectorAll('#dfo .ob').forEach(x=>{const on=x.dataset.i===DF.sel;x.classList.toggle('sel',on);if(on){const o=dfSel(),H=o.k==='img'?[['nw',0,0],['n',50,0],['ne',100,0],['e',100,50],['se',100,100],['s',50,100],['sw',0,100],['w',0,50],['skx',80,0],['sky',0,80]]:[['nw',0,0],['ne',100,0],['se',100,100],['sw',0,100]];H.push(['rot',50,0]);x.insertAdjacentHTML('beforeend',H.map(([h,l,t])=>`<i class="hnd ${h}" data-h="${h}" style="left:${l}%;top:${t}%"></i>`).join(''))}});const s=$('dfs');if(s)s.style.display=DF.sel?'flex':'none'}
-function dfSz(d){const o=dfSel();if(!o)return;if(o.locked){toast('Boyutunu değiştirmek için önce kilidini aç. 🔒');return}const f=1+d*.1,cw=dfCw();if(o.k==='img'){if(!o.hh)o.hh=document.querySelector('#dfo .ob.sel').offsetHeight/cw;o.w=Math.max(.08,Math.min(1.5,o.w*f));o.hh*=f}else o.s=Math.max(16,Math.min(220,o.s*f));dfSv();dfObjs()}
-function dfRs(){const o=dfSel();if(!o)return;if(o.locked){toast('Önce görselin kilidini aç. 🔒');return}o.r=0;o.kx=0;o.ky=0;dfSv();dfObjs()}
-function dfDrag(ev){const t=ev.target,el=t.closest('.ob');if(!el||DF.pen)return;const g=dfCur(),o=g.o.find(z=>z.id===el.dataset.i);if(!o)return;if(DF.sel!==o.id){DF.sel=o.id;dfMark()}
- const cw=dfCw(),H=t.dataset.h||'',bx=$('dfp').getBoundingClientRect();if(o.locked){toast('Bu görsel kilitli. Önce kilidini aç. 🔒');return}if(o.k==='img'&&!o.hh)o.hh=el.offsetHeight/cw;
- const sx=ev.clientX,sy=ev.clientY,O={...o},th=(O.r||0)*Math.PI/180,cs=Math.cos(th),sn=Math.sin(th),r0=el.getBoundingClientRect(),cx0=r0.left+r0.width/2,cy0=r0.top+r0.height/2,W0=o.k==='img'?O.w*cw:el.offsetWidth,H0=o.k==='img'?O.hh*cw:el.offsetHeight;
- t.setPointerCapture(ev.pointerId);ev.preventDefault();
- const mv=m=>{const dx=m.clientX-sx,dy=m.clientY-sy,lx=dx*cs+dy*sn,ly=-dx*sn+dy*cs;
-  if(!H){o.x=Math.max(-.2,Math.min(1,O.x+dx/bx.width));o.y=Math.max(-20,Math.min(bx.height-20,O.y+dy))}
-  else if(H==='rot'){let a=Math.round(Math.atan2(m.clientY-cy0,m.clientX-cx0)*180/Math.PI+90);if(Math.abs(a%45)<4)a=Math.round(a/45)*45;o.r=a}
-  else if(H==='skx')o.kx=Math.max(-60,Math.min(60,(O.kx||0)+lx*.4));
-  else if(H==='sky')o.ky=Math.max(-60,Math.min(60,(O.ky||0)+ly*.4));
-  else{const gx=/e/.test(H)?1:/w/.test(H)?-1:0,gy=/s/.test(H)?1:/n/.test(H)?-1:0;let W=W0,Hh=H0;
-   if(o.k==='stk'||(gx&&gy)){W=Math.max(24,W0+gx*lx);Hh=H0*W/W0}else{if(gx)W=Math.max(24,W0+gx*lx);if(gy)Hh=Math.max(24,H0+gy*ly)}
-   const ax=gx*(W-W0)/2,ay=gy*(Hh-H0)/2,X=O.x*cw+W0/2+ax*cs-ay*sn-W/2,Y=O.y+H0/2+ax*sn+ay*cs-Hh/2;o.x=X/cw;o.y=Y;
-   if(o.k==='img'){o.w=W/cw;o.hh=Hh/cw}else o.s=Math.max(16,O.s*W/W0)}
-  dfAp(el,o)},up=()=>{t.removeEventListener('pointermove',mv);t.removeEventListener('pointerup',up);dfSv()};t.addEventListener('pointermove',mv);t.addEventListener('pointerup',up)}
-const dfGo=d=>{DF.p+=d;dfDraw(d>0?'R':'L')};
-async function dfAdd(){const a=$('dfn').value.trim();if(!a){toast('Önce konu adını yaz ✏️');$('dfn').focus();return}const k={id:uid(),ad:a,p:[]};(dfG()[DF.d]=dfG()[DF.d]||[]).push(k);await dfSv();DF.k=k.id;DF.p=0;dfDraw()}
-async function dfDel(id){dfG()[DF.d]=dfG()[DF.d].filter(x=>x.id!==id);await dfSv();dfDraw()}
-async function dfPg(){const k=dfK();k.p.push({id:uid(),t:'',bg:(k.p[DF.p]||{}).bg});DF.p=k.p.length-1;await dfSv();dfDraw('R')}
-async function dfPgDel(){const k=dfK();k.p.splice(DF.p,1);await dfSv();dfDraw('L')}
-async function dfMig(){const f='mig4_'+W.id;if((await P(tx('meta').get(f)))?.v)return;const ds=await recs(W.id,'ders'),old=await recs(W.id,'not');
- old.sort((x,y)=>(x.ts||0)-(y.ts||0)).forEach(r=>{const c=ds.find(x=>trl(x.ad||'')===trl(r.ders||'')),cid=c?c.id:'genel',ks=(dfG()[cid]=dfG()[cid]||[]),ad=(r.ad||'Not').trim();let k=ks.find(x=>trl(x.ad)===trl(ad));if(!k){k={id:uid(),ad,p:[]};ks.push(k)}if(r.not&&r.not.trim())k.p.push({id:uid(),t:r.not})});
- await dfSv();await put('meta',{k:f,v:1})}
+async function defter(){await notesPrepare();return notesRender()}
+function notesMarkdown(src){
+ return e(src).split('\n').map(line=>{
+  if(/^### /.test(line))return '<h3>'+line.slice(4)+'</h3>';
+  if(/^## /.test(line))return '<h2>'+line.slice(3)+'</h2>';
+  if(/^# /.test(line))return '<h1>'+line.slice(2)+'</h1>';
+  if(/^[-*] /.test(line))return '<p>• '+line.slice(2)+'</p>';
+  return '<p>'+line.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*(.+?)\*/g,'<em>$1</em>')+'</p>';
+ }).join('');
+}
+function notesRender(){
+ const allNotes=notesData(),active=notesCurrent();
+ const rows=allNotes.filter(n=>{
+  if(NotesUI.view==='trash')return !!n.trashedAt;
+  if(n.trashedAt)return false;
+  if(NotesUI.view==='pinned'&&!n.pinned)return false;
+  if(NotesUI.tag&&!(n.tags||[]).includes(NotesUI.tag))return false;
+  const q=NotesUI.query.trim().toLocaleLowerCase('tr');
+  return !q||[n.title,n.content,...(n.tags||[])].join(' ').toLocaleLowerCase('tr').includes(q);
+ }).sort((a,b)=>(Number(!!b.pinned)-Number(!!a.pinned))||(b.updatedAt||0)-(a.updatedAt||0));
+ const tags=[...new Set(allNotes.filter(n=>!n.trashedAt).flatMap(n=>n.tags||[]))].sort((a,b)=>a.localeCompare(b,'tr'));
+ const nav=(id,ico,label)=>'<button class="n2-nav '+(NotesUI.view===id&&!NotesUI.tag?'active':'')+'" onclick="notesSetView(\''+id+'\')"><span>'+ico+'</span><span>'+label+'</span>'+(id==='all'?'<small>'+allNotes.filter(n=>!n.trashedAt).length+'</small>':'')+'</button>';
+ const list=rows.map(n=>'<button class="n2-note '+(n.id===NotesUI.selected?'selected':'')+'" onclick="notesSelect(\''+n.id+'\')"><span class="n2-note-title">'+e(n.title||'Adsız not')+(n.pinned?' <i>✦</i>':'')+'</span><span class="n2-note-preview">'+e((n.content||'Henüz içerik yok').replace(/[#>*_\x60]/g,'').replace(/\s+/g,' ').slice(0,110))+'</span><span class="n2-note-date">'+new Date(n.updatedAt||n.createdAt||Date.now()).toLocaleDateString('tr-TR',{day:'numeric',month:'short'})+'</span></button>').join('');
+ let editor='';
+ if(active&&!active.trashedAt){
+  editor='<section class="n2-editor"><header class="n2-editor-top"><div class="n2-breadcrumb">Tüm Notlar <span>›</span> <b>'+e(active.title||'Adsız not')+'</b></div><div class="n2-actions"><button title="Sabitle" onclick="notesPin()">'+(active.pinned?'★':'☆')+'</button><button title="Markdown" onclick="notesPreview()">M↓</button><button title="Bağlantıyı kopyala" onclick="notesCopy()">↗</button><button title="Diğer işlemler" onclick="notesMenu()">•••</button></div></header>'+
+  (NotesUI.menu?'<div class="n2-menu"><button onclick="notesPin()">Sabitle / sabitlemeyi kaldır</button><button onclick="notesPreview()">Markdown önizleme</button><button onclick="notesCopy()">Dahili bağlantıyı kopyala</button><button class="danger" onclick="notesTrash()">Çöp kutusuna taşı</button></div>':'')+
+  '<input class="n2-title-input" value="'+e(active.title||'')+'" placeholder="Not başlığı" oninput="notesEdit(\'title\',this.value)"><div class="n2-meta"><span>Son düzenleme: '+new Date(active.updatedAt||Date.now()).toLocaleString('tr-TR')+'</span><div class="n2-tags">'+(active.tags||[]).map(t=>'<button onclick="notesTagFilter(\''+e(t)+'\')">#'+e(t)+'</button>').join('')+'</div></div>'+
+  (NotesUI.preview?'<article class="n2-markdown">'+notesMarkdown(active.content||'')+'</article>':'<textarea class="n2-content" placeholder="Notunu buraya yaz... Markdown desteklenir." oninput="notesEdit(\'content\',this.value)">'+e(active.content||'')+'</textarea>')+
+  '<footer class="n2-editor-footer"><input placeholder="Etiket ekle (Enter)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();notesAddTag(this.value);this.value=\'\'}"><span>Otomatik kaydedilir</span></footer></section>';
+ }else if(NotesUI.view==='trash'&&active){
+  editor='<section class="n2-empty"><div class="n2-empty-icon">♻</div><h2>'+e(active.title||'Adsız not')+'</h2><p>Bu not çöp kutusunda.</p><button class="n2-primary" onclick="notesRestore()">Geri yükle</button><button class="n2-quiet danger" onclick="notesDelete()">Kalıcı olarak sil</button></section>';
+ }else{
+  editor='<section class="n2-empty"><div class="n2-empty-icon">✎</div><h2>Notlarını burada düzenle</h2><p>Bir not seç veya yeni bir not oluşturarak başla.</p><button class="n2-primary" onclick="notesCreate()">＋ Yeni not oluştur</button></section>';
+ }
+ return '<div class="n2-workspace"><aside class="n2-sidebar"><div class="n2-brand"><span class="n2-brand-mark">✎</span><b>Notlar</b><button class="n2-collapse" onclick="document.querySelector(\'.n2-workspace\').classList.toggle(\'sidebar-collapsed\')">☰</button></div><nav class="n2-navs">'+nav('all','▤','Tüm Notlar')+nav('pinned','☆','Sabitlenenler')+nav('trash','▱','Çöp Kutusu')+'</nav><div class="n2-side-heading">ETİKETLER <button onclick="notesNewTag()">DÜZENLE</button></div><div class="n2-tag-list">'+(tags.map(t=>'<button class="'+(NotesUI.tag===t?'active':'')+'" onclick="notesTagFilter(\''+e(t)+'\')"># '+e(t)+'</button>').join('')||'<span>Henüz etiket yok</span>')+'</div><div class="n2-side-bottom"><span>● Kayıt etkin</span><small>Çalışma Alanım · Notlar</small></div></aside>'+
+ '<section class="n2-list-panel '+(active?'has-selection':'')+'"><div class="n2-list-head"><div><h2>'+(NotesUI.view==='trash'?'Çöp Kutusu':NotesUI.view==='pinned'?'Sabitlenenler':'Tüm Notlar')+'</h2><small>'+rows.length+' not</small></div><button class="n2-new" onclick="notesCreate()">＋</button></div><label class="n2-search"><span>⌕</span><input value="'+e(NotesUI.query)+'" placeholder="Notlarda ve etiketlerde ara" oninput="notesSearch(this.value)"><kbd>⌘ K</kbd></label><div class="n2-note-list">'+(list||'<div class="n2-list-empty">Burada henüz not yok.</div>')+'</div></section><div class="n2-editor-panel '+(active?'has-selection':'')+'">'+editor+'</div></div>';
+}
+function notesSetView(v){NotesUI.view=v;NotesUI.tag=null;NotesUI.selected=null;NotesUI.menu=false;render()}
+function notesSelect(id){NotesUI.selected=id;NotesUI.menu=false;render()}
+async function notesCreate(){const n={id:uid(),title:'',content:'',tags:[],pinned:false,createdAt:Date.now(),updatedAt:Date.now()};notesData().unshift(n);NotesUI.view='all';NotesUI.tag=null;NotesUI.selected=n.id;await put('ws',W);render();setTimeout(()=>document.querySelector('.n2-title-input')?.focus(),80)}
+function notesSearch(v){NotesUI.query=v;const root=document.querySelector('.n2-workspace');if(root){const tpl=document.createElement('template');tpl.innerHTML=notesRender();root.replaceWith(tpl.content.firstElementChild)}}
+function notesEdit(k,v){const n=notesCurrent();if(!n)return;n[k]=v;n.updatedAt=Date.now();clearTimeout(NotesUI.saveTimer);NotesUI.saveTimer=setTimeout(()=>put('ws',W),400);if(k==='title'){const t=document.querySelector('.n2-note.selected .n2-note-title');if(t)t.textContent=v||'Adsız not'}}
+async function notesPin(){const n=notesCurrent();if(!n)return;n.pinned=!n.pinned;n.updatedAt=Date.now();NotesUI.menu=false;await put('ws',W);render()}
+async function notesTrash(){const n=notesCurrent();if(!n)return;n.trashedAt=Date.now();n.updatedAt=Date.now();NotesUI.selected=null;NotesUI.menu=false;await put('ws',W);render()}
+async function notesRestore(){const n=notesCurrent();if(!n)return;delete n.trashedAt;n.updatedAt=Date.now();NotesUI.view='all';await put('ws',W);render()}
+async function notesDelete(){const n=notesCurrent();if(!n)return;W.notes=notesData().filter(x=>x.id!==n.id);NotesUI.selected=null;await put('ws',W);render()}
+function notesPreview(){NotesUI.preview=!NotesUI.preview;NotesUI.menu=false;render()}
+function notesMenu(){NotesUI.menu=!NotesUI.menu;render()}
+function notesTagFilter(t){NotesUI.tag=NotesUI.tag===t?null:t;NotesUI.view='all';NotesUI.selected=null;render()}
+async function notesAddTag(v){const n=notesCurrent(),t=String(v||'').trim().replace(/^#/,'');if(!n||!t)return;n.tags=n.tags||[];if(!n.tags.includes(t))n.tags.push(t);n.updatedAt=Date.now();await put('ws',W);render()}
+function notesNewTag(){const t=prompt('Etiket adı');if(t)notesTagFilter(t.trim().replace(/^#/,''))}
+async function notesCopy(){const n=notesCurrent();if(!n)return;try{await navigator.clipboard.writeText(location.href.split('#')[0]+'#note-'+n.id);toast('Not bağlantısı kopyalandı')}catch(_){toast('Bağlantı kopyalanamadı')}}
