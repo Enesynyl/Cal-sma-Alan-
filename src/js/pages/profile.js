@@ -1,13 +1,34 @@
 /* Student profile editor and identity card. */
-let CA_PROFILE_CACHE=null,CA_PROFILE_CACHE_AT=0,CA_PROFILE_DRAFT_PHOTO=null,CA_PROFILE_REMOVE_PHOTO=false;
+let CA_PROFILE_CACHE=null,CA_PROFILE_CACHE_AT=0,CA_PROFILE_CACHE_UID='',CA_PROFILE_DRAFT_PHOTO=null,CA_PROFILE_REMOVE_PHOTO=false;
 async function caProfileApi(action,data={}){
  const user=FB?.auth?.currentUser;if(!user)throw new Error('Profilini düzenlemek için hesabına giriş yapmalısın.');
  const token=await user.getIdToken(),r=await fetch('/api/community',{method:'POST',cache:'no-store',headers:{'content-type':'application/json',authorization:'Bearer '+token},body:JSON.stringify({action,...data})});
  const d=await r.json().catch(()=>({}));if(!r.ok||d.ok===false)throw new Error(d.error||'Profil işlemi tamamlanamadı.');return d;
 }
 async function caProfileGet(force=false){
- if(!force&&CA_PROFILE_CACHE&&Date.now()-CA_PROFILE_CACHE_AT<60000)return CA_PROFILE_CACHE;
- const d=await caProfileApi('getProfile');CA_PROFILE_CACHE=d.profile||{};CA_PROFILE_CACHE_AT=Date.now();return CA_PROFILE_CACHE;
+ // Do not assume Firebase has finished restoring the signed-in user when the dashboard first renders.
+ let app=FB;
+ if(typeof fbLoad==='function'){
+  try{app=await fbLoad()}catch(loadError){if(!app?.auth?.currentUser)throw loadError}
+ }
+ const user=app?.auth?.currentUser;
+ if(!user)throw new Error('Oturum bilgisi henüz hazır değil. Profil yeniden yüklenecek.');
+ if(!force&&CA_PROFILE_CACHE&&CA_PROFILE_CACHE_UID===user.uid&&Date.now()-CA_PROFILE_CACHE_AT<60000)return CA_PROFILE_CACHE;
+ // Read the authenticated user's own Firestore profile from the server first. This is the
+ // same document that the profile editor saves and avoids a startup race with the API layer.
+ try{
+  const ref=app.fs.doc(app.db,'users',user.uid,'sync','profile');
+  const snap=app.fs.getDocFromServer?await app.fs.getDocFromServer(ref):await app.fs.getDoc(ref);
+  if(snap.exists()){
+   CA_PROFILE_CACHE=snap.data()||{};CA_PROFILE_CACHE_AT=Date.now();CA_PROFILE_CACHE_UID=user.uid;
+   return CA_PROFILE_CACHE;
+  }
+ }catch(readError){console.warn('Profil doğrudan okunamadı; sunucu API yedeği deneniyor:',readError)}
+ // Keep the authenticated API path as a fallback for accounts whose Firestore rules
+ // do not permit a direct document read on this client.
+ const d=await caProfileApi('getProfile');
+ CA_PROFILE_CACHE=d.profile||{};CA_PROFILE_CACHE_AT=Date.now();CA_PROFILE_CACHE_UID=user.uid;
+ return CA_PROFILE_CACHE;
 }
 const caProfileEsc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function caProfileAvatar(p,size='large'){
@@ -64,7 +85,7 @@ async function caProfileSave(ev){
   if(email&&email!==user.email){if(!FB?.au?.verifyBeforeUpdateEmail)throw new Error('E-posta değiştirme şu anda desteklenmiyor.');await FB.au.verifyBeforeUpdateEmail(user,email);pendingEmail=email}
   const current=await caProfileGet(true),photoURL=CA_PROFILE_DRAFT_PHOTO!==null?CA_PROFILE_DRAFT_PHOTO:(CA_PROFILE_REMOVE_PHOTO?'':current.photoURL||'');
   const d=await caProfileApi('saveProfile',{ad,universite,bolum,sinif,egitimDurumu,photoURL,pendingEmail});
-  CA_PROFILE_CACHE=d.profile||{};CA_PROFILE_CACHE_AT=Date.now();status.textContent=pendingEmail?'Profil kaydedildi. E-posta değişikliği için doğrulama bağlantısı gönderdik.':'Profilin başarıyla kaydedildi.';
+  CA_PROFILE_CACHE=d.profile||{};CA_PROFILE_CACHE_AT=Date.now();CA_PROFILE_CACHE_UID=user.uid;status.textContent=pendingEmail?'Profil kaydedildi. E-posta değişikliği için doğrulama bağlantısı gönderdik.':'Profilin başarıyla kaydedildi.';
   toast(pendingEmail?'Profil kaydedildi. Yeni e-postanı doğrula.':'Profilin güncellendi.');setTimeout(()=>render(),650);
  }catch(x){const raw=String(x?.message||'');const friendly=/Document name|FIRESTORE|Firestore|FirebaseError/i.test(raw)?'Profil kaydedilemedi. Bağlantını kontrol edip tekrar dene.':raw||'Profil bilgileri kaydedilemedi.';status.textContent=friendly;toast(friendly)}
  finally{if(btn)btn.disabled=false}
