@@ -106,20 +106,38 @@ async function intelLoadCampaigns(){
  }).catch(()=>intelCampaignCache).finally(()=>{intelCampaignRequest=null});
  return intelCampaignRequest;
 }
-let intelHomeDataCache=null,intelHomeDataCacheAt=0,intelHomeDataRequest=null;
+let intelHomeDataCache=null,intelHomeDataCacheAt=0,intelHomeDataCacheKey='',intelHomeDataRequest=null,intelHomeDataRequestKey='';
 async function intelLoadHomeData(){
- if(intelHomeDataCache?.wsId===W.id&&Date.now()-intelHomeDataCacheAt<12000)return intelHomeDataCache;
- if(intelHomeDataRequest)return intelHomeDataRequest;
+ const userKey=FB?.auth?.currentUser?.uid||CA_PROFILE_CACHE_UID||'';
+ const cacheKey=String(W?.id||'')+'|'+userKey;
+ if(intelHomeDataCache?.wsId===W.id&&intelHomeDataCacheKey===cacheKey&&Date.now()-intelHomeDataCacheAt<12000)return intelHomeDataCache;
+ if(intelHomeDataRequest&&intelHomeDataRequestKey===cacheKey)return intelHomeDataRequest;
+ if(intelHomeDataRequest)await intelHomeDataRequest.catch(()=>{});
+ intelHomeDataRequestKey=cacheKey;
  intelHomeDataRequest=(async()=>{
-  // Load the latest saved profile before rendering the dashboard. A timeout fallback
-  // caused the initial avatar to render as an initial and never update after the fetch.
-  const profilePromise=caProfileGet(true).catch(()=>CA_PROFILE_CACHE||{});
   const rowsPromise=recs(W.id);
-  const [rows,profile]=await Promise.all([rowsPromise,profilePromise]);
+  let profile={},profileLoaded=false,lastProfileError=null;
+  // Wait for Firebase auth restoration (inside caProfileGet) and retry transient startup failures.
+  for(let attempt=0;attempt<3;attempt++){
+   try{profile=await caProfileGet(true)||{};profileLoaded=true;break}
+   catch(error){
+    lastProfileError=error;
+    if(attempt<2)await new Promise(resolve=>setTimeout(resolve,300*(attempt+1)));
+   }
+  }
+  if(!profileLoaded&&userKey&&CA_PROFILE_CACHE_UID===userKey&&CA_PROFILE_CACHE){
+   profile=CA_PROFILE_CACHE;profileLoaded=true;
+  }
+  if(!profileLoaded&&lastProfileError)console.warn('Ana ekran profil fotoğrafı yüklenemedi; sonraki çizimde yeniden denenecek:',lastProfileError);
+  const rows=await rowsPromise;
   const data={wsId:W.id,rows,profile:profile||{}};
-  intelHomeDataCache=data;intelHomeDataCacheAt=Date.now();
+  intelHomeDataCache=data;
+  const resolvedUserKey=FB?.auth?.currentUser?.uid||CA_PROFILE_CACHE_UID||'';
+  intelHomeDataCacheKey=String(W?.id||'')+'|'+resolvedUserKey;
+  // Never cache an empty profile caused by an auth/network race.
+  intelHomeDataCacheAt=profileLoaded?Date.now():0;
   return data;
- })().finally(()=>{intelHomeDataRequest=null});
+ })().finally(()=>{intelHomeDataRequest=null;intelHomeDataRequestKey=''});
  return intelHomeDataRequest;
 }
 async function intelligenceHome(){
