@@ -36,9 +36,19 @@ function caProfileAvatar(p,size='large'){
  const initial=caProfileEsc((p?.ad||p?.displayName||'Ö').trim().slice(0,1).toLocaleUpperCase('tr'));
  return photo?'<img class="ca-profile-avatar '+size+'" src="'+caProfileEsc(photo)+'" alt="Profil fotoğrafı" data-fallback="'+initial+'" onerror="var node=document.createElement(\'span\');node.className=\'ca-profile-avatar '+size+'\';node.textContent=this.dataset.fallback||\'Ö\';this.replaceWith(node)">' :'<span class="ca-profile-avatar '+size+'">'+initial+'</span>';
 }
-async function profilePage(){
- let p;try{p=await caProfileGet(true)}catch(x){return '<section class="ca-profile-page"><div class="card"><h2>Profil</h2><p>'+caProfileEsc(x.message)+'</p><button onclick="render()">Yeniden dene</button></div></section>'}
+function profilePage(){
+ const user=FB?.auth?.currentUser;
+ const cached=CA_PROFILE_CACHE&&(!user||CA_PROFILE_CACHE_UID===user.uid)?CA_PROFILE_CACHE:{};
+ const p={...cached,ad:cached.ad||cached.displayName||user?.displayName||'',email:cached.email||user?.email||''};
  CA_PROFILE_DRAFT_PHOTO=null;CA_PROFILE_REMOVE_PHOTO=false;
+ // Refresh the authoritative profile in the background; never block page navigation on network.
+ caProfileGet(true).then(fresh=>{
+  if(cur.m!=='profil'||!fresh)return;
+  const fields={name:fresh.ad||fresh.displayName||'',email:FB?.auth?.currentUser?.email||fresh.email||'',university:fresh.universite||'',department:fresh.bolum||'',year:fresh.sinif||'',id:fresh.studentId||''};
+  for(const [key,value] of Object.entries(fields)){const el=document.getElementById('ca-profile-'+key);if(el&&!el.matches(':focus')&&!el.dataset.userEdited&&value)el.value=value}
+  const photo=document.getElementById('ca-profile-photo-preview');if(photo&&!CA_PROFILE_DRAFT_PHOTO&& !CA_PROFILE_REMOVE_PHOTO)photo.innerHTML=caProfileAvatar(fresh,'preview');
+  const education=fresh.egitimDurumu||'öğrenci';const select=document.getElementById('ca-profile-education');if(select&&!select.matches(':focus')){select.value=education;caProfileEducationChanged(education)}
+ }).catch(x=>console.warn('Profil arka planda yenilenemedi:',x));
  const education=p.egitimDurumu||((p.universite||'').includes('Üniversitesi')?'öğrenci':p.universite==='Mezun'?'mezun':'öğrenci değil');
  return `<section class="ca-profile-page">
   <header class="ca-profile-heading"><button type="button" onclick="cur.m='bugun';render()">‹ Bugün</button><div><span>HESAP VE KİŞİSEL BİLGİLER</span><h1>Profil düzenleme</h1><p>Bilgilerini ve profil fotoğrafını buradan güncelleyebilirsin.</p></div></header>
@@ -55,8 +65,20 @@ async function profilePage(){
    <div class="ca-profile-id"><div><small>ÖĞRENCİ ID'N</small><b id="ca-profile-id-value">${caProfileEsc(p.studentId||'Atanıyor…')}</b><p>Arkadaşların seni bu ID ile de bulabilir.</p></div><button type="button" onclick="caProfileCopyId()">Kopyala</button></div>
    <div class="ca-profile-actions"><span id="ca-profile-status" role="status"></span><button class="p" type="submit">Değişiklikleri kaydet</button></div>
   </form>
+  <section class="ca-account-card">
+   <div class="ca-account-heading"><span>GÜVENLİK VE VERİLER</span><h2>Hesap yönetimi</h2><p>Oturumunu ve çalışma alanı verilerini buradan yönet.</p></div>
+   <div class="ca-account-actions">
+    <button type="button" onclick="pin()"><span class="ca-account-icon">🔒</span><span><b>PIN kilidi</b><small>Uygulama kilidini ayarla veya kaldır.</small></span><i>›</i></button>
+    <button type="button" onclick="caProfileResetData()"><span class="ca-account-icon">↻</span><span><b>Verileri sıfırla</b><small>Bu çalışma alanındaki kayıtları temizle.</small></span><i>›</i></button>
+    <button type="button" onclick="caProfileSignOut()"><span class="ca-account-icon">⇥</span><span><b>Hesaptan çıkış yap</b><small>Hesabından güvenli şekilde çıkış yap.</small></span><i>›</i></button>
+    <button type="button" class="danger" onclick="caProfileDeleteInfo()"><span class="ca-account-icon">⌫</span><span><b>Hesabımı kalıcı olarak sil</b><small>Kalıcı hesap silme işlemi için güvenli doğrulama gerekir.</small></span><i>›</i></button>
+   </div>
+  </section>
  </section>`;
 }
+function caProfileResetData(){ask('Bu çalışma alanındaki tüm veriler kalıcı olarak silinsin mi?',dws)}
+function caProfileSignOut(){ask('Hesabından çıkış yapmak istediğine emin misin?',()=>fbAct('out'))}
+function caProfileDeleteInfo(){dlg('<div class="ca-delete-info"><h3>Hesabı kalıcı olarak sil</h3><p>Hesabın ve bulutta saklanan kişisel verilerin birlikte silinmesi için güvenli hesap silme servisi gerekiyor. Bu işlem henüz etkinleştirilmedi; verilerinin bir kısmının geride kalmaması için şu anda silme işlemi başlatılmıyor.</p><div class="row"><button type="button" class="p" onclick="dlg()">Anladım</button></div></div>')}
 async function caProfilePhotoChanged(input){
  const file=input.files?.[0];if(!file)return;
  if(!/^image\/(jpeg|png|webp)$/i.test(file.type)){toast('JPG, PNG veya WEBP fotoğraf seç.');input.value='';return}
@@ -91,4 +113,4 @@ async function caProfileSave(ev){
  }catch(x){const raw=String(x?.message||'');const friendly=/Document name|FIRESTORE|Firestore|FirebaseError/i.test(raw)?'Profil kaydedilemedi. Bağlantını kontrol edip tekrar dene.':raw||'Profil bilgileri kaydedilemedi.';status.textContent=friendly;toast(friendly)}
  finally{if(btn)btn.disabled=false}
 }
-Object.assign(window,{profilePage,caProfileGet,caProfileAvatar,caProfilePhotoChanged,caProfileRemovePhoto,caProfileEducationChanged,caProfileCopyId,caProfileSave});
+Object.assign(window,{profilePage,caProfileGet,caProfileAvatar,caProfilePhotoChanged,caProfileRemovePhoto,caProfileEducationChanged,caProfileCopyId,caProfileSave,caProfileResetData,caProfileSignOut,caProfileDeleteInfo});
