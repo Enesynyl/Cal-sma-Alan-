@@ -1,7 +1,10 @@
 (function communityBundle(){
  let tab='groups',cache={groups:[],friends:[],requests:[],people:[],resources:[],messages:[]},searchTimer=null,peopleSearchTimer=null,peopleSearchSeq=0,panelSeq=0,indexPromise=null,groupLive={id:null,poll:null,typingPoll:null,unsub:[],typingActive:false,typingLastSent:0,canSend:true,roles:[],canManage:false};
  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- const communityAvatar=x=>x.photoURL?'<div class="community-avatar"><img src="'+esc(x.photoURL)+'" alt=""></div>':'<div class="community-avatar">'+esc((x.displayName||'Ö').slice(0,1).toLocaleUpperCase('tr'))+'</div>';
+ const communityAvatar=x=>{
+   const initial=esc(String(x.displayName||'Ö').trim().slice(0,1).toLocaleUpperCase('tr')),photo=String(x.photoURL||'').trim();
+   return photo?'<div class="community-avatar" data-initial="'+initial+'"><img src="'+esc(photo)+'" alt="" decoding="async" onerror="this.remove();this.parentElement.textContent=this.parentElement.dataset.initial"></div>':'<div class="community-avatar">'+initial+'</div>';
+  };
  const communityStudentMeta=x=>[x.studentId?'ID: '+x.studentId:'',x.university,x.department,x.classYear].filter(Boolean).map(esc).join(' · ');
  async function api(action,data={}){const user=FB?.auth?.currentUser;if(!user)throw new Error('Toplulukları kullanmak için hesabına giriş yapmalısın.');const token=await user.getIdToken(),r=await fetch('/api/community',{method:'POST',cache:'no-store',headers:{'content-type':'application/json',authorization:'Bearer '+token},body:JSON.stringify({action,...data})});const d=await r.json().catch(()=>({}));if(!r.ok||d.ok===false)throw new Error(d.error||'İşlem tamamlanamadı.');return d}
  async function page(){
