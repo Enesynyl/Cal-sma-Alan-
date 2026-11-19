@@ -116,7 +116,19 @@ async function intelLoadHomeData(){
   const [rows,profile]=await Promise.all([rowsPromise,Promise.race([profilePromise,new Promise(resolve=>setTimeout(()=>resolve(CA_PROFILE_CACHE||{}),650))])]);
   const data={wsId:W.id,rows,profile:profile||{}};
   intelHomeDataCache=data;intelHomeDataCacheAt=Date.now();
-  profilePromise.then(p=>{if(p&&intelHomeDataCache?.wsId===W.id)intelHomeDataCache.profile=p}).catch(()=>{});
+  profilePromise.then(p=>{
+   if(p&&intelHomeDataCache?.wsId===W.id)intelHomeDataCache.profile=p;
+   if(!p||cur.m!=='bugun')return;
+   const refreshAvatar=()=>{
+    if(cur.m!=='bugun')return;
+    const button=document.querySelector('.intel-profile');if(!button)return;
+    const name=p.ad||W.fullName||W.name||'Öğrenci';
+    const initials=name.split(/\s+/).slice(0,2).map(x=>x[0]).join('').toLocaleUpperCase('tr');
+    const avatar=window.caProfileAvatar?caProfileAvatar(p,'large'):'<span>'+e(initials)+'</span>';
+    button.innerHTML=avatar+'<b>'+e(name)+'</b><small>⌄</small>';
+   };
+   if(document.querySelector('.intel-profile'))refreshAvatar();else requestAnimationFrame(refreshAvatar);
+  }).catch(()=>{});
   return data;
  })().finally(()=>{intelHomeDataRequest=null});
  return intelHomeDataRequest;
