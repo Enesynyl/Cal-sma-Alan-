@@ -1,0 +1,15 @@
+(()=>{if(window.__caAIInstalled)return;window.__caAIInstalled=true;let history=[],busy=false;
+const cssLink=document.createElement("link");cssLink.rel="stylesheet";cssLink.href="/ai-chat.css";document.head.appendChild(cssLink);
+function install(){if(document.getElementById("ca-ai-launcher"))return;
+const b=document.createElement("button");b.id="ca-ai-launcher";b.type="button";b.setAttribute("aria-label","Çalışma Alanım AI");b.innerHTML='<span class="ca-ai-orb">✦</span>';document.body.appendChild(b);
+const panel=document.createElement("section");panel.id="ca-ai-panel";panel.setAttribute("aria-label","AI sohbet");panel.innerHTML='<header class="ca-ai-head"><div><div class="ca-ai-title"><span class="ca-ai-orb">✦</span> Çalışma Alanım AI</div><small>AI asistanın</small></div><button class="ca-ai-close" aria-label="Sohbeti kapat">×</button></header><div class="ca-ai-messages" id="ca-ai-messages"><div class="ca-ai-welcome"><h3>Merhaba! ✨</h3><p>Nasıl yardımcı olabilirim?</p><div class="ca-ai-suggestions"><button>Bugün nasıl plan yapmalıyım?</button><button>Ders çalışmak için öneri ver</button><button>Bir hedef belirlememe yardım et</button></div></div></div><form class="ca-ai-form"><textarea rows="1" maxlength="4000" placeholder="Mesajını yaz..." aria-label="Mesaj"></textarea><button type="submit" aria-label="Gönder">↑</button></form><div class="ca-ai-foot">Yanıtlar yapay zekâ tarafından oluşturulur.</div>';
+document.body.appendChild(panel);
+b.onclick=()=>panel.classList.toggle("open");panel.querySelector(".ca-ai-close").onclick=()=>panel.classList.remove("open");
+const box=panel.querySelector("textarea"),list=panel.querySelector("#ca-ai-messages"),form=panel.querySelector("form");
+panel.querySelectorAll(".ca-ai-suggestions button").forEach(x=>x.onclick=()=>{box.value=x.textContent;box.focus()});
+function bubble(text,who){const d=document.createElement("div");d.className="ca-ai-bubble "+who;d.textContent=text;list.appendChild(d);list.scrollTop=list.scrollHeight;return d}
+form.onsubmit=async ev=>{ev.preventDefault();if(busy)return;const text=box.value.trim();if(!text)return;box.value="";list.querySelector(".ca-ai-welcome")?.remove();bubble(text,"user");history.push({role:"user",content:text});busy=true;const wait=bubble("Yanıt hazırlanıyor…","assistant wait");form.querySelector("button").disabled=true;
+try{const r=await fetch("/api/ai-chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:history})});const data=await r.json();if(!r.ok)throw new Error(data.error||"İstek başarısız");wait.remove();bubble(data.reply,"assistant");history.push({role:"assistant",content:data.reply});if(history.length>20)history=history.slice(-20)}catch(err){wait.textContent=err.message||"Bağlantı kurulamadı.";wait.classList.add("error")}finally{busy=false;form.querySelector("button").disabled=false;box.focus()}};
+}
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",install,{once:true});else install();
+})();
