@@ -1,7 +1,9 @@
 /* ---- Ana ekran ---- */
 async function render(){
  if(cur.m==='admin'&&window.renderAdminPanel?.())return;
- const L=await all('ws'),ms=W.mods.filter(k=>AV.ogr.includes(k)&&k!=='ayar'&&k!=='duzen');
+ const L=await all('ws');
+ if(cur.m==='admin'&&window.renderAdminPanel?.())return;
+ const ms=W.mods.filter(k=>AV.ogr.includes(k)&&k!=='ayar'&&k!=='duzen');
  const rs=document.documentElement.style;rs.setProperty('--ac','#83b8e8');rs.setProperty('--ac2','rgba(131,184,232,.16)');
  const bv=null;document.documentElement.classList.remove('bgon');document.body.style.backgroundImage='none';
  rs.setProperty('--ibr',{c:'50%',r:'10px',s:'3px'}[W.ish||'c']);rs.setProperty('--ibg','rgba(131,184,232,.14)');
@@ -11,9 +13,11 @@ async function render(){
  ['--tx','--mu','--sf','--bg','--bd'].forEach((k,i)=>rs.setProperty(k,tc[i]));rs.setProperty('color-scheme',dd?'dark':dd===false?'light':'');
  if(!cur.m||(cur.m!=='admin'&&cur.m!=='ayar'&&cur.m!=='bugun'&&cur.m!=='topluluk'&&cur.m!=='profil'&&!ms.includes(cur.m)))cur.m='bugun';
  const tabs=M[cur.m]?.[2]||[cur.m];if(!tabs.includes(cur.t))cur.t=tabs[0];
+ const renderMode=cur.m,renderTab=cur.t;
  if(cur.m==='odak'&&PT.stage==='fullscreen'){clearInterval(DCI);document.body.classList.add('focus-active');$('app').innerHTML=focusScreen();ensureSpotifyUI();return}
  document.body.classList.remove('focus-active');
  let body,usedTodayCache=false;if(cur.m==='bugun'&&window.__caTodayMarkup){body=window.__caTodayMarkup;usedTodayCache=true;if(!window.__caTodayRefreshScheduled){window.__caTodayRefreshScheduled=true;setTimeout(()=>{window.__caTodayRefreshScheduled=false;if(cur.m==='bugun'){window.__caTodayMarkup=null;render()}},1200)}}else{body=cur.m==='topluluk'?await communityPage():cur.m==='profil'?profilePage():cur.m==='bugun'?await intelligenceHome():cur.m==='gorev'?await taskCenter():cur.m==='odev'?await homeworkCenter():cur.m==='sinav'?await examCenter():cur.m==='uni'?await uniPage():cur.m==='ayar'?await ayar(L):cur.t==='ay'?await ay():cur.t==='program'?await program():cur.t==='odak'?await odak():cur.t==='calis'?await calis():cur.t==='not'?await defter():cur.t==='hesap'?await hesap():await list(cur.t);if(cur.m==='bugun'){window.__caTodayMarkup=body;window.__caTodayMarkupAt=Date.now()}}
+ if(cur.m!==renderMode||cur.t!==renderTab)return;
  $('app').innerHTML=`<div class="shell"><aside class="side"><div class="wsb" title="${e(W.name)}">${W.icon?`<i class="ib">${e(W.icon)}</i>`:'<img class="brandmark" src="/logo.svg" alt="Çalışma Alanım">'}<span class="lb">${e(W.name)}</span></div>
  <div class="nav"><button title="Bugün" class="${cur.m==='bugun'?'on':''}" onclick="cur.m='bugun';render()"><i class="ib">🏠</i><span class="lb">Bugün</span></button>${ms.map(k=>`<button title="${e(mn(k))}" class="${cur.m===k?'on':''}" onclick="cur.m='${k}';cur.t=null;cur.q='';cur.d='';render()"><i class="ib">${mi(k)}</i><span class="lb">${mn(k)}</span></button>`).join('')}<button title="Topluluklar" class="${cur.m==='topluluk'?'on':''}" onclick="cur.m='topluluk';cur.t=null;render()"><i class="ib">👥</i><span class="lb">Topluluklar</span></button></div>
  </aside>
