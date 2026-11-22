@@ -9,7 +9,7 @@ export default async function handler(req,res){
    if(!text)return res.status(400).json({error:"Metin boş."});
    const voice=process.env.ELEVENLABS_VOICE_ID||"21m00Tcm4TlvDq8ikWAM";
    const r=await fetch("https://api.elevenlabs.io/v1/text-to-speech/"+voice,{method:"POST",headers:{"xi-api-key":tkey,"Content-Type":"application/json","Accept":"audio/mpeg"},body:JSON.stringify({text,model_id:"eleven_multilingual_v2",voice_settings:{stability:0.45,similarity_boost:0.75}})});
-   if(!r.ok){console.error("ElevenLabs TTS error",r.status,await r.text());return res.status(502).json({fallback:true,error:"Ses API'si yanıt vermedi."});}
+   if(!r.ok){console.error("ElevenLabs TTS error",r.status,await r.text());return res.status(502).json({fallback:false,error:"ElevenLabs ses üretimi başarısız oldu. API yanıtı: "+r.status});}
    res.setHeader("Content-Type","audio/mpeg");res.setHeader("Cache-Control","no-store");return res.status(200).send(Buffer.from(await r.arrayBuffer()));
   }
   const key=process.env.GROQ_API_KEY;
