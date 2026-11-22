@@ -5,8 +5,8 @@ export default async function handler(req,res){
     if(body.mode==="voices"){
    const tkey=process.env.ELEVENLABS_API_KEY;
    if(!tkey)return res.status(503).json({error:"ElevenLabs anahtarı yapılandırılmamış."});
-   const fetchVoices=async type=>{const q=new URL("https://api.elevenlabs.io/v2/voices");q.searchParams.set("voice_type",type);q.searchParams.set("page_size","100");const rr=await fetch(q,{headers:{"xi-api-key":tkey}});if(!rr.ok)throw new Error("Ses listesi alınamadı ("+rr.status+")");return (await rr.json()).voices||[];};
-   try{const [defaults,owned]=await Promise.all([fetchVoices("default"),fetchVoices("non-community")]);const all=[...defaults,...owned];const voices=all.filter(v=>v.voice_id&&v.name).map(v=>({id:v.voice_id,name:v.name,category:v.category,labels:v.labels||{},type:v.category==="premade"?"default/owned":"owned"}));return res.status(200).json({voices});}catch(e){return res.status(502).json({error:e.message||"Ses listesi alınamadı."});}
+   const fetchVoices=async()=>{const rr=await fetch("https://api.elevenlabs.io/v1/voices",{headers:{"xi-api-key":tkey}});if(!rr.ok){const detail=await rr.text();console.error("ElevenLabs voices error",rr.status,detail);throw new Error("ElevenLabs ses listesi "+rr.status+": "+detail.slice(0,220));}return (await rr.json()).voices||[];};
+   try{const all=await fetchVoices();const voices=all.filter(v=>v.voice_id&&v.name).map(v=>({id:v.voice_id,name:v.name,category:v.category,labels:v.labels||{},type:v.category==="premade"?"default/owned":"owned"}));return res.status(200).json({voices});}catch(e){return res.status(502).json({error:e.message||"Ses listesi alınamadı."});}
   }
   if(body.mode==="tts"){
    const tkey=process.env.ELEVENLABS_API_KEY;
