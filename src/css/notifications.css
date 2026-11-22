@@ -29,3 +29,7 @@
 #ca-notif-button.ca-notif-in-today{position:relative;inset:auto;width:44px;height:44px;flex:none;border-radius:15px;box-shadow:0 8px 24px rgba(0,0,0,.24)}
 .intel-notification-slot{display:flex;align-items:center;justify-content:flex-end;flex:none;min-width:44px;margin-left:auto}
 @media(max-width:700px){#ca-notif-button.ca-notif-in-today{width:42px;height:42px;border-radius:14px}}
+
+/* Visible notification shortcut specifically on the Today page */
+#ca-notif-button.ca-notif-today-floating{position:fixed;z-index:1200;right:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));width:52px;height:52px;border:1px solid rgba(145,184,231,.32);border-radius:18px;background:linear-gradient(145deg,rgba(36,61,94,.96),rgba(12,23,40,.96));color:#eaf4ff;display:grid;place-items:center;box-shadow:0 12px 34px rgba(0,0,0,.34),inset 0 1px rgba(255,255,255,.12);backdrop-filter:blur(18px)}
+@media(max-width:700px){#ca-notif-button.ca-notif-today-floating{right:14px;bottom:calc(92px + env(safe-area-inset-bottom,0px));width:48px;height:48px;border-radius:16px}}
