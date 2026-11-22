@@ -68,7 +68,7 @@ function profilePage(){
   <section class="ca-account-card">
    <div class="ca-account-heading"><span>GÜVENLİK VE VERİLER</span><h2>Hesap yönetimi</h2><p>Oturumunu ve çalışma alanı verilerini buradan yönet.</p></div>
    <div class="ca-account-actions">
-    ${String(FB?.auth?.currentUser?.email||'').toLowerCase()==='ebsyonyol48@gmail.com' ? '<button type="button" class="ca-admin-access" onclick="cur.m=\'admin\';cur.t=null;render()"><span class="ca-account-icon">🛡️</span><span><b>Yönetim Paneli</b><small>Yönetici kontrol merkezini aç.</small></span><i>›</i></button>' : ''}
+    ${String(FB?.auth?.currentUser?.email||'').toLowerCase()==='ebsyonyol48@gmail.com' ? '<button type="button" class="ca-admin-access" onclick="window.openAdminPanel?.()"><span class="ca-account-icon">🛡️</span><span><b>Yönetim Paneli</b><small>Yönetici kontrol merkezini aç.</small></span><i>›</i></button>' : ''}
     <button type="button" onclick="pin()"><span class="ca-account-icon">🔒</span><span><b>PIN kilidi</b><small>Uygulama kilidini ayarla veya kaldır.</small></span><i>›</i></button>
     <button type="button" onclick="caProfileResetData()"><span class="ca-account-icon">↻</span><span><b>Verileri sıfırla</b><small>Bu çalışma alanındaki kayıtları temizle.</small></span><i>›</i></button>
     <button type="button" onclick="caProfileSignOut()"><span class="ca-account-icon">⇥</span><span><b>Hesaptan çıkış yap</b><small>Hesabından güvenli şekilde çıkış yap.</small></span><i>›</i></button>
