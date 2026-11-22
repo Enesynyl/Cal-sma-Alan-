@@ -1,17 +1,31 @@
-/* Premium, blurred authentication transition overlay */
+#ca-notif-button{position:fixed;z-index:1100;right:20px;bottom:22px;width:52px;height:52px;border:1px solid rgba(145,184,231,.32);border-radius:18px;background:linear-gradient(145deg,rgba(36,61,94,.96),rgba(12,23,40,.96));color:#eaf4ff;box-shadow:0 12px 34px rgba(0,0,0,.34),inset 0 1px rgba(255,255,255,.12);font-size:22px;display:grid;place-items:center;backdrop-filter:blur(18px)}
+#ca-notif-button i{position:absolute;right:-4px;top:-5px;min-width:18px;height:18px;padding:0 5px;border-radius:20px;background:#e85d76;color:#fff;font:700 10px/18px system-ui;text-align:center;font-style:normal}
+#ca-notif-button i[hidden]{display:none}
+.ca-notif-backdrop{position:fixed;z-index:2000;inset:0;display:flex;justify-content:flex-end;align-items:stretch;background:rgba(2,7,15,.58);backdrop-filter:blur(7px);padding:14px}
+.ca-notif-panel{width:min(440px,100%);display:flex;flex-direction:column;gap:15px;padding:20px;border:1px solid rgba(160,190,226,.22);border-radius:24px;background:linear-gradient(145deg,#17263c,#0a1322);color:#edf5ff;box-shadow:0 24px 80px rgba(0,0,0,.5);overflow:hidden}
+.ca-notif-panel header{display:flex;justify-content:space-between;align-items:center}.ca-notif-panel header small{font-size:9px;letter-spacing:.18em;color:#80b9f1}.ca-notif-panel h2{margin:5px 0 0;color:#f4f8ff}.ca-notif-close{width:38px;height:38px;border-radius:12px;background:#ffffff10;color:#fff;font-size:24px}
+.ca-notif-actions{display:flex;flex-wrap:wrap;gap:7px}.ca-notif-actions button{padding:8px 10px;border:1px solid #ffffff20;border-radius:10px;background:#ffffff0b;color:#dcecff;font-size:11px}
+.ca-notif-list{flex:1;min-height:0;overflow:auto;display:grid;align-content:start;gap:8px}.ca-notif-list article{display:flex;gap:11px;padding:12px;border:1px solid #ffffff13;border-radius:14px;background:#ffffff08}.ca-notif-list article>span{color:#8cc5ff;font-size:18px}.ca-notif-list article b{font-size:13px;color:#f1f6ff}.ca-notif-list article p{margin:4px 0;color:#b1c1d6;font-size:12px}.ca-notif-list article small{font-size:10px;color:#8198b5}.ca-notif-list article.read{opacity:.55}.ca-notif-empty{display:grid;place-items:center;gap:8px;min-height:160px;color:#dbeaff}.ca-notif-empty small{color:#8ea4c0}.ca-notif-panel footer{font-size:11px;color:#8ea4c0}
+@media(max-width:700px){#ca-notif-button{right:14px;bottom:calc(88px + env(safe-area-inset-bottom));width:48px;height:48px;border-radius:16px}.ca-notif-backdrop{padding:0;align-items:flex-end}.ca-notif-panel{width:100%;height:min(82dvh,720px);border-radius:24px 24px 0 0;padding:18px 15px calc(18px + env(safe-area-inset-bottom))}}
+
+.ca-push-optin{position:fixed;z-index:1900;left:50%;bottom:24px;transform:translateX(-50%);width:min(560px,calc(100% - 32px));display:flex;align-items:center;gap:13px;padding:17px 18px;border:1px solid rgba(139,190,245,.34);border-radius:20px;background:linear-gradient(135deg,rgba(24,43,68,.98),rgba(9,18,32,.98));color:#edf5ff;box-shadow:0 18px 60px rgba(0,0,0,.42);backdrop-filter:blur(18px)}
+.ca-push-optin-icon{font-size:25px}.ca-push-optin-copy{flex:1;min-width:0}.ca-push-optin-copy b{font-size:14px}.ca-push-optin-copy p{margin:4px 0 0;color:#b5c7dc;font-size:12px;line-height:1.45}.ca-push-optin-enable{flex:none;padding:10px 14px;border-radius:12px;background:#8fc5ff;color:#10243c;font-weight:700;font-size:12px}.ca-push-optin-enable:disabled{opacity:.6}.ca-push-optin-close{position:absolute;right:7px;top:5px;background:transparent;color:#b8cce3;font-size:20px}
+@media(max-width:700px){.ca-push-optin{bottom:calc(82px + env(safe-area-inset-bottom));padding:15px 12px;gap:9px}.ca-push-optin-copy p{font-size:11px}.ca-push-optin-enable{padding:9px 10px}}
+
+.ca-notif-tabs{display:flex;gap:8px;padding:4px;border:1px solid #ffffff16;border-radius:13px;background:#ffffff08}
+.ca-notif-tabs button{flex:1;padding:10px 12px;border-radius:10px;background:transparent;color:#aebfd4;font-size:12px;font-weight:650;transition:background .18s,color .18s}
+.ca-notif-tabs button[aria-selected="true"]{background:linear-gradient(135deg,rgba(100,163,230,.28),rgba(69,111,167,.16));color:#eff7ff;box-shadow:inset 0 0 0 1px rgba(146,194,244,.22)}
+
+.ca-notif-delete{flex:none;align-self:flex-start;width:28px;height:28px;padding:0;border:1px solid #ffffff20;border-radius:9px;background:#ffffff0a;color:#d6e5f8;font-size:19px;line-height:1}
+.ca-notif-item-body{min-width:0;flex:1}.ca-notif-image{display:block;max-width:100%;max-height:210px;object-fit:contain;margin:9px 0;border-radius:12px}.ca-notif-link{display:inline-flex;margin:8px 0;padding:8px 11px;border-radius:10px;background:rgba(116,177,236,.18);color:#b9dcff;font-size:12px;font-weight:700;text-decoration:none}
+
 .ca-auth-loading{position:fixed;z-index:5000;inset:0;display:grid;place-items:center;padding:24px;background:rgba(3,8,16,.48);backdrop-filter:blur(18px) saturate(.8);-webkit-backdrop-filter:blur(18px) saturate(.8)}
 .ca-auth-loading-card{width:min(280px,100%);min-height:210px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:13px;padding:25px;border:1px solid rgba(168,205,242,.23);border-radius:26px;background:linear-gradient(145deg,rgba(25,43,66,.97),rgba(10,19,32,.98));box-shadow:0 25px 80px rgba(0,0,0,.44),inset 0 1px rgba(255,255,255,.06);color:#eff6ff;text-align:center}
-.ca-auth-loading-mark{display:grid;place-items:center;width:46px;height:46px;border-radius:15px;background:linear-gradient(145deg,#4c8df0,#2856ba);box-shadow:0 8px 28px rgba(49,111,213,.34);font-size:25px}
+.ca-auth-loading-mark{display:grid;place-items:center;width:46px;height:46px;border-radius:15px;background:linear-gradient(145deg,#4c8df0,#2856ba);font-size:25px}
 .ca-auth-loading-spinner{width:24px;height:24px;border:2px solid rgba(153,199,241,.2);border-top-color:#91c9ff;border-radius:50%;animation:ca-auth-spin .8s linear infinite}
 .ca-auth-loading-card b{font-size:14px;font-weight:750}.ca-auth-loading-card small{color:#9eb3cb;font-size:11px}
 @keyframes ca-auth-spin{to{transform:rotate(360deg)}}body.auth-loading-active{overflow:hidden}
-#fbGo[disabled]{opacity:.72;cursor:wait;filter:saturate(.8)}
-/* Today notification control lives in the welcome section. */
+#fbGo[disabled]{opacity:.72;cursor:wait}
 #ca-notif-button.ca-notif-in-today{position:relative;inset:auto;width:44px;height:44px;flex:none;border-radius:15px;box-shadow:0 8px 24px rgba(0,0,0,.24)}
 .intel-notification-slot{display:flex;align-items:center;justify-content:flex-end;flex:none;min-width:44px;margin-left:auto}
 @media(max-width:700px){#ca-notif-button.ca-notif-in-today{width:42px;height:42px;border-radius:14px}}
-
-/* Keep notification bell in Today top action group and floating on other pages. */
-#ca-notif-button.ca-notif-in-today{position:relative;inset:auto;right:auto;bottom:auto;width:36px;height:36px;flex:none;border-radius:11px;box-shadow:none;font-size:17px}
-.intel-top-actions #ca-notif-button{order:-1}
-@media(max-width:700px){#ca-notif-button.ca-notif-in-today{width:34px;height:34px;border-radius:10px}}
