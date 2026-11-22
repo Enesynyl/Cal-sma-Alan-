@@ -1,5 +1,6 @@
 /* ---- Ana ekran ---- */
 async function render(){
+ if(cur.m==='admin'&&window.renderAdminPanel?.())return;
  const L=await all('ws'),ms=W.mods.filter(k=>AV.ogr.includes(k)&&k!=='ayar'&&k!=='duzen');
  const rs=document.documentElement.style;rs.setProperty('--ac','#83b8e8');rs.setProperty('--ac2','rgba(131,184,232,.16)');
  const bv=null;document.documentElement.classList.remove('bgon');document.body.style.backgroundImage='none';
