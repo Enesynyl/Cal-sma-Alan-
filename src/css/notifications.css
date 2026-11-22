@@ -10,3 +10,8 @@
 #ca-notif-button.ca-notif-in-today{position:relative;inset:auto;width:44px;height:44px;flex:none;border-radius:15px;box-shadow:0 8px 24px rgba(0,0,0,.24)}
 .intel-notification-slot{display:flex;align-items:center;justify-content:flex-end;flex:none;min-width:44px;margin-left:auto}
 @media(max-width:700px){#ca-notif-button.ca-notif-in-today{width:42px;height:42px;border-radius:14px}}
+
+/* Keep notification bell in Today top action group and floating on other pages. */
+#ca-notif-button.ca-notif-in-today{position:relative;inset:auto;right:auto;bottom:auto;width:36px;height:36px;flex:none;border-radius:11px;box-shadow:none;font-size:17px}
+.intel-top-actions #ca-notif-button{order:-1}
+@media(max-width:700px){#ca-notif-button.ca-notif-in-today{width:34px;height:34px;border-radius:10px}}
