@@ -46,6 +46,21 @@ function addSettingsEntry(){if(!ok()||document.getElementById('adm-settings-entr
  return true;
 }
 window.renderAdminPanel=renderAdminPanel;
+document.addEventListener('click',ev=>{
+ const trigger=ev.target?.closest?.('[data-admin-open]');
+ if(!trigger)return;
+ ev.preventDefault();ev.stopPropagation();ev.stopImmediatePropagation?.();
+ if(trigger.dataset.adminOpening==='1')return;
+ trigger.dataset.adminOpening='1';
+ const label=trigger.querySelector('b'),previous=label?.textContent||'Kontrol Merkezi';
+ if(label)label.textContent='Kontrol Merkezi açılıyor…';
+ trigger.setAttribute('aria-busy','true');
+ Promise.resolve(window.openAdminPanel?.()).finally(()=>{
+  if(!document.contains(trigger))return;
+  trigger.dataset.adminOpening='0';trigger.removeAttribute('aria-busy');
+  if(label)label.textContent=previous;
+ });
+},true);
 const original=window.render;
 if(typeof original==='function')window.render=async function(){
  if(cur.m==='admin'&&renderAdminPanel())return;
