@@ -2,12 +2,18 @@ export default async function handler(req,res){
  if(req.method!=="POST"){res.setHeader("Allow","POST");return res.status(405).json({error:"Yalnızca POST kabul edilir."});}
  try{
   const body=req.body||{};
+    if(body.mode==="voices"){
+   const tkey=process.env.ELEVENLABS_API_KEY;
+   if(!tkey)return res.status(503).json({error:"ElevenLabs anahtarı yapılandırılmamış."});
+   const fetchVoices=async type=>{const q=new URL("https://api.elevenlabs.io/v2/voices");q.searchParams.set("voice_type",type);q.searchParams.set("page_size","100");const rr=await fetch(q,{headers:{"xi-api-key":tkey}});if(!rr.ok)throw new Error("Ses listesi alınamadı ("+rr.status+")");return (await rr.json()).voices||[];};
+   try{const [defaults,owned]=await Promise.all([fetchVoices("default"),fetchVoices("non-community")]);const all=[...defaults,...owned];const voices=all.filter(v=>v.voice_id&&v.name).map(v=>({id:v.voice_id,name:v.name,category:v.category,labels:v.labels||{},type:v.category==="premade"?"default/owned":"owned"}));return res.status(200).json({voices});}catch(e){return res.status(502).json({error:e.message||"Ses listesi alınamadı."});}
+  }
   if(body.mode==="tts"){
    const tkey=process.env.ELEVENLABS_API_KEY;
    if(!tkey)return res.status(503).json({fallback:true,error:"ElevenLabs anahtarı yapılandırılmamış."});
    const text=String(body.text||"").trim().slice(0,5000);
    if(!text)return res.status(400).json({error:"Metin boş."});
-   const voice=process.env.ELEVENLABS_VOICE_ID||"21m00Tcm4TlvDq8ikWAM";
+   const voice=String(body.voiceId||process.env.ELEVENLABS_VOICE_ID||"21m00Tcm4TlvDq8ikWAM");
    const r=await fetch("https://api.elevenlabs.io/v1/text-to-speech/"+voice,{method:"POST",headers:{"xi-api-key":tkey,"Content-Type":"application/json","Accept":"audio/mpeg"},body:JSON.stringify({text,model_id:"eleven_multilingual_v2",voice_settings:{stability:0.45,similarity_boost:0.75}})});
    if(!r.ok){const detail=await r.text();console.error("ElevenLabs TTS error",r.status,detail);let info="";try{const parsed=JSON.parse(detail);info=parsed.detail?.message||parsed.detail?.status||parsed.message||parsed.error||detail;}catch{info=detail;}info=String(info||"").slice(0,350);const msg="ElevenLabs API "+r.status+": "+info;return res.status(502).json({fallback:false,error:msg});}
    res.setHeader("Content-Type","audio/mpeg");res.setHeader("Cache-Control","no-store");return res.status(200).send(Buffer.from(await r.arrayBuffer()));
