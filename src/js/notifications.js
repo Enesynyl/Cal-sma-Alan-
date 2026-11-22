@@ -40,12 +40,28 @@
  }
  function ensureButton(){
   let b=$id('ca-notif-button');
-  if(!b){b=document.createElement('button');b.id='ca-notif-button';b.type='button';b.setAttribute('aria-label','Bildirim merkezi');b.innerHTML='<span aria-hidden="true">🔔</span><i id="ca-notif-count" hidden></i>';b.addEventListener('click',openCenter)}
-  // Stable body placement: nested Today markup can be replaced or cached.
-  if(b.parentElement!==document.body)document.body.appendChild(b);
-  b.classList.toggle('ca-notif-today-floating',cur?.m==='bugun');
-  b.classList.remove('ca-notif-in-today');
-  b.hidden=false;b.style.removeProperty('display');
+  if(!b){
+   b=document.createElement('button');b.id='ca-notif-button';b.type='button';
+   b.setAttribute('aria-label','Bildirim merkezi');b.title='Bildirimler';
+   b.innerHTML='<span aria-hidden="true">🔔</span><i id="ca-notif-count" hidden></i>';
+   b.addEventListener('click',openCenter);
+  }
+  const today=cur?.m==='bugun';
+  const topActions=today?document.querySelector('#app .intel-top-actions'):null;
+  const profile=topActions?.querySelector('.intel-profile');
+  if(topActions){
+   b.classList.add('ca-notif-in-topbar','intel-icon-btn');
+   b.classList.remove('ca-notif-today-floating','ca-notif-in-today');
+   if(profile&&profile.parentElement===topActions){
+    if(b.parentElement!==topActions||b.nextElementSibling!==profile)topActions.insertBefore(b,profile);
+   }else if(b.parentElement!==topActions)topActions.appendChild(b);
+   b.hidden=false;b.style.removeProperty('display');
+  }else{
+   if(b.parentElement!==document.body)document.body.appendChild(b);
+   b.classList.remove('ca-notif-in-topbar','intel-icon-btn','ca-notif-in-today');
+   b.classList.toggle('ca-notif-today-floating',today);
+   b.hidden=false;b.style.removeProperty('display');
+  }
   renderBadge();
  }
  function openCenter(){
