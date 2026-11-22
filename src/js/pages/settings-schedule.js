@@ -12,7 +12,18 @@ async function bk(){
 }
 const hs=async s=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode('ca'+s)))].map(b=>b.toString(16).padStart(2,'0')).join('');
 function lock(h){$('app').innerHTML=`<div class="wz"><h1>🔒 Kilitli</h1><label>PIN<input id="pn" type="password" inputmode="numeric"></label><div class="row"><button class="p" onclick="unl('${h}')">Aç</button></div></div>`}
-async function unl(h){if(await hs($('pn').value)===h)boot();else{$('pn').value='';$('pn').placeholder='Yanlış PIN'}}
+let pinUnlockBusy=false;
+async function unl(h){
+ if(pinUnlockBusy)return;
+ const field=$('pn'),button=field?.closest('.wz')?.querySelector('button.p');
+ if(!field)return;
+ pinUnlockBusy=true;
+ if(button){button.disabled=true;button.textContent='Açılıyor…'}
+ window.showWorkspaceLoading?.('Çalışma alanın açılıyor');
+ try{if(await hs(field.value)===h){await boot()}else{field.value='';field.placeholder='Yanlış PIN';field.focus()}}
+ catch(error){console.error('PIN kilidi açılamadı:',error);field.value='';field.placeholder='Tekrar dene'}
+ finally{pinUnlockBusy=false;window.hideWorkspaceLoading?.();if(button?.isConnected){button.disabled=false;button.textContent='Aç'}}
+}
 async function pin(){const h=await P(tx('meta').get('pin'));dlg(`<h3>Uygulama kilidi</h3><p class="m">Yerel bir ekran kilididir; verileri şifrelemez.</p><label>Yeni PIN (en az 4 hane)<input id="np" type="password" inputmode="numeric"></label><div class="row">${h?'<button onclick="np0()">Kilidi kaldır</button>':''}<button class="p" onclick="np1()">Kaydet</button></div>`)}
 const np1=async()=>{const v=$('np').value;if(v.length<4){$('np').placeholder='En az 4 hane';return}await put('meta',{k:'pin',v:await hs(v)});dlg()};
 const np0=async()=>{await del('meta','pin');dlg()};

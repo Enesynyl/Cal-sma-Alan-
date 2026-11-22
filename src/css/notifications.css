@@ -18,3 +18,14 @@
 
 .ca-notif-delete{flex:none;align-self:flex-start;width:28px;height:28px;padding:0;border:1px solid #ffffff20;border-radius:9px;background:#ffffff0a;color:#d6e5f8;font-size:19px;line-height:1}
 .ca-notif-item-body{min-width:0;flex:1}.ca-notif-image{display:block;max-width:100%;max-height:210px;object-fit:contain;margin:9px 0;border-radius:12px}.ca-notif-link{display:inline-flex;margin:8px 0;padding:8px 11px;border-radius:10px;background:rgba(116,177,236,.18);color:#b9dcff;font-size:12px;font-weight:700;text-decoration:none}
+
+.ca-auth-loading{position:fixed;z-index:5000;inset:0;display:grid;place-items:center;padding:24px;background:rgba(3,8,16,.48);backdrop-filter:blur(18px) saturate(.8);-webkit-backdrop-filter:blur(18px) saturate(.8)}
+.ca-auth-loading-card{width:min(280px,100%);min-height:210px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:13px;padding:25px;border:1px solid rgba(168,205,242,.23);border-radius:26px;background:linear-gradient(145deg,rgba(25,43,66,.97),rgba(10,19,32,.98));box-shadow:0 25px 80px rgba(0,0,0,.44),inset 0 1px rgba(255,255,255,.06);color:#eff6ff;text-align:center}
+.ca-auth-loading-mark{display:grid;place-items:center;width:46px;height:46px;border-radius:15px;background:linear-gradient(145deg,#4c8df0,#2856ba);font-size:25px}
+.ca-auth-loading-spinner{width:24px;height:24px;border:2px solid rgba(153,199,241,.2);border-top-color:#91c9ff;border-radius:50%;animation:ca-auth-spin .8s linear infinite}
+.ca-auth-loading-card b{font-size:14px;font-weight:750}.ca-auth-loading-card small{color:#9eb3cb;font-size:11px}
+@keyframes ca-auth-spin{to{transform:rotate(360deg)}}body.auth-loading-active{overflow:hidden}
+#fbGo[disabled]{opacity:.72;cursor:wait}
+#ca-notif-button.ca-notif-in-today{position:relative;inset:auto;width:44px;height:44px;flex:none;border-radius:15px;box-shadow:0 8px 24px rgba(0,0,0,.24)}
+.intel-notification-slot{display:flex;align-items:center;justify-content:flex-end;flex:none;min-width:44px;margin-left:auto}
+@media(max-width:700px){#ca-notif-button.ca-notif-in-today{width:42px;height:42px;border-radius:14px}}
