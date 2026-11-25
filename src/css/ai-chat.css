@@ -53,9 +53,24 @@
 @keyframes caVoiceScreenIn{from{opacity:0;transform:scale(1.025)}to{opacity:1;transform:scale(1)}}@keyframes caVoiceBloom{0%{opacity:.35;filter:saturate(.2);transform:scale(.86)}60%{opacity:.9;filter:saturate(.85);transform:scale(1.04)}100%{opacity:1;filter:saturate(1.15);transform:scale(1)}}@keyframes caVoiceHalo{50%{transform:scale(1.06);opacity:.35}}
 @media(max-width:600px){.ca-voice-fullscreen{align-items:stretch}.ca-voice-content{justify-content:center;gap:13px}.ca-voice-orb-wrap{height:26vh}.ca-voice-orb{width:min(48vw,190px);height:min(48vw,190px)}.ca-voice-content h2{font-size:28px}}
 
-/* Header-mounted AI launcher: positioned immediately left of the profile/avatar area on mobile */
+/* AI launcher lives inside the Today header, immediately beside the profile photo. */
+#ca-ai-launcher[hidden]{display:none!important}
+.intel-top-actions #ca-ai-launcher{
+ position:relative!important;inset:auto!important;top:auto!important;right:auto!important;bottom:auto!important;left:auto!important;
+ display:grid!important;place-items:center!important;flex:0 0 34px!important;width:34px!important;min-width:34px!important;max-width:34px!important;
+ height:34px!important;min-height:34px!important;max-height:34px!important;margin:0!important;padding:0!important;
+ border:1px solid rgba(153,195,255,.48)!important;border-radius:50%!important;overflow:hidden!important;
+ background:linear-gradient(145deg,#477cff,#24a9ad)!important;color:#fff!important;
+ box-shadow:0 0 0 3px rgba(95,149,255,.10),0 5px 15px rgba(32,100,190,.28)!important;
+ font-size:17px!important;line-height:1!important;cursor:pointer!important;transform:none!important;
+}
+.intel-top-actions #ca-ai-launcher .ca-ai-orb{
+ display:grid!important;place-items:center!important;width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;
+ border:0!important;border-radius:50%!important;background:transparent!important;color:#fff!important;
+ font-size:18px!important;line-height:1!important;box-shadow:none!important;
+}
+#ca-ai-panel{z-index:10020}
 @media(max-width:700px){
- #ca-ai-launcher{right:58px!important;top:calc(env(safe-area-inset-top,0px) + 42px)!important;bottom:auto!important;width:38px!important;height:38px!important;border-radius:13px!important;font-size:17px!important;box-shadow:0 5px 16px #0004!important;z-index:9998!important}
- #ca-ai-launcher .ca-ai-orb{width:100%!important;height:100%!important;border-radius:12px!important;font-size:17px!important}
+ .intel-top-actions #ca-ai-launcher{flex-basis:34px!important;width:34px!important;height:34px!important}
  #ca-ai-panel{right:12px!important;top:calc(env(safe-area-inset-top,0px) + 90px)!important;bottom:auto!important;height:min(620px,calc(100dvh - env(safe-area-inset-top,0px) - 110px))!important;width:calc(100vw - 24px)!important}
 }
