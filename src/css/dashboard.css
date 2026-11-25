@@ -178,7 +178,7 @@ body:not(.login-mode) .shell:has(.page-bugun)>.main{padding:0 2px 28px;min-width
  .intel-top-actions{min-width:0;gap:5px;margin:0}
 }
 @media(max-width:390px){
- .intel-topbar{grid-template-columns:minmax(0,1fr) 67px;gap:6px}
+ .intel-topbar{grid-template-columns:minmax(0,1fr) 81px;gap:6px}
  .intel-brand-mark{width:30px;height:30px}
  .intel-icon-btn{width:30px;height:32px}
  .intel-profile{padding:2px}
