@@ -34,12 +34,12 @@ export default async function handler(req,res){
   // Lightweight web research for academic/helpful queries; results are passed as untrusted reference data.
   let webResults=[];
   const latest=messages.filter(m=>m.role==="user").slice(-1)[0]?.content||"";
-  const wantsResearch=/\\b(araştır|internet|kaynak|güncel|bilgi|konu|özet|sosyoloji|ingilizce|ders|ödev|sınav)\\b/i.test(latest);
+  const wantsResearch=/\b(araştır|internet|kaynak|güncel|bilgi|konu|özet|sosyoloji|ingilizce|ders|ödev|sınav)\b/i.test(latest);
   if(wantsResearch){
     try{
-      const q=latest.replace(/(?:notlar?\\s+kısmına|notlara|not\\s+oluştur|ödevler?\\s+kısmına|dersim\\s+için|ders\\s+notu)/gi," ").trim().slice(0,180);
+      const q=latest.replace(/(?:notlar?\s+kısmına|notlara|not\s+oluştur|ödevler?\s+kısmına|dersim\s+için|ders\s+notu)/gi," ").trim().slice(0,180);
       const rr=await fetch("https://html.duckduckgo.com/html/?q="+encodeURIComponent(q),{headers:{"User-Agent":"Mozilla/5.0 (compatible; StudyAssistant/1.0)"}});
-      if(rr.ok){const html=await rr.text();const blocks=html.match(/<div class="result[^"]*">[\\s\\S]*?<\\/div>/g)||[];webResults=blocks.slice(0,6).map(b=>{const link=b.match(/<a[^>]+class="result__a"[^>]+href="([^"]+)"[^>]*>([\\s\\S]*?)<\\/a>/),sn=b.match(/class="result__snippet"[^>]*>([\\s\\S]*?)<\\/[^>]+>/);const clean=x=>String(x||"").replace(/<[^>]*>/g," ").replace(/&amp;/g,"&").replace(/&quot;/g,'"').replace(/&#x27;/g,"'").replace(/\\s+/g," ").trim();return link?{url:link[1],title:clean(link[2]),snippet:clean(sn?.[1])}:null}).filter(Boolean);
+      if(rr.ok){const html=await rr.text();const blocks=html.match(/<div class="result[^"]*">[\s\S]*?<\/div>/g)||[];webResults=blocks.slice(0,6).map(b=>{const link=b.match(/<a[^>]+class="result__a"[^>]+href="([^"]+)"[^>]*>([\\s\\S]*?)<\\/a>/),sn=b.match(/class="result__snippet"[^>]*>([\\s\\S]*?)<\\/[^>]+>/);const clean=x=>String(x||"").replace(/<[^>]*>/g," ").replace(/&amp;/g,"&").replace(/&quot;/g,'"').replace(/&#x27;/g,"'").replace(/\s+/g," ").trim();return link?{url:link[1],title:clean(link[2]),snippet:clean(sn?.[1])}:null}).filter(Boolean);
       }
     }catch(e){console.warn("AI web research unavailable",e)}
   }
