@@ -1,0 +1,105 @@
+/* Application-wide icon alignment pass.
+   This stylesheet is loaded after all page styles so icon geometry has one source of truth. */
+
+/* Accessible icon controls and SVG glyphs share the same optical center. */
+#app button[aria-label],
+dialog button[aria-label],
+.community-modal-backdrop button[aria-label],
+#ca-ai-panel button[aria-label]{
+  box-sizing:border-box!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+  line-height:1!important;
+  vertical-align:middle!important;
+}
+#app button[aria-label]>svg,
+dialog button[aria-label]>svg,
+.community-modal-backdrop button[aria-label]>svg,
+#ca-ai-panel button[aria-label]>svg,
+#app button>svg,
+dialog button>svg,
+.community-modal-backdrop button>svg,
+#ca-ai-panel button>svg{
+  display:block!important;
+  flex:0 0 auto!important;
+  align-self:center!important;
+  width:1.2em!important;
+  height:1.2em!important;
+  min-width:1.2em!important;
+  min-height:1.2em!important;
+  margin:0!important;
+  padding:0!important;
+  overflow:visible!important;
+  vertical-align:middle!important;
+}
+
+/* Square icon buttons: remove inherited text-button padding that pushes glyphs off-center. */
+#app :is(.focus-exit,.task-form-head>button,.hw-form>header>button,.hw-check,
+  .hw-cal-head button,.home-cal-head button,.intel-ad-prev,.intel-ad-next,
+  .community-modal-close,.today-widget-tools button,.df-tools-toggle,
+  .df-bottom-toggle,.n2-back,.n2-collapse),
+dialog :is(.community-modal-close,.task-form-head>button,.hw-form>header>button),
+.community-modal-backdrop .community-modal-close,
+#ca-ai-panel :is(.ca-ai-close,.ca-ai-menu,.ca-ai-mic,.ca-ai-live),
+#ca-ai-panel .ca-ai-form>button,
+#ca-notif-button,
+#app .intel-icon-btn,
+#app .home-tools>button:not(.home-profile),
+#app .sp-controls button,
+#app .sp-island-controls button,
+#app .intel-ad-dots button,
+#app .hw-reminder-chip button{
+  box-sizing:border-box!important;
+  display:inline-grid!important;
+  place-items:center!important;
+  padding:0!important;
+  text-align:center!important;
+  line-height:1!important;
+  vertical-align:middle!important;
+}
+#app :is(.focus-exit,.task-form-head>button,.hw-form>header>button,.hw-check,
+  .hw-cal-head button,.home-cal-head button,.intel-ad-prev,.intel-ad-next,
+  .community-modal-close,.df-tools-toggle,.df-bottom-toggle),
+#ca-ai-panel :is(.ca-ai-close,.ca-ai-menu,.ca-ai-mic,.ca-ai-live),
+#ca-notif-button{
+  flex:0 0 auto!important;
+}
+
+/* Sidebar icon tiles must not shrink or inherit a text baseline from nearby labels. */
+#app .side .nav button>.ib,
+#app .side .wsb>.ib,
+#app .side .nav2 button>.ib{
+  box-sizing:border-box!important;
+  display:grid!important;
+  place-items:center!important;
+  flex:0 0 auto!important;
+  align-self:center!important;
+  margin:0!important;
+  line-height:1!important;
+  text-align:center!important;
+}
+
+/* Common icon-bearing dashboard and utility buttons. */
+#app .today-widget-tools button{width:34px!important;height:34px!important;min-width:34px!important;min-height:34px!important}
+#app .intel-ad-prev,#app .intel-ad-next{width:38px!important;height:38px!important;min-width:38px!important;min-height:38px!important}
+#app .hw-check{width:27px!important;height:27px!important;min-width:27px!important;min-height:27px!important}
+#app .hw-cal-head button,#app .home-cal-head button{width:36px!important;height:36px!important;min-width:36px!important;min-height:36px!important}
+#app .focus-exit{width:46px!important;height:46px!important;min-width:46px!important;min-height:46px!important}
+#app .community-modal-close{width:38px!important;height:38px!important;min-width:38px!important;min-height:38px!important}
+#ca-ai-panel .ca-ai-close{width:42px!important;height:42px!important;min-width:42px!important;min-height:42px!important;border-radius:14px!important}
+#ca-ai-panel .ca-ai-menu{width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important}
+#ca-ai-panel .ca-ai-form>.ca-ai-mic{width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important}
+#ca-ai-panel .ca-ai-voice-options :is(.ca-ai-mic,.ca-ai-live){width:48px!important;height:48px!important;min-width:48px!important;min-height:48px!important}
+#ca-ai-panel .ca-ai-form>button[type="submit"]{width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important}
+#ca-notif-button{width:52px!important;height:52px!important;min-width:52px!important;min-height:52px!important}
+#app .hw-reminder-chip button{width:19px!important;height:19px!important;min-width:19px!important;min-height:19px!important}
+#app .intel-ad-dots button{min-height:7px!important}
+
+/* Keep icons centered even when the button text is enlarged by mobile accessibility settings. */
+@media(max-width:700px){
+  #app button[aria-label],dialog button[aria-label],#ca-ai-panel button[aria-label]{
+    -webkit-tap-highlight-color:transparent;
+  }
+}
