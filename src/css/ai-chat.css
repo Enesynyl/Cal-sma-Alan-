@@ -118,3 +118,28 @@
 .ca-ai-wave{display:flex;align-items:center;justify-content:center;gap:2px;color:#fff;font-size:20px;letter-spacing:-2px;}
 #ca-ai-panel .ca-ai-voice-options .ca-ai-live{width:48px!important;height:48px!important;min-width:48px!important;padding:0!important;}
 #ca-ai-panel .ca-ai-voice-options .ca-ai-mic{font-size:18px!important;}
+
+/* Live conversation icon: clean vertical white waveform, no red tile or text glyphs */
+#ca-ai-panel .ca-ai-voice-options .ca-ai-live{
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  width:48px!important;height:48px!important;min-width:48px!important;min-height:48px!important;
+  padding:0!important;background:transparent!important;border:0!important;
+  border-radius:12px!important;box-shadow:none!important;color:#fff!important;
+}
+#ca-ai-panel .ca-ai-wave{
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  gap:3px!important;width:38px!important;height:38px!important;
+  font-size:0!important;letter-spacing:normal!important;line-height:0!important;
+}
+#ca-ai-panel .ca-ai-wave i{
+  display:block!important;flex:0 0 4px!important;width:4px!important;
+  border-radius:999px!important;background:#fff!important;
+  box-shadow:0 1px 3px #0005!important;
+}
+#ca-ai-panel .ca-ai-wave i:nth-child(1){height:9px!important}
+#ca-ai-panel .ca-ai-wave i:nth-child(2){height:20px!important}
+#ca-ai-panel .ca-ai-wave i:nth-child(3){height:29px!important}
+#ca-ai-panel .ca-ai-wave i:nth-child(4){height:17px!important}
+#ca-ai-panel .ca-ai-wave i:nth-child(5){height:26px!important}
+#ca-ai-panel .ca-ai-wave i:nth-child(6){height:15px!important}
+#ca-ai-panel .ca-ai-wave i:nth-child(7){height:10px!important}
