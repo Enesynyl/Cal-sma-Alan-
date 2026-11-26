@@ -1,7 +1,7 @@
 {
-  "name": "Çalışma Alanım",
-  "short_name": "Çalışma Alanım",
-  "start_url": "/",
+  "name": "Çalışma Alanım AI",
+  "short_name": "AI",
+  "start_url": "/?ai=1",
   "display": "standalone",
   "background_color": "#101113",
   "theme_color": "#101113",
