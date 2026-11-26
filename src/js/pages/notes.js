@@ -50,19 +50,35 @@ function notesRender(){
  return '<div class="n2-workspace"><aside class="n2-sidebar"><div class="n2-brand"><span class="n2-brand-mark">✎</span><b>Notlar</b><button class="n2-collapse" onclick="document.querySelector(\'.n2-workspace\').classList.toggle(\'sidebar-collapsed\')">☰</button></div><nav class="n2-navs">'+nav('all','▤','Tüm Notlar')+nav('pinned','☆','Sabitlenenler')+nav('trash','▱','Çöp Kutusu')+'</nav><div class="n2-side-heading">ETİKETLER <button onclick="notesNewTag()">DÜZENLE</button></div><div class="n2-tag-list">'+(tags.map(t=>'<button class="'+(NotesUI.tag===t?'active':'')+'" onclick="notesTagFilter(\''+e(t)+'\')"># '+e(t)+'</button>').join('')||'<span>Henüz etiket yok</span>')+'</div><div class="n2-side-bottom"><span>● Kayıt etkin</span><small>Çalışma Alanım · Notlar</small></div></aside>'+
  '<section class="n2-list-panel '+(active?'has-selection':'')+'"><div class="n2-list-head"><div><h2>'+(NotesUI.view==='trash'?'Çöp Kutusu':NotesUI.view==='pinned'?'Sabitlenenler':'Tüm Notlar')+'</h2><small>'+rows.length+' not</small></div><button class="n2-new" onclick="notesCreate()">＋</button></div><label class="n2-search"><span>⌕</span><input value="'+e(NotesUI.query)+'" placeholder="Notlarda ve etiketlerde ara" oninput="notesSearch(this.value)"><kbd>⌘ K</kbd></label><div class="n2-note-list">'+(list||'<div class="n2-list-empty">Burada henüz not yok.</div>')+'</div></section><div class="n2-editor-panel '+(active?'has-selection':'')+'">'+editor+'</div></div>';
 }
-function notesSetView(v){NotesUI.view=v;NotesUI.tag=null;NotesUI.selected=null;NotesUI.menu=false;render()}
-function notesSelect(id){NotesUI.selected=id;NotesUI.menu=false;render()}
-async function notesCreate(){const n={id:uid(),title:'',content:'',tags:[],pinned:false,createdAt:Date.now(),updatedAt:Date.now()};notesData().unshift(n);NotesUI.view='all';NotesUI.tag=null;NotesUI.selected=n.id;await put('ws',W);render();setTimeout(()=>document.querySelector('.n2-title-input')?.focus(),80)}
+/* Update only the Notes workspace.
+   The outer .n2-workspace is observed by the page-entry reveal animation.
+   Keeping that element mounted prevents note actions from replaying the tab animation. */
+function notesRefresh(){
+ const root=document.querySelector('#app .main.page-not .n2-workspace');
+ if(!root){render();return}
+ const template=document.createElement('template');
+ template.innerHTML=notesRender();
+ const next=template.content.firstElementChild;
+ if(!next)return;
+ const scrollSelectors=['.n2-note-list','.n2-tag-list'];
+ const scrollPositions=scrollSelectors.map(selector=>[selector,root.querySelector(selector)?.scrollTop||0]);
+ root.innerHTML=next.innerHTML;
+ scrollPositions.forEach(([selector,top])=>{const el=root.querySelector(selector);if(el)el.scrollTop=top});
+}
+
+function notesSetView(v){NotesUI.view=v;NotesUI.tag=null;NotesUI.selected=null;NotesUI.menu=false;notesRefresh()}
+function notesSelect(id){NotesUI.selected=id;NotesUI.menu=false;notesRefresh()}
+async function notesCreate(){const n={id:uid(),title:'',content:'',tags:[],pinned:false,createdAt:Date.now(),updatedAt:Date.now()};notesData().unshift(n);NotesUI.view='all';NotesUI.tag=null;NotesUI.selected=n.id;await put('ws',W);notesRefresh();setTimeout(()=>document.querySelector('.n2-title-input')?.focus(),80)}
 function notesSearch(v){NotesUI.query=v;const root=document.querySelector('.n2-workspace');if(!root)return;const tpl=document.createElement('template');tpl.innerHTML=notesRender();const next=tpl.content.firstElementChild;const oldList=root.querySelector('.n2-note-list'),newList=next.querySelector('.n2-note-list');if(oldList&&newList)oldList.replaceWith(newList);const oldCount=root.querySelector('.n2-list-head small'),newCount=next.querySelector('.n2-list-head small');if(oldCount&&newCount)oldCount.textContent=newCount.textContent}
-function notesMobileBack(){NotesUI.selected=null;render()}
+function notesMobileBack(){NotesUI.selected=null;notesRefresh()}
 function notesEdit(k,v){const n=notesCurrent();if(!n)return;n[k]=v;n.updatedAt=Date.now();clearTimeout(NotesUI.saveTimer);NotesUI.saveTimer=setTimeout(()=>put('ws',W),400);if(k==='title'){const t=document.querySelector('.n2-note.selected .n2-note-title');if(t)t.textContent=v||'Adsız not'}}
-async function notesPin(){const n=notesCurrent();if(!n)return;n.pinned=!n.pinned;n.updatedAt=Date.now();NotesUI.menu=false;await put('ws',W);render()}
-async function notesTrash(){const n=notesCurrent();if(!n)return;n.trashedAt=Date.now();n.updatedAt=Date.now();NotesUI.selected=null;NotesUI.menu=false;await put('ws',W);render()}
-async function notesRestore(){const n=notesCurrent();if(!n)return;delete n.trashedAt;n.updatedAt=Date.now();NotesUI.view='all';await put('ws',W);render()}
-async function notesDelete(){const n=notesCurrent();if(!n)return;W.notes=notesData().filter(x=>x.id!==n.id);NotesUI.selected=null;await put('ws',W);render()}
-function notesPreview(){NotesUI.preview=!NotesUI.preview;NotesUI.menu=false;render()}
-function notesMenu(){NotesUI.menu=!NotesUI.menu;render()}
-function notesTagFilter(t){NotesUI.tag=NotesUI.tag===t?null:t;NotesUI.view='all';NotesUI.selected=null;render()}
-async function notesAddTag(v){const n=notesCurrent(),t=String(v||'').trim().replace(/^#/,'');if(!n||!t)return;n.tags=n.tags||[];if(!n.tags.includes(t))n.tags.push(t);n.updatedAt=Date.now();await put('ws',W);render()}
+async function notesPin(){const n=notesCurrent();if(!n)return;n.pinned=!n.pinned;n.updatedAt=Date.now();NotesUI.menu=false;await put('ws',W);notesRefresh()}
+async function notesTrash(){const n=notesCurrent();if(!n)return;n.trashedAt=Date.now();n.updatedAt=Date.now();NotesUI.selected=null;NotesUI.menu=false;await put('ws',W);notesRefresh()}
+async function notesRestore(){const n=notesCurrent();if(!n)return;delete n.trashedAt;n.updatedAt=Date.now();NotesUI.view='all';await put('ws',W);notesRefresh()}
+async function notesDelete(){const n=notesCurrent();if(!n)return;W.notes=notesData().filter(x=>x.id!==n.id);NotesUI.selected=null;await put('ws',W);notesRefresh()}
+function notesPreview(){NotesUI.preview=!NotesUI.preview;NotesUI.menu=false;notesRefresh()}
+function notesMenu(){NotesUI.menu=!NotesUI.menu;notesRefresh()}
+function notesTagFilter(t){NotesUI.tag=NotesUI.tag===t?null:t;NotesUI.view='all';NotesUI.selected=null;notesRefresh()}
+async function notesAddTag(v){const n=notesCurrent(),t=String(v||'').trim().replace(/^#/,'');if(!n||!t)return;n.tags=n.tags||[];if(!n.tags.includes(t))n.tags.push(t);n.updatedAt=Date.now();await put('ws',W);notesRefresh()}
 function notesNewTag(){const t=prompt('Etiket adı');if(t)notesTagFilter(t.trim().replace(/^#/,''))}
 async function notesCopy(){const n=notesCurrent();if(!n)return;try{await navigator.clipboard.writeText(location.href.split('#')[0]+'#note-'+n.id);toast('Not bağlantısı kopyalandı')}catch(_){toast('Bağlantı kopyalanamadı')}}
