@@ -17,7 +17,7 @@ const recs=async(ws,t)=>(await runDB('rec','readonly',st=>P(st.index('ws').getAl
 /* ---- Tanımlar ---- */
 const ST='sel:Bekliyor,Devam ediyor,Tamamlandı,İptal edildi';
 const T={
-gorev:{n:'Görev',f:[['ad','Görev'],['son','Son tarih','date'],['saat','Saat','time'],['oncelik','Öncelik','sel:Düşük,Orta,Yüksek'],['durum','Durum',ST],['tekrar','Tekrar (bitince otomatik yenilenir)','sel:Her gün,Her hafta,Her ay'],['not','Not','area']]},
+gorev:{n:'Görev',f:[['ad','Görev'],['son','Son tarih','date'],['saat','Saat','time'],['oncelik','Öncelik','sel:Düşük,Orta,Yüksek'],['durum','Durum',ST],['tekrar','Tekrar (bitince otomatik yenilenir)','sel:Her gün,Her hafta,Her ay'],['not','Not','area'],['sure','Süre (dakika)','number']]},
 kart:{n:'Bilgi kartı',t:r=>(r.on||'').slice(0,60),f:[['on','Soru / ön yüz','area'],['ders','Ders','ref:ders'],['konu','Konu'],['arka','Cevap / arka yüz','area']]},
 ders:{n:'Ders',f:[['ad','Ders'],['kredi','AKTS','number'],['hoca','Öğretim üyesi'],['gun','Gün','sel:Pazartesi,Salı,Çarşamba,Perşembe,Cuma,Cumartesi,Pazar'],['saat','Saat','time'],['yer','Sınıf'],['progtxt','Tüm ders saatleri (satır başına: Gün 09:00-10:50 Sınıf) — doluysa yukarıdaki gün/saat yerine bu kullanılır','area'],['dev','Devamsızlık (ders saati)','number'],['hak','Devamsızlık hakkı (ders saati)','number']]},
 odev:{n:'Ödev',f:[['ad','Ödev'],['ders','Ders','ref:ders'],['son','Son tarih','date'],['saat','Saat','time'],['durum','Durum',ST]]},
