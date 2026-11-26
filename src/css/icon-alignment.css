@@ -126,3 +126,13 @@ dialog .ex-form header>button{box-sizing:border-box!important;width:38px!importa
 }
 #ca-ai-panel .ca-voice-close{width:48px!important;height:48px!important;min-width:48px!important;min-height:48px!important}
 #ca-ai-panel :is(.ca-ai-siri-dismiss,.ca-ai-guide-close){width:36px!important;height:36px!important;min-width:36px!important;min-height:36px!important}
+
+/* Spotify Today launcher restored next to the AI launcher. */
+.intel-dashboard .intel-top-actions #sp-today-launcher{
+ box-sizing:border-box!important;width:42px!important;height:42px!important;min-width:42px!important;min-height:42px!important;
+ display:inline-grid!important;place-items:center!important;padding:0!important;margin:0 8px 0 0!important;
+ border-radius:14px!important;border:1px solid var(--bd)!important;background:var(--sf)!important;color:var(--tx)!important;
+ box-shadow:0 3px 12px rgba(20,35,55,.08)!important;cursor:pointer!important;flex:0 0 auto!important;
+}
+.intel-dashboard .intel-top-actions #sp-today-launcher svg{width:22px!important;height:22px!important;display:block!important;fill:none!important;stroke:currentColor!important;stroke-width:1.7!important;stroke-linecap:round!important;stroke-linejoin:round!important;margin:0!important;}
+.intel-dashboard .intel-top-actions #sp-today-launcher[hidden]{display:none!important}
