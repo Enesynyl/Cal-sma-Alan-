@@ -40,9 +40,9 @@ dialog button>svg,
   .hw-cal-head button,.home-cal-head button,.intel-ad-prev,.intel-ad-next,
   .community-modal-close,.today-widget-tools button,.df-tools-toggle,
   .df-bottom-toggle,.n2-back,.n2-collapse),
-dialog :is(.community-modal-close,.task-form-head>button,.hw-form>header>button),
+dialog :is(.community-modal-close,.task-form-head>button,.hw-form>header>button,.ex-form header>button),
 .community-modal-backdrop .community-modal-close,
-#ca-ai-panel :is(.ca-ai-close,.ca-ai-menu,.ca-ai-mic,.ca-ai-live),
+#ca-ai-panel :is(.ca-ai-close,.ca-ai-menu,.ca-ai-mic,.ca-ai-live,.ca-voice-close,.ca-ai-siri-dismiss,.ca-ai-guide-close),
 #ca-ai-panel .ca-ai-form>button,
 #ca-notif-button,
 #app .intel-icon-btn,
@@ -117,3 +117,12 @@ dialog :is(.community-modal-close,.task-form-head>button,.hw-form>header>button)
 .ca-notif-close{width:38px!important;height:38px!important;min-width:38px!important;min-height:38px!important}
 .ca-push-optin-close{width:32px!important;height:32px!important;min-width:32px!important;min-height:32px!important;right:7px!important;top:5px!important}
 .ca-notif-delete{width:28px!important;height:28px!important;min-width:28px!important;min-height:28px!important}
+
+/* Exam dialog and secondary AI overlays use the same centered close affordance. */
+dialog .ex-form header>button{box-sizing:border-box!important;width:38px!important;height:38px!important;min-width:38px!important;min-height:38px!important;padding:0!important;display:inline-grid!important;place-items:center!important;line-height:1!important}
+#ca-ai-panel :is(.ca-voice-close,.ca-ai-siri-dismiss,.ca-ai-guide-close){
+  box-sizing:border-box!important;display:inline-grid!important;place-items:center!important;
+  padding:0!important;line-height:1!important;text-align:center!important;
+}
+#ca-ai-panel .ca-voice-close{width:48px!important;height:48px!important;min-width:48px!important;min-height:48px!important}
+#ca-ai-panel :is(.ca-ai-siri-dismiss,.ca-ai-guide-close){width:36px!important;height:36px!important;min-width:36px!important;min-height:36px!important}
