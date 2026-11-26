@@ -47,6 +47,7 @@ dialog :is(.community-modal-close,.task-form-head>button,.hw-form>header>button)
 #ca-notif-button,
 #app .intel-icon-btn,
 #app .home-tools>button:not(.home-profile),
+.ca-notif-close,.ca-push-optin-close,.ca-notif-delete,
 #app .sp-controls button,
 #app .sp-island-controls button,
 #app .intel-ad-dots button,
@@ -103,3 +104,16 @@ dialog :is(.community-modal-close,.task-form-head>button,.hw-form>header>button)
     -webkit-tap-highlight-color:transparent;
   }
 }
+
+/* Notification sheets and confirmation banners use the same close-button geometry. */
+.ca-notif-close,.ca-push-optin-close,.ca-notif-delete{
+  box-sizing:border-box!important;
+  display:inline-grid!important;
+  place-items:center!important;
+  padding:0!important;
+  line-height:1!important;
+  text-align:center!important;
+}
+.ca-notif-close{width:38px!important;height:38px!important;min-width:38px!important;min-height:38px!important}
+.ca-push-optin-close{width:32px!important;height:32px!important;min-width:32px!important;min-height:32px!important;right:7px!important;top:5px!important}
+.ca-notif-delete{width:28px!important;height:28px!important;min-width:28px!important;min-height:28px!important}
