@@ -137,10 +137,3 @@ dialog .ex-form header>button{box-sizing:border-box!important;width:38px!importa
 .intel-dashboard .intel-top-actions #sp-today-launcher svg{width:22px!important;height:22px!important;display:block!important;fill:none!important;stroke:currentColor!important;stroke-width:1.7!important;stroke-linecap:round!important;stroke-linejoin:round!important;margin:0!important;}
 .intel-dashboard .intel-top-actions #sp-today-launcher[hidden]{display:none!important}
 
-/* Notes workspace: stop the page-entry animation from replaying on every notes interaction/render. */
-.main:has(.n2-workspace).vin,
-.main:has(.n2-workspace).vin :is(.it,.card,.st,.fld,.hd),
-.main:has(.n2-workspace) :is(.it,.card,.st,.fld,.hd){
- animation:none!important;
-}
-.main:has(.n2-workspace){transition:none!important}
