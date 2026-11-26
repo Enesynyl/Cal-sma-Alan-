@@ -108,3 +108,13 @@
 .ca-ai-form>.ca-ai-mic{display:flex!important;opacity:1!important;visibility:visible!important;transform:none!important}
 .ca-ai-voice-options .ca-ai-mic{display:none!important}
 .ca-ai-voice-options .ca-ai-live{font-size:20px!important;width:48px;height:48px;display:flex!important;align-items:center;justify-content:center}
+
+/* Final requested layout: mic always fixed beside text input; two audio actions in upward menu */
+#ca-ai-panel .ca-ai-form>.ca-ai-mic{display:flex!important;opacity:1!important;visibility:visible!important;transform:none!important;position:static!important;}
+#ca-ai-panel:not(.voice-menu-open) .ca-ai-form>.ca-ai-mic{display:flex!important;}
+#ca-ai-panel.voice-menu-open .ca-ai-form>.ca-ai-mic{display:flex!important;animation:none!important;}
+#ca-ai-panel .ca-ai-voice-options .ca-ai-mic{display:flex!important;}
+#ca-ai-panel .ca-ai-voice-options .ca-ai-live{background:transparent!important;border:1px solid #ffffff24!important;color:#fff!important;}
+.ca-ai-wave{display:flex;align-items:center;justify-content:center;gap:2px;color:#fff;font-size:20px;letter-spacing:-2px;}
+#ca-ai-panel .ca-ai-voice-options .ca-ai-live{width:48px!important;height:48px!important;min-width:48px!important;padding:0!important;}
+#ca-ai-panel .ca-ai-voice-options .ca-ai-mic{font-size:18px!important;}
