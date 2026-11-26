@@ -83,3 +83,15 @@
 .ca-ai-install-logo{width:60px;height:60px;border-radius:50%;display:grid;place-items:center;margin-bottom:14px;background:linear-gradient(145deg,#7c6df2,#46b7b0);font-size:28px}
 .ca-ai-install-card h3{margin:0 40px 12px 0}.ca-ai-install-card p,.ca-ai-install-card li{line-height:1.55;color:#d0d5df}.ca-ai-install-card ol{padding-left:24px}.ca-ai-guide-note{font-size:12px;color:#9aa7ba!important}
 \n.ca-ai-siri{border:1px solid #ffffff20;background:#ffffff10;color:inherit;border-radius:12px;padding:8px 10px;font:inherit;font-size:12px;white-space:nowrap;cursor:pointer}.ca-ai-siri-guide{position:fixed;inset:0;z-index:10090;background:#000b;display:none;place-items:center;padding:18px}.ca-ai-siri-card{position:relative;width:min(100%,440px);max-height:86dvh;overflow:auto;background:#151b25;border:1px solid #ffffff24;border-radius:24px;padding:24px;color:#f5f7fb;box-shadow:0 25px 80px #0008}.ca-ai-siri-card h3{margin:8px 36px 12px 0}.ca-ai-siri-card p,.ca-ai-siri-card li,.ca-ai-siri-card small{line-height:1.55;color:#c6d0df}.ca-ai-siri-card ol{padding-left:22px}.ca-ai-siri-card small{display:block;margin-top:12px;font-size:12px}.ca-ai-siri-dismiss{position:absolute;top:12px;right:12px;border:0;border-radius:50%;width:36px;height:36px;background:#ffffff12;color:white;font-size:22px}.ca-ai-siri-copy,.ca-ai-siri-open{display:block;width:100%;margin-top:10px;padding:12px;border-radius:13px;border:1px solid #ffffff20;background:#ffffff10;color:white;font:inherit}.ca-ai-siri-open{background:linear-gradient(135deg,#477cff,#24a9ad);border:0}\n
+/* Full-screen AI panel with soft cinematic entrance */
+#ca-ai-panel{inset:0!important;right:0!important;left:0!important;top:0!important;bottom:0!important;width:100vw!important;height:100dvh!important;max-height:none!important;border-radius:0!important;border:0!important;transform:scale(.965);opacity:0;filter:blur(5px);transition:transform .72s cubic-bezier(.2,.8,.2,1),opacity .72s ease,filter .72s ease;display:flex!important;visibility:hidden!important;pointer-events:none!important}
+#ca-ai-panel.open{visibility:visible!important;pointer-events:auto!important;transform:scale(1);opacity:1;filter:blur(0);display:flex!important}
+.ca-ai-head{padding:calc(14px + env(safe-area-inset-top)) 18px 14px}
+.ca-ai-form{padding:14px 16px calc(14px + env(safe-area-inset-bottom))}
+.ca-ai-menu{width:44px!important;height:44px!important;border-radius:14px!important;background:#252b36!important;color:#dce8f7!important;border:1px solid #ffffff22!important;font-size:19px!important;flex:none}
+.ca-ai-mic,.ca-ai-live{transition:opacity .25s,transform .25s}
+#ca-ai-panel:not(.voice-menu-open) .ca-ai-mic,#ca-ai-panel:not(.voice-menu-open) .ca-ai-live{display:none!important}
+#ca-ai-panel.voice-menu-open .ca-ai-mic,#ca-ai-panel.voice-menu-open .ca-ai-live{display:flex!important;animation:caMenuReveal .25s ease both}
+@keyframes caMenuReveal{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.ca-ai-head-actions{gap:8px}
+@media(max-width:700px){#ca-ai-panel{height:100dvh!important;width:100vw!important;}}
